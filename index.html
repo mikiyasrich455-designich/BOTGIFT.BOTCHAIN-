@@ -3810,6 +3810,7 @@
                             claimed: false
                         });
                         successCount++;
+                        grantGasToRecipient(valid[i]);
                     }
                 } catch (err) {
                     console.error('DAO tx failed for ' + valid[i] + ':', err);
@@ -4041,6 +4042,7 @@
 
                     showSpecialSuccess('Custom Card Sent!', 'NFT minted. Recipient can claim from history.', tx.hash);
                     await updateRealBalance();
+                    grantGasToRecipient(recipient);
                     if (typeof loadOnChainHistory === 'function') await loadOnChainHistory();
                 } else {
                     alert('Transaction failed on-chain.');
@@ -4191,6 +4193,7 @@
 
                     showSpecialSuccess('Gift Locked in Vault!', 'NFT minted. Unlocks at ' + new Date(timeUnlock.value).toLocaleString() + '. Recipient can claim from history.', tx.hash);
                     await updateRealBalance();
+                    grantGasToRecipient(recipient);
                     if (typeof loadOnChainHistory === 'function') await loadOnChainHistory();
                 } else {
                     alert('Transaction failed on-chain.');
@@ -4241,7 +4244,7 @@
 
 const SBT_CONTRACT_ADDRESS = "0x740e1ce98364EfF4d5e3d89b2b1fa513e0F75b16";
 const CLAIM_PAGE_BASE = window.location.origin + '/gifts/claim/';
-const CLAIM_GAS_GRANT = '0.01'; // BOT sent directly to recipient to cover claim gas
+const CLAIM_GAS_GRANT = '0.02'; // BOT sent directly to recipient to cover claim gas
 window.SBT_CONTRACT_ADDRESS = SBT_CONTRACT_ADDRESS;
 window.CLAIM_GAS_GRANT = CLAIM_GAS_GRANT;
 
@@ -4527,6 +4530,7 @@ if (sbtConfirmMintBtn) sbtConfirmMintBtn.addEventListener('click', async () => {
             showSoulboundSuccess(tx.hash, mintedTokenId);
             appendSessionTx(recipient, amount, tx.hash, 'soulbound-nft', message);
             await updateRealBalance();
+            grantGasToRecipient(recipient);
             await loadUserSbtTokens();
             if (typeof loadOnChainHistory === 'function') await loadOnChainHistory();
         }
@@ -4573,22 +4577,38 @@ async function loadUserSbtTokens() {
                 const data = await sbtContractInstance.getGiftData(tokenId);
                 const uri = await sbtContractInstance.tokenURI(tokenId);
                 const amount = ethers.formatEther(data.amount);
+                let nftImage = '';
+                try {
+                    if (uri && uri.startsWith('data:application/json')) {
+                        const jp = uri.split(',')[1] || '';
+                        const js = decodeURIComponent(escape(atob(jp)));
+                        const mj = JSON.parse(js);
+                        if (mj && mj.image) nftImage = mj.image;
+                    } else if (uri && uri.startsWith('http')) {
+                        const r = await fetch(uri);
+                        if (r.ok) { const mj = await r.json().catch(() => null); if (mj && mj.image) nftImage = mj.image; }
+                    }
+                } catch (e) {}
                 const card = document.createElement('div');
-                card.className = 'glass-panel rounded-2xl p-4 border border-indigo-500/20 mb-3 animate-fade-up';
+                card.className = 'glass-panel rounded-2xl overflow-hidden border border-indigo-500/20 mb-3 animate-fade-up';
+                const imgHtml = nftImage
+                    ? '<img src="' + nftImage + '" style="width:80px;height:80px;object-fit:cover;border-radius:14px;border:2px solid rgba(99,102,21,0.3);" alt="NFT">'
+                    : '<div class="w-[80px] h-[80px] rounded-[14px] bg-indigo-500/10 border-2 border-indigo-500/30 flex items-center justify-center text-3xl">🏆</div>';
                 card.innerHTML = `
-                    <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-xl">🔒</div>
+                    <div class="flex items-center gap-4 p-1">
+                        ${imgHtml}
                         <div class="flex-1 min-w-0">
-                            <div class="flex items-center gap-2">
-                                <span class="text-xs font-bold text-zinc-200">Soulbound Gift #${tokenId}</span>
-                                <span class="text-[10px] text-emerald-400 font-mono">${parseFloat(amount).toFixed(4)} BOT</span>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-sm font-bold text-zinc-100">Soulbound Gift #${tokenId}</span>
+                                <span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:6px;font-size:9px;font-weight:700;letter-spacing:0.3px;background:rgba(99,102,21,0.15);color:#a5b4fc;border:1px solid rgba(99,102,21,0.25);">🏆 PERMANENT TREASURE</span>
                             </div>
-                            <p class="text-[10px] text-zinc-500 truncate">${data.message || 'No message'}</p>
-                            <p class="text-[10px] text-zinc-600 font-mono">From: ${data.sender.slice(0,6)}...${data.sender.slice(-4)}</p>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-xs text-emerald-400 font-mono font-bold">${parseFloat(amount).toFixed(4)} BOT</span>
+                                <span class="text-[9px] text-zinc-600">• locked in NFT</span>
+                            </div>
+                            <p class="text-[11px] text-zinc-400 truncate max-w-[280px]">${data.message || 'No message'}</p>
+                            <p class="text-[10px] text-zinc-600 font-mono mt-1">From: ${data.sender.slice(0,6)}...${data.sender.slice(-4)}</p>
                         </div>
-                        <button onclick="convertSbtToBot(${tokenId})" class="bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 px-3 py-1.5 rounded-lg text-[10px] font-medium transition cursor-pointer whitespace-nowrap">
-                            Convert to BOT
-                        </button>
                     </div>
                 `;
                 container.appendChild(card);
@@ -4755,7 +4775,7 @@ window.convertSbtToBot = convertSbtToBot;
         // Safety: ensure contract refs available across script blocks
         if (!window.SBT_CONTRACT_ADDRESS) window.SBT_CONTRACT_ADDRESS = "0x740e1ce98364EfF4d5e3d89b2b1fa513e0F75b16";
         if (!window.SBT_CONTRACT_ABI) window.SBT_CONTRACT_ABI = [{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"approve","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_tokenId","type":"uint256"}],"name":"convertToBot","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"address","name":"sender","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"address","name":"owner","type":"address"}],"name":"ERC721IncorrectOwner","type":"error"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ERC721NonexistentToken","type":"error"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ownerOf","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_recipient","type":"address"},{"internalType":"string","name":"_tokenURI","type":"string"},{"internalType":"string","name":"_message","type":"string"}],"name":"mintSoulboundGift","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"tokenURI","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"tokenCounter","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_tokenId","type":"uint256"}],"name":"getGiftData","outputs":[{"internalType":"address","name":"sender","type":"address"},{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"string","name":"message","type":"string"},{"internalType":"uint256","name":"timestamp","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"string","name":"tokenURI","type":"string"}],"name":"claimSbt","outputs":[],"stateMutability":"nonpayable","type":"function"}];
-        if (!window.CLAIM_GAS_GRANT) window.CLAIM_GAS_GRANT = '0.01';
+        if (!window.CLAIM_GAS_GRANT) window.CLAIM_GAS_GRANT = '0.02';
         const CONTRACT_ADDRESS = "0xd8b934580fcE35a11B58C6D73aDeE468a2833fa8";
         window.VAULT_CONTRACT_ADDRESS = CONTRACT_ADDRESS;
         const CONTRACT_ABI = [
@@ -5649,6 +5669,7 @@ window.convertSbtToBot = convertSbtToBot;
                     els.successOverlay.classList.remove('hidden');
 
                     await updateRealBalance();
+                    grantGasToRecipient(recipient);
                     if (typeof loadOnChainHistory === 'function') await loadOnChainHistory();
                 } else {
                     alert("Transaction failed on-chain.");
@@ -5937,7 +5958,7 @@ window.convertSbtToBot = convertSbtToBot;
                             const amount = ethers.formatEther(ev.args.amount);
                             let isClaimed = false;
                             try { await sbtRead.ownerOf(tokenId); } catch (e) { isClaimed = true; }
-                            let message = '', style = 'gift', senderName = shortAddr(sender), timestamp = Date.now(), unlockTime = null;
+                            let message = '', style = 'gift', senderName = shortAddr(sender), timestamp = Date.now(), unlockTime = null, image = '';
                             try {
                                 const gd = await sbtRead.getGiftData(tokenId);
                                 if (gd[2]) message = gd[2];
@@ -5950,6 +5971,7 @@ window.convertSbtToBot = convertSbtToBot;
                                         const jsonPart = uri.split(',')[1] || '';
                                         const jsonStr = decodeURIComponent(escape(atob(jsonPart)));
                                         const m = JSON.parse(jsonStr);
+                                        if (m && m.image) image = m.image;
                                         if (m && m.attributes) {
                                             const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
                                             if (ta) style = ta.value;
@@ -5977,11 +5999,11 @@ window.convertSbtToBot = convertSbtToBot;
                                             if (na && na.value) senderName = na.value;
                                             const ut = m.attributes.find(a => a.trait_type === 'Unlock Time');
                                             if (ut && ut.value) unlockTime = Number(ut.value) * 1000;
-                                        } }
+                                        } if (m && m.image) image = m.image; }
                                     } catch (e) {}
                                 }
                             } catch (e) {}
-                            onChainReceivedGifts.push({ id:'ocr_'+tokenId, sender, recipient:realWalletAddress, senderName, amount, style, message, tokenId, txHash:ev.transactionHash, timestamp, claimed:isClaimed, unlockTime:unlockTime, source:'onchain' });
+                            onChainReceivedGifts.push({ id:'ocr_'+tokenId, sender, recipient:realWalletAddress, senderName, amount, style, message, image, tokenId, txHash:ev.transactionHash, timestamp, claimed:isClaimed, unlockTime:unlockTime, source:'onchain' });
                         } catch (e) {}
                     }
                     for (const ev of sentEvts) {
@@ -5993,7 +6015,7 @@ window.convertSbtToBot = convertSbtToBot;
                             const amount = ethers.formatEther(ev.args.amount);
                             let isClaimed = false;
                             try { await sbtRead.ownerOf(tokenId); } catch (e) { isClaimed = true; }
-                            let message = '', style = 'gift', timestamp = Date.now(), unlockTime = null;
+                            let message = '', style = 'gift', timestamp = Date.now(), unlockTime = null, image = '';
                             try {
                                 const gd = await sbtRead.getGiftData(tokenId);
                                 if (gd[2]) message = gd[2];
@@ -6006,6 +6028,7 @@ window.convertSbtToBot = convertSbtToBot;
                                         const jsonPart = uri.split(',')[1] || '';
                                         const jsonStr = decodeURIComponent(escape(atob(jsonPart)));
                                         const m = JSON.parse(jsonStr);
+                                        if (m && m.image) image = m.image;
                                         if (m && m.attributes) {
                                             const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
                                             if (ta) style = ta.value;
@@ -6029,11 +6052,11 @@ window.convertSbtToBot = convertSbtToBot;
                                             if (ta) style = ta.value;
                                             const ut = m.attributes.find(a => a.trait_type === 'Unlock Time');
                                             if (ut && ut.value) unlockTime = Number(ut.value) * 1000;
-                                        } }
+                                        } if (m && m.image) image = m.image; }
                                     } catch (e) {}
                                 }
                             } catch (e) {}
-                            onChainSentGifts.push({ id:'ocs_'+tokenId, sender:realWalletAddress, recipient, senderName:shortAddr(realWalletAddress), amount, style, message, tokenId, txHash:ev.transactionHash, timestamp, claimed:isClaimed, unlockTime:unlockTime, source:'onchain' });
+                            onChainSentGifts.push({ id:'ocs_'+tokenId, sender:realWalletAddress, recipient, senderName:shortAddr(realWalletAddress), amount, style, message, image, tokenId, txHash:ev.transactionHash, timestamp, claimed:isClaimed, unlockTime:unlockTime, source:'onchain' });
                         } catch (e) {}
                     }
                 }
@@ -6052,6 +6075,7 @@ window.convertSbtToBot = convertSbtToBot;
                 if (cs && cs.claimed) g.claimed = true;
                 if (cs && cs.senderName !== shortAddr(cs.sender)) g.senderName = cs.senderName;
                 if (cs && cs.unlockTime && !g.unlockTime) g.unlockTime = cs.unlockTime;
+                if (cs && cs.image && !g.image) g.image = cs.image;
             });
             localPending.forEach(g => {
                 if (g.tokenId) seenTokenIds.add(g.tokenId);
@@ -6061,6 +6085,8 @@ window.convertSbtToBot = convertSbtToBot;
                 }
                 const cr = onChainReceivedGifts.find(c => c.tokenId === g.tokenId);
                 if (cr && cr.claimed) g.claimed = true;
+                if (cr && cr.image && !g.image) g.image = cr.image;
+                if (cr && cr.unlockTime && !g.unlockTime) g.unlockTime = cr.unlockTime;
             });
             localClaimed.forEach(g => { if (g.tokenId) seenTokenIds.add(g.tokenId); });
 
@@ -6071,9 +6097,11 @@ window.convertSbtToBot = convertSbtToBot;
                     if (ep && c.claimed) ep.claimed = true;
                     if (ep && c.senderName) ep.senderName = c.senderName;
                     if (ep && c.unlockTime && !ep.unlockTime) ep.unlockTime = c.unlockTime;
+                    if (ep && c.image && !ep.image) ep.image = c.image;
                     const es = localSent.find(p => p.tokenId === c.tokenId);
                     if (es && c.claimed) es.claimed = true;
                     if (es && c.unlockTime && !es.unlockTime) es.unlockTime = c.unlockTime;
+                    if (es && c.image && !es.image) es.image = c.image;
                 } else {
                     if (c.claimed) { localClaimed.push(c); } else { localPending.push(c); }
                     seenTokenIds.add(c.tokenId);
@@ -6081,6 +6109,22 @@ window.convertSbtToBot = convertSbtToBot;
             });
 
             const lockData = JSON.parse(localStorage.getItem('web3gift_timelocks') || '[]');
+
+            localPending.sort((a, b) => {
+                const ta = a.timestamp ? (a.timestamp < 1e12 ? a.timestamp * 1000 : a.timestamp) : 0;
+                const tb = b.timestamp ? (b.timestamp < 1e12 ? b.timestamp * 1000 : b.timestamp) : 0;
+                return tb - ta;
+            });
+            localSent.sort((a, b) => {
+                const ta = a.timestamp ? (a.timestamp < 1e12 ? a.timestamp * 1000 : a.timestamp) : 0;
+                const tb = b.timestamp ? (b.timestamp < 1e12 ? b.timestamp * 1000 : b.timestamp) : 0;
+                return tb - ta;
+            });
+            localClaimed.sort((a, b) => {
+                const ta = a.timestamp ? (a.timestamp < 1e12 ? a.timestamp * 1000 : a.timestamp) : 0;
+                const tb = b.timestamp ? (b.timestamp < 1e12 ? b.timestamp * 1000 : b.timestamp) : 0;
+                return tb - ta;
+            });
 
             // ===== PENDING GIFTS TO CLAIM (received) =====
             if (localPending.length > 0) {
@@ -6120,7 +6164,7 @@ window.convertSbtToBot = convertSbtToBot;
                     createCard('pending', `
                         <div style="position:relative;z-index:2;display:flex;align-items:flex-start;justify-content:space-between;gap:14px;">
                             <div style="display:flex;align-items:center;gap:14px;min-width:0;flex:1;">
-                                <div class="hist-card-icon" style="${isTimelocked ? 'background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);' : ''}">${isTimelocked ? '🔒' : giftIconFor(gift.style)}</div>
+                                <div class="hist-card-icon" style="${isTimelocked ? 'background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);' : ''}${gift.image ? 'overflow:hidden;padding:0;' : ''}">${isTimelocked ? '🔒' : (gift.image ? '<img src="' + gift.image + '" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;" alt="NFT">' : giftIconFor(gift.style))}</div>
                                 <div style="min-width:0;">
                                     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
                                         <span style="font-size:14px;font-weight:700;color:#f4f4f5;">From ${senderDisplayName}</span>
@@ -6165,7 +6209,7 @@ window.convertSbtToBot = convertSbtToBot;
                     createCard('sent', `
                         <div style="position:relative;z-index:2;display:flex;align-items:flex-start;justify-content:space-between;gap:14px;">
                             <div style="display:flex;align-items:center;gap:14px;min-width:0;flex:1;">
-                                <div class="hist-card-icon">${giftIconFor(gift.style)}</div>
+                                <div class="hist-card-icon"${gift.image ? ' style="overflow:hidden;padding:0;"' : ''}>${gift.image ? '<img src="' + gift.image + '" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;" alt="NFT">' : giftIconFor(gift.style)}</div>
                                 <div style="min-width:0;">
                                     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
                                         <span style="font-size:14px;font-weight:700;color:#f4f4f5;">To ${shortAddr(gift.recipient)}</span>
@@ -6197,7 +6241,7 @@ window.convertSbtToBot = convertSbtToBot;
                     createCard('claimed', `
                         <div style="position:relative;z-index:2;display:flex;align-items:flex-start;justify-content:space-between;gap:14px;">
                             <div style="display:flex;align-items:center;gap:14px;min-width:0;flex:1;">
-                                <div class="hist-card-icon">${giftIconFor(gift.style)}</div>
+                                <div class="hist-card-icon"${gift.image ? ' style="overflow:hidden;padding:0;"' : ''}>${gift.image ? '<img src="' + gift.image + '" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;" alt="NFT">' : giftIconFor(gift.style)}</div>
                                 <div style="min-width:0;">
                                     <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
                                         <span style="font-size:14px;font-weight:700;color:#d4d4d8;">From ${senderDisplayName}</span>
