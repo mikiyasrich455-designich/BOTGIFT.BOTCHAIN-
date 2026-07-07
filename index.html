@@ -2401,13 +2401,13 @@
                         <div class="max-w-[80%]">
                             <p class="text-[10px] text-zinc-500 mb-2 uppercase tracking-wider">Quick questions</p>
                             <div class="space-y-2" id="aiChatTemplates">
-                                <button onclick="sendAiChatTemplate(this)" class="chat-template-btn w-full text-left rounded-xl px-4 py-2.5 text-xs text-zinc-200 transition-all duration-200 cursor-pointer hover:scale-[1.02]" style="background: rgba(20,184,166,0.08); border: 1px solid rgba(20,184,166,0.15);" data-msg="Gift me a love letter for my girlfriend 💕">
+                                <button class="chat-template-btn w-full text-left rounded-xl px-4 py-2.5 text-xs text-zinc-200 transition-all duration-200 cursor-pointer hover:scale-[1.02]" style="background: rgba(20,184,166,0.08); border: 1px solid rgba(20,184,166,0.15);" data-msg="Gift me a love letter for my girlfriend 💕">
                                     💌 Gift me a love letter for my girlfriend 💕
                                 </button>
-                                <button onclick="sendAiChatTemplate(this)" class="chat-template-btn w-full text-left rounded-xl px-4 py-2.5 text-xs text-zinc-200 transition-all duration-200 cursor-pointer hover:scale-[1.02]" style="background: rgba(20,184,166,0.08); border: 1px solid rgba(20,184,166,0.15);" data-msg="What's the best crypto gift for a friend? 🚀">
+                                <button class="chat-template-btn w-full text-left rounded-xl px-4 py-2.5 text-xs text-zinc-200 transition-all duration-200 cursor-pointer hover:scale-[1.02]" style="background: rgba(20,184,166,0.08); border: 1px solid rgba(20,184,166,0.15);" data-msg="What's the best crypto gift for a friend? 🚀">
                                     🚀 What's the best crypto gift for a friend? 🚀
                                 </button>
-                                <button onclick="sendAiChatTemplate(this)" class="chat-template-btn w-full text-left rounded-xl px-4 py-2.5 text-xs text-zinc-200 transition-all duration-200 cursor-pointer hover:scale-[1.02]" style="background: rgba(20,184,166,0.08); border: 1px solid rgba(20,184,166,0.15);" data-msg="Surprise me with a birthday gift idea! 🎂">
+                                <button class="chat-template-btn w-full text-left rounded-xl px-4 py-2.5 text-xs text-zinc-200 transition-all duration-200 cursor-pointer hover:scale-[1.02]" style="background: rgba(20,184,166,0.08); border: 1px solid rgba(20,184,166,0.15);" data-msg="Surprise me with a birthday gift idea! 🎂">
                                     🎂 Surprise me with a birthday gift idea! 🎂
                                 </button>
                             </div>
@@ -2418,7 +2418,7 @@
                 <!-- Chat Input -->
                 <div class="shrink-0 px-4 py-3 border-t border-zinc-700/30" style="background: rgba(9,9,11,0.6);">
                     <div class="flex gap-2 items-center">
-                        <input id="aiChatInput" type="text" placeholder="Type your message..." class="flex-1 bg-zinc-950/80 border border-zinc-700/50 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:outline-none focus:border-teal-500/50 transition input-glow" onkeypress="if(event.key==='Enter')sendAiChatMessage()">
+                        <input id="aiChatInput" type="text" placeholder="Type your message..." class="flex-1 bg-zinc-950/80 border border-zinc-700/50 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:outline-none focus:border-teal-500/50 transition input-glow">
                         <button onclick="sendAiChatMessage()" id="aiChatSendBtn" class="w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-200 cursor-pointer hover:scale-105 shrink-0" style="background: linear-gradient(135deg, #0d9488, #14b8a6);">
                             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7"></path></svg>
                         </button>
@@ -3617,11 +3617,11 @@
                 const mysteryAddr = await systemSigner.getAddress();
 
                 const mysteryTheme = getGiftTheme('mystery');
-                const mysteryDataUri = 'data:image/svg+xml,' + encodeURIComponent(mysteryTheme.nftImageSvg);
+                const mysteryImage = await ensureImageOnIpfs('data:image/svg+xml,' + encodeURIComponent(mysteryTheme.nftImageSvg));
                 const metadata = {
                     name: mysteryTheme.successIcon + ' Mystery Box - ' + selectedMysteryTier.toUpperCase(),
                     description: 'A mystery gift containing ' + mysteryReward + ' BOT and a ' + gift + ' NFT!',
-                    image: mysteryDataUri,
+                    image: mysteryImage,
                     attributes: [
                         { trait_type: 'Gift Type', value: 'mystery' },
                         { trait_type: 'Tier', value: selectedMysteryTier },
@@ -3764,12 +3764,12 @@
             for (let i = 0; i < valid.length; i++) {
                 btn.innerHTML = `Minting ${i + 1}/${valid.length}... <span class="text-sm">⏳</span>`;
                 try {
-                    const daoTheme = getGiftTheme('cryptoBro');
-                    const daoDataUri = 'data:image/svg+xml,' + encodeURIComponent(daoTheme.nftImageSvg);
+                    const daoTheme = getGiftTheme('dao');
+                    const daoImage = await ensureImageOnIpfs('data:image/svg+xml,' + encodeURIComponent(daoTheme.nftImageSvg));
                     const metadata = {
                         name: '🏛️ DAO Treasury Gift',
                         description: 'DAO Treasury Distribution of ' + perAmount + ' BOT',
-                        image: daoDataUri,
+                        image: daoImage,
                         attributes: [
                             { trait_type: 'Gift Type', value: 'dao' },
                             { trait_type: 'Amount', value: perAmount.toString(), display_type: 'number' },
@@ -3994,12 +3994,15 @@
                     cardIpfsHash = await uploadImageToPinata(canvasBlob);
                 }
 
-                const designerTheme = getGiftTheme('cryptoBro');
-                const designerFallbackUri = 'data:image/svg+xml,' + encodeURIComponent(designerTheme.nftImageSvg);
+                const designerTheme = getGiftTheme('designer');
+                let designerImageUrl = cardIpfsHash ? (PINATA_GATEWAY + cardIpfsHash) : null;
+                if (!designerImageUrl) {
+                    designerImageUrl = await ensureImageOnIpfs('data:image/svg+xml,' + encodeURIComponent(designerTheme.nftImageSvg));
+                }
                 const metadata = {
                     name: '🎨 Custom Gift Card',
                     description: 'A custom designed gift card on BOT Chain',
-                    image: cardIpfsHash ? (PINATA_GATEWAY + cardIpfsHash) : designerFallbackUri,
+                    image: designerImageUrl,
                     attributes: [
                         { trait_type: 'Gift Type', value: 'designer' },
                         { trait_type: 'Amount', value: amount, display_type: 'number' },
@@ -4128,12 +4131,12 @@
             btn.innerHTML = 'Creating NFT... <span class="text-lg">⏳</span>';
 
             try {
-                const timelockTheme = getGiftTheme('cryptoBro');
-                const timelockDataUri = 'data:image/svg+xml,' + encodeURIComponent(timelockTheme.nftImageSvg);
+                const timelockTheme = getGiftTheme('timelock');
+                const timelockImage = await ensureImageOnIpfs('data:image/svg+xml,' + encodeURIComponent(timelockTheme.nftImageSvg));
                 const metadata = {
                     name: '⏳ Time-Locked Gift',
                     description: 'Gift locked until ' + new Date(timeUnlock.value).toLocaleString() + ': ' + message,
-                    image: timelockDataUri,
+                    image: timelockImage,
                     attributes: [
                         { trait_type: 'Gift Type', value: 'timelock' },
                         { trait_type: 'Amount', value: amount, display_type: 'number' },
@@ -5238,7 +5241,10 @@ window.convertSbtToBot = convertSbtToBot;
                 designer: 'https://res.cloudinary.com/dguexkgjw/image/upload/v1783197536/photo_5931304236568218968_y_djl9s6.jpg'
             };
             const theme = getGiftTheme(style);
-            let imageDataUrl = cardImageUrls[style] || ('data:image/svg+xml,' + encodeURIComponent(theme.nftImageSvg));
+            let imageDataUrl = cardImageUrls[style];
+            if (!imageDataUrl) {
+                imageDataUrl = await ensureImageOnIpfs('data:image/svg+xml,' + encodeURIComponent(theme.nftImageSvg));
+            }
             if (uploadedImage) {
                 try {
                     const imgFile = dataUriToFile(uploadedImage, 'gift-image.png');
@@ -5275,6 +5281,19 @@ window.convertSbtToBot = convertSbtToBot;
             const u8arr = new Uint8Array(n);
             while (n--) u8arr[n] = bstr.charCodeAt(n);
             return new File([u8arr], filename, { type: mime });
+        }
+
+        async function ensureImageOnIpfs(imageDataUri) {
+            if (!imageDataUri) return imageDataUri;
+            if (imageDataUri.startsWith('http') && !imageDataUri.startsWith('data:')) return imageDataUri;
+            try {
+                const svgBlob = dataUriToFile(imageDataUri, 'gift-image.svg');
+                const hash = await uploadImageToPinata(svgBlob);
+                return PINATA_GATEWAY + hash;
+            } catch (e) {
+                console.warn('[GIFT BOT] Image IPFS upload failed, using fallback:', e);
+                return imageDataUri;
+            }
         }
 
         async function claimGift(giftId) {
@@ -5347,23 +5366,18 @@ window.convertSbtToBot = convertSbtToBot;
                     console.warn('Could not fetch on-chain gift data:', e);
                 }
 
-                if (btn) { btn.textContent = 'Claiming on-chain...'; btn.disabled = true; }
-
-                const claimTx = await sbtContractInstance.convertToBot(gift.tokenId);
-                if (btn) btn.textContent = 'Confirming...';
-                const claimReceipt = await claimTx.wait();
-                if (claimReceipt.status !== 1) throw new Error('Claim transaction failed on-chain');
+                if (btn) { btn.textContent = 'Claiming...'; btn.disabled = true; }
 
                 gift.claimed = true;
                 gift.claimedAt = Date.now();
-                gift.claimTxHash = claimTx.hash;
+                gift.permanent = true;
                 saveAllGifts(gifts);
 
                 if (btn) {
-                    btn.textContent = 'Claimed ✓';
+                    btn.textContent = 'Claimed ✓ Permanent';
                     btn.className = 'hist-claim-btn';
-                    btn.style.background = 'rgba(82,82,91,0.3)';
-                    btn.style.color = '#71717a';
+                    btn.style.background = 'rgba(16,185,129,0.3)';
+                    btn.style.color = '#6ee7b7';
                     btn.disabled = true;
                 }
 
@@ -5374,8 +5388,7 @@ window.convertSbtToBot = convertSbtToBot;
                     localStorage.setItem(claimedKey, JSON.stringify(claimed));
                 }
 
-                showRedeemSuccessOverlay(claimTx.hash, onChainAmount, onChainStyle);
-                if (typeof updateRealBalance === 'function') await updateRealBalance();
+                showRedeemSuccessOverlay('permanent-' + Date.now(), onChainAmount, onChainStyle);
                 if (typeof loadOnChainHistory === 'function') await loadOnChainHistory();
             } catch (err) {
                 console.error('Claim gift failed:', err);
@@ -5529,19 +5542,14 @@ window.convertSbtToBot = convertSbtToBot;
 
                 btn.onclick = async () => {
                     btn.disabled = true;
-                    btn.textContent = 'Claiming on-chain...';
+                    btn.textContent = 'Claiming...';
                     statusEl.classList.remove('hidden');
-                    statusEl.textContent = 'Sending claim transaction to BOT Chain...';
+                    statusEl.textContent = 'Claiming permanent NFT...';
                     try {
-                        const claimTx = await sbtContractInstance.convertToBot(tokenId);
-                        statusEl.textContent = 'Waiting for confirmation...';
-                        const claimReceipt = await claimTx.wait();
-                        if (claimReceipt.status !== 1) throw new Error('Claim failed on-chain');
-
-                        btn.textContent = 'Claimed!';
-                        btn.style.background = 'rgba(82,82,91,0.3)';
-                        btn.style.color = '#71717a';
-                        statusEl.textContent = 'BOT tokens sent to your wallet! Tx: ' + claimTx.hash.slice(0, 10) + '...';
+                        btn.textContent = 'Claimed! Permanent NFT';
+                        btn.style.background = 'rgba(16,185,129,0.3)';
+                        btn.style.color = '#6ee7b7';
+                        statusEl.textContent = 'NFT is now your permanent collectible! It stays in your wallet forever.';
                         const confetti = document.getElementById('giftClaimConfetti');
                         confetti.innerHTML = '';
                         for (let i = 0; i < 30; i++) {
@@ -5818,7 +5826,7 @@ window.convertSbtToBot = convertSbtToBot;
             } catch (e) {}
 
             btn.disabled = true;
-            btn.textContent = 'Claiming on-chain...';
+            btn.textContent = 'Claiming...';
             try {
                 let giftAmount = '0';
                 let giftAmountNum = 0;
@@ -5829,22 +5837,17 @@ window.convertSbtToBot = convertSbtToBot;
                     giftAmountNum = parseFloat(giftAmount);
                 } catch (e) {}
 
-                btn.textContent = 'Confirming tx...';
-                const claimTx = await sbtContractInstance.convertToBot(tokenId);
-                const claimReceipt = await claimTx.wait();
-                if (claimReceipt.status !== 1) throw new Error('Claim transaction failed on-chain');
-
-                btn.textContent = 'Claimed ✅';
+                btn.textContent = 'Claimed ✅ Permanent';
                 btn.className = 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-3 py-1.5 rounded-lg text-[10px] font-medium transition cursor-default whitespace-nowrap shrink-0';
                 const row = document.querySelector(`[data-sbt-token-id="${tokenId}"]`);
                 if (row) {
                     const locked = row.querySelector('.text-emerald-400.font-mono');
                     if (locked) {
-                        locked.textContent = 'BOT Claimed ✓';
+                        locked.textContent = 'Permanent NFT ✓';
                         locked.className = 'text-[10px] text-emerald-500 font-mono';
                     }
                 }
-                showRedeemSuccessOverlay(claimTx.hash, giftAmountNum || 0, giftStyle);
+                showRedeemSuccessOverlay('permanent-' + Date.now(), giftAmountNum || 0, giftStyle);
 
                 try {
                     const key = 'web3gift_claimed_' + (realWalletAddress || walletAddress || 'unknown');
@@ -7919,18 +7922,13 @@ window.convertSbtToBot = convertSbtToBot;
                     return;
                 }
 
-                document.getElementById('claimStep2Desc').textContent = 'Sending claim transaction to BOT Chain...';
+                document.getElementById('claimStep2Desc').textContent = 'Claiming permanent NFT...';
 
-                const claimTx = await window.sbtContractInstance.convertToBot(gift.tokenId);
-                document.getElementById('claimStep2Desc').textContent = 'Waiting for confirmation on BOT Chain...';
-                const claimReceipt = await claimTx.wait();
-                if (claimReceipt.status !== 1) throw new Error('Claim transaction failed on-chain');
-
-                document.getElementById('claimStep2Desc').textContent = 'Claim confirmed! BOT tokens sent to your wallet.';
+                document.getElementById('claimStep2Desc').textContent = 'NFT claimed! It is now your permanent collectible.';
 
                 gift.claimed = true;
                 gift.claimedAt = Date.now();
-                gift.claimTxHash = claimTx.hash;
+                gift.permanent = true;
                 saveAllGifts(getAllGifts().map(g => g.id === gift.id ? gift : g));
 
                 try {
