@@ -919,6 +919,13 @@
             font-size: 22px;
             flex-shrink: 0;
             transition: transform 0.3s ease;
+            overflow: hidden;
+        }
+        .history-gift-card .hist-card-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 14px;
         }
         .history-gift-card:hover .hist-card-icon { transform: scale(1.12); }
         .history-gift-card .hist-tag {
@@ -1429,6 +1436,15 @@
                             <textarea id="cryptoMessageInput" placeholder="Write something special for your bro..." rows="3" maxlength="140" class="w-full bg-zinc-950/80 border border-zinc-700/50 rounded-xl p-3.5 text-xs text-zinc-100 focus:outline-none focus:border-emerald-500/50 crypto-input-glow transition resize-none"></textarea>
                             <div class="absolute bottom-3 right-3"><span class="text-lg opacity-40">✨</span></div>
                         </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-[11px] tracking-wide text-zinc-400 font-medium block uppercase flex items-center gap-1.5">
+                            <svg class="w-3 h-3 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                            Your Name (Who is this from?)
+                        </label>
+                        <input type="text" id="cryptoSenderNameInput" placeholder="e.g. CryptoBro, Alice, Dad..." class="w-full bg-zinc-950/80 border border-zinc-700/50 rounded-xl p-3.5 text-xs text-zinc-100 focus:outline-none focus:border-emerald-500/50 crypto-input-glow transition">
+                        <p class="text-[10px] text-zinc-600">This name shows on the recipient's gift card</p>
                     </div>
 
                     <div class="flex items-center justify-between py-2 border-t border-zinc-700/30">
@@ -2629,15 +2645,15 @@
         });
 
         const giftTypes = {
-            cryptoBro: { icon: '🎁', title: 'Crypto Bro Gift', desc: 'The ultimate degen present. A premium customizable gift card for your crypto bro, rendered on-chain with style.' },
-            loveletter: { icon: '💌', title: 'Love Letter', desc: 'A sealed envelope with hearts. Send your love on-chain.' },
-            birthday: { icon: '🎈', title: 'Happy Birthday', desc: 'Balloons and celebration vibes. Make their birthday special.' },
-            heart: { icon: '💖', title: 'Your Heart', desc: 'Send your heart away. For the ones you truly care about.' },
-            mystery: { icon: '🎲', title: 'Mystery Box', desc: 'A random surprise inside. The thrill of the unknown.' },
-            goldenticket: { icon: '🎫', title: 'Golden Ticket', desc: 'VIP access pass. Exclusive and golden.' },
-            treasure: { icon: '🏴‍☠️', title: 'Treasure Chest', desc: 'Pirate gold and gems. X marks the spot.' },
-            christmas: { icon: '🎄', title: 'Christmas', desc: 'Holiday spirit and cheer. Merry Christmas!' },
-            diamond: { icon: '💎', title: 'Diamond Hands', desc: 'Rare and precious. Only for diamond hands.' }
+            cryptoBro: { icon: '🎁', title: 'Crypto Bro Gift', desc: 'The ultimate degen present. A premium customizable gift card for your crypto bro, rendered on-chain with style.', cardImg: 'https://res.cloudinary.com/dguexkgjw/image/upload/v1783088302/Gemini_Generated_Image_4z7vg14z7vg14z7v-removebg-preview_wqdjup.png' },
+            loveletter: { icon: '💌', title: 'Love Letter', desc: 'A sealed envelope with hearts. Send your love on-chain.', cardImg: '' },
+            birthday: { icon: '🎈', title: 'Happy Birthday', desc: 'Balloons and celebration vibes. Make their birthday special.', cardImg: '' },
+            heart: { icon: '💖', title: 'Your Heart', desc: 'Send your heart away. For the ones you truly care about.', cardImg: '' },
+            mystery: { icon: '🎲', title: 'Mystery Box', desc: 'A random surprise inside. The thrill of the unknown.', cardImg: '' },
+            goldenticket: { icon: '🎫', title: 'Golden Ticket', desc: 'VIP access pass. Exclusive and golden.', cardImg: '' },
+            treasure: { icon: '🏴‍☠️', title: 'Treasure Chest', desc: 'Pirate gold and gems. X marks the spot.', cardImg: '' },
+            christmas: { icon: '🎄', title: 'Christmas', desc: 'Holiday spirit and cheer. Merry Christmas!', cardImg: '' },
+            diamond: { icon: '💎', title: 'Diamond Hands', desc: 'Rare and precious. Only for diamond hands.', cardImg: '' }
         };
         const GIFT_THEME = {
             cryptoBro: {
@@ -3198,7 +3214,12 @@
             });
             if (step === 2 && selectedGiftType && selectedGiftType !== 'cryptoBro') {
                 const gift = giftTypes[selectedGiftType];
-                els.selectedGiftPreview.textContent = gift.icon;
+                if (gift.cardImg) {
+                    els.selectedGiftPreview.innerHTML = '<img src="' + gift.cardImg + '" style="width:80px;height:80px;object-fit:cover;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.3);" alt="' + gift.title + '">';
+                } else {
+                    els.selectedGiftPreview.innerHTML = '';
+                    els.selectedGiftPreview.textContent = gift.icon;
+                }
                 els.selectedGiftTitle.textContent = gift.title;
             }
             if (step === 3) {
@@ -3206,7 +3227,12 @@
                 const recipient = els.recipientInput.value;
                 const amount = els.amountInput.value || '0.0';
                 const message = els.messageInput.value;
-                els.finalGiftIcon.textContent = gift.icon;
+                if (gift.cardImg) {
+                    els.finalGiftIcon.innerHTML = '<img src="' + gift.cardImg + '" style="width:80px;height:80px;object-fit:cover;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.3);" alt="' + gift.title + '">';
+                } else {
+                    els.finalGiftIcon.innerHTML = '';
+                    els.finalGiftIcon.textContent = gift.icon;
+                }
                 els.finalGiftTitle.textContent = gift.title;
                 els.finalRecipient.textContent = recipient.slice(0, 6) + '...' + recipient.slice(-4);
                 els.finalAmount.textContent = amount + ' $BOT';
@@ -5191,8 +5217,14 @@ window.convertSbtToBot = convertSbtToBot;
 
         async function createGiftMetadata(senderAddr, style, message, amount) {
             const giftIcons = { cryptoBro:'🎁', loveletter:'💌', birthday:'🎈', heart:'💖', mystery:'🎲', goldenticket:'🎫', treasure:'🏴\u200D☠️', christmas:'🎄', rocket:'🚀', diamond:'💎', dao:'🏛️', timelock:'⏳', designer:'🎨', gift:'🎁' };
+            const cardImageUrls = {
+                cryptoBro: 'https://res.cloudinary.com/dguexkgjw/image/upload/v1783088302/Gemini_Generated_Image_4z7vg14z7vg14z7v-removebg-preview_wqdjup.png',
+                dao: 'https://res.cloudinary.com/dguexkgjw/image/upload/v1783197571/photo_5931304236568218967_y_j2irwa.jpg',
+                timelock: 'https://res.cloudinary.com/dguexkgjw/image/upload/v1783197672/photo_5931304236568218965_y_fugghd.jpg',
+                designer: 'https://res.cloudinary.com/dguexkgjw/image/upload/v1783197536/photo_5931304236568218968_y_djl9s6.jpg'
+            };
             const theme = getGiftTheme(style);
-            const imageDataUri = 'data:image/svg+xml,' + encodeURIComponent(theme.nftImageSvg);
+            const imageDataUri = cardImageUrls[style] || ('data:image/svg+xml,' + encodeURIComponent(theme.nftImageSvg));
             const metadata = {
                 name: theme.successIcon + ' ' + (giftTypes[style] ? giftTypes[style].title : 'Gift') + ' from ' + senderAddr.slice(0,6) + '...' + senderAddr.slice(-4),
                 description: message || 'A gift on BOT Chain Testnet',
@@ -5516,7 +5548,7 @@ window.convertSbtToBot = convertSbtToBot;
                     addGift({
                         id: giftId,
                         sender: realWalletAddress,
-                        senderName: (document.getElementById('senderNameInput') && document.getElementById('senderNameInput').value.trim()) || realWalletAddress.slice(0,6) + '...' + realWalletAddress.slice(-4),
+                        senderName: (document.getElementById('senderNameInput') && document.getElementById('senderNameInput').value.trim()) || (document.getElementById('cryptoSenderNameInput') && document.getElementById('cryptoSenderNameInput').value.trim()) || realWalletAddress.slice(0,6) + '...' + realWalletAddress.slice(-4),
                         recipient: recipient,
                         amount: parseFloat(amount).toString(),
                         style: style,
@@ -5578,7 +5610,21 @@ window.convertSbtToBot = convertSbtToBot;
             if (emptyState) emptyState.style.display = 'none';
 
             function giftIconFor(s) {
-                return s==='cryptoBro'?'🎁':s==='loveletter'?'💌':s==='birthday'?'🎈':s==='heart'?'💖':s==='mystery'?'🎲':s==='goldenticket'?'🎫':s==='treasure'?'🏴\u200D☠️':s==='christmas'?'🎄':s==='diamond'?'💎':s==='dao'?'🏛️':s==='timelock'?'⏳':s==='designer'?'🎨':'🎁';
+                var cardImages = {
+                    cryptoBro: '<img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783088302/Gemini_Generated_Image_4z7vg14z7vg14z7v-removebg-preview_wqdjup.png" style="width:100%;height:100%;object-fit:cover;border-radius:14px;" alt="Crypto Bro">',
+                    loveletter: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#be123c,#f43f5e);display:flex;align-items:center;justify-content:center;font-size:22px;">💌</div>',
+                    birthday: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#1e3a8a,#6366f1);display:flex;align-items:center;justify-content:center;font-size:22px;">🎈</div>',
+                    heart: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#a21caf,#d946ef);display:flex;align-items:center;justify-content:center;font-size:22px;">💖</div>',
+                    mystery: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#374151,#6b7280);display:flex;align-items:center;justify-content:center;font-size:22px;">🎲</div>',
+                    goldenticket: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#b45309,#f59e0b);display:flex;align-items:center;justify-content:center;font-size:22px;">🎫</div>',
+                    treasure: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#78350f,#b45309);display:flex;align-items:center;justify-content:center;font-size:22px;">🏴\u200D☠️</div>',
+                    christmas: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#166534,#22c55e);display:flex;align-items:center;justify-content:center;font-size:22px;">🎄</div>',
+                    diamond: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#0891b2,#22d3ee);display:flex;align-items:center;justify-content:center;font-size:22px;">💎</div>',
+                    dao: '<img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783197571/photo_5931304236568218967_y_j2irwa.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:14px;" alt="DAO">',
+                    timelock: '<img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783197672/photo_5931304236568218965_y_fugghd.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:14px;" alt="Time-Locked">',
+                    designer: '<img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783197536/photo_5931304236568218968_y_djl9s6.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:14px;" alt="Designer">'
+                };
+                return cardImages[s] || '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#059669,#34d399);display:flex;align-items:center;justify-content:center;font-size:22px;">🎁</div>';
             }
 
             const card = document.createElement('div');
@@ -5771,7 +5817,21 @@ window.convertSbtToBot = convertSbtToBot;
             let cardIndex = 0;
 
             function giftIconFor(s) {
-                return s==='cryptoBro'?'🎁':s==='loveletter'?'💌':s==='birthday'?'🎈':s==='heart'?'💖':s==='mystery'?'🎲':s==='goldenticket'?'🎫':s==='treasure'?'🏴\u200D☠️':s==='christmas'?'🎄':s==='rocket'?'🚀':s==='diamond'?'💎':s==='dao'?'🏛️':s==='timelock'?'⏳':s==='designer'?'🎨':'🎁';
+                var cardImages = {
+                    cryptoBro: '<img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783088302/Gemini_Generated_Image_4z7vg14z7vg14z7v-removebg-preview_wqdjup.png" style="width:100%;height:100%;object-fit:cover;border-radius:14px;" alt="Crypto Bro">',
+                    loveletter: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#be123c,#f43f5e);display:flex;align-items:center;justify-content:center;font-size:22px;">💌</div>',
+                    birthday: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#1e3a8a,#6366f1);display:flex;align-items:center;justify-content:center;font-size:22px;">🎈</div>',
+                    heart: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#a21caf,#d946ef);display:flex;align-items:center;justify-content:center;font-size:22px;">💖</div>',
+                    mystery: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#374151,#6b7280);display:flex;align-items:center;justify-content:center;font-size:22px;">🎲</div>',
+                    goldenticket: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#b45309,#f59e0b);display:flex;align-items:center;justify-content:center;font-size:22px;">🎫</div>',
+                    treasure: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#78350f,#b45309);display:flex;align-items:center;justify-content:center;font-size:22px;">🏴\u200D☠️</div>',
+                    christmas: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#166534,#22c55e);display:flex;align-items:center;justify-content:center;font-size:22px;">🎄</div>',
+                    diamond: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#0891b2,#22d3ee);display:flex;align-items:center;justify-content:center;font-size:22px;">💎</div>',
+                    dao: '<img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783197571/photo_5931304236568218967_y_j2irwa.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:14px;" alt="DAO">',
+                    timelock: '<img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783197672/photo_5931304236568218965_y_fugghd.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:14px;" alt="Time-Locked">',
+                    designer: '<img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783197536/photo_5931304236568218968_y_djl9s6.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:14px;" alt="Designer">'
+                };
+                return cardImages[s] || '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#059669,#34d399);display:flex;align-items:center;justify-content:center;font-size:22px;">🎁</div>';
             }
             function timeAgo(ts) {
                 const d = Date.now() - ts;
@@ -6846,7 +6906,21 @@ window.convertSbtToBot = convertSbtToBot;
         };
 
         function giftIconFor(s) {
-            return s==='cryptoBro'?'🎁':s==='loveletter'?'💌':s==='birthday'?'🎈':s==='heart'?'💖':s==='mystery'?'🎲':s==='goldenticket'?'🎫':s==='treasure'?'🏴\u200D☠️':s==='christmas'?'🎄':s==='diamond'?'💎':s==='dao'?'🏛️':s==='timelock'?'⏳':s==='designer'?'🎨':'🎁';
+            var cardImages = {
+                cryptoBro: '<img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783088302/Gemini_Generated_Image_4z7vg14z7vg14z7v-removebg-preview_wqdjup.png" style="width:100%;height:100%;object-fit:cover;border-radius:14px;" alt="Crypto Bro">',
+                loveletter: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#be123c,#f43f5e);display:flex;align-items:center;justify-content:center;font-size:22px;">💌</div>',
+                birthday: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#1e3a8a,#6366f1);display:flex;align-items:center;justify-content:center;font-size:22px;">🎈</div>',
+                heart: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#a21caf,#d946ef);display:flex;align-items:center;justify-content:center;font-size:22px;">💖</div>',
+                mystery: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#374151,#6b7280);display:flex;align-items:center;justify-content:center;font-size:22px;">🎲</div>',
+                goldenticket: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#b45309,#f59e0b);display:flex;align-items:center;justify-content:center;font-size:22px;">🎫</div>',
+                treasure: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#78350f,#b45309);display:flex;align-items:center;justify-content:center;font-size:22px;">🏴\u200D☠️</div>',
+                christmas: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#166534,#22c55e);display:flex;align-items:center;justify-content:center;font-size:22px;">🎄</div>',
+                diamond: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#0891b2,#22d3ee);display:flex;align-items:center;justify-content:center;font-size:22px;">💎</div>',
+                dao: '<img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783197571/photo_5931304236568218967_y_j2irwa.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:14px;" alt="DAO">',
+                timelock: '<img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783197672/photo_5931304236568218965_y_fugghd.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:14px;" alt="Time-Locked">',
+                designer: '<img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783197536/photo_5931304236568218968_y_djl9s6.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:14px;" alt="Designer">'
+            };
+            return cardImages[s] || '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#059669,#34d399);display:flex;align-items:center;justify-content:center;font-size:22px;">🎁</div>';
         }
         function giftThemeColor(s) {
             const map = { cryptoBro:['#059669','#10b981'], loveletter:['#be123c','#f43f5e'], birthday:['#1e3a8a','#6366f1'], heart:['#a21caf','#d946ef'], mystery:['#7c3aed','#a78bfa'], goldenticket:['#b45309','#f59e0b'], treasure:['#78350f','#b45309'], christmas:['#166534','#22c55e'], diamond:['#0891b2','#22d3ee'], dao:['#9333ea','#c084fc'], timelock:['#475569','#94a3b8'], designer:['#db2777','#f472b6'] };
