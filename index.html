@@ -3775,7 +3775,7 @@
                     const metaHash = await uploadMetadataToPinata(metadata);
                     const tokenURI = (metaHash && metaHash.startsWith('data:')) ? metaHash : (PINATA_GATEWAY + metaHash);
 
-                    const tx = await sbtContractInstance.mintSoulboundGift(realWalletAddress, tokenURI, 'DAO Treasury Distribution', {
+                    const tx = await sbtContractInstance.mintSoulboundGift(valid[i], tokenURI, 'DAO Treasury Distribution', {
                         value: ethers.parseUnits(perAmount.toString(), 18)
                     });
                     lastTxHash = tx.hash;
@@ -3790,11 +3790,6 @@
                             const parsed = sbtContractInstance.interface.parseLog(event);
                             mintedTokenId = parsed.args.tokenId.toString();
                         }
-
-                        try {
-                            const approveTx = await sbtContractInstance.approve(valid[i], mintedTokenId);
-                            await approveTx.wait();
-                        } catch (e) { console.warn('DAO approve failed:', e); }
 
                         addGift({
                             id: 'dao_' + Date.now() + '_' + i,
@@ -4010,7 +4005,7 @@
                 const tokenURI = (metaHash && metaHash.startsWith('data:')) ? metaHash : (PINATA_GATEWAY + metaHash);
 
                 btn.textContent = 'Minting NFT...';
-                const tx = await sbtContractInstance.mintSoulboundGift(realWalletAddress, tokenURI, 'Custom Card Gift', {
+                const tx = await sbtContractInstance.mintSoulboundGift(recipient, tokenURI, 'Custom Card Gift', {
                     value: ethers.parseUnits(amount, 18)
                 });
                 btn.textContent = 'Confirming...';
@@ -4024,12 +4019,6 @@
                         const parsed = sbtContractInstance.interface.parseLog(event);
                         mintedTokenId = parsed.args.tokenId.toString();
                     }
-
-                    btn.textContent = 'Approving...';
-                    try {
-                        const approveTx = await sbtContractInstance.approve(recipient, mintedTokenId);
-                        await approveTx.wait();
-                    } catch (e) { console.warn('Designer approve failed:', e); }
 
                     addGift({
                         id: 'designer_' + Date.now(),
@@ -4151,7 +4140,7 @@
                 const tokenURI = (metaHash && metaHash.startsWith('data:')) ? metaHash : (PINATA_GATEWAY + metaHash);
 
                 btn.innerHTML = 'Minting NFT...';
-                const tx = await sbtContractInstance.mintSoulboundGift(realWalletAddress, tokenURI, message, {
+                const tx = await sbtContractInstance.mintSoulboundGift(recipient, tokenURI, message, {
                     value: ethers.parseUnits(amount, 18)
                 });
                 btn.innerHTML = 'Confirming...';
@@ -4166,12 +4155,6 @@
                         const parsed = sbtContractInstance.interface.parseLog(event);
                         mintedTokenId = parsed.args.tokenId.toString();
                     }
-
-                    btn.innerHTML = 'Approving...';
-                    try {
-                        const approveTx = await sbtContractInstance.approve(recipient, mintedTokenId);
-                        await approveTx.wait();
-                    } catch (e) { console.warn('Timelock approve failed:', e); }
 
                     addGift({
                         id: 'timelock_' + Date.now(),
@@ -4523,7 +4506,7 @@ if (sbtConfirmMintBtn) sbtConfirmMintBtn.addEventListener('click', async () => {
         const tokenURI = (sbtIpfsMetadataHash && sbtIpfsMetadataHash.startsWith('data:')) ? sbtIpfsMetadataHash : (`${PINATA_GATEWAY}${sbtIpfsMetadataHash}`);
         const message = sbtMessage.value || '';
         const amountWei = ethers.parseEther(amount);
-        const tx = await sbtContractInstance.mintSoulboundGift(realWalletAddress, tokenURI, message, { value: amountWei });
+        const tx = await sbtContractInstance.mintSoulboundGift(recipient, tokenURI, message, { value: amountWei });
         sbtConfirmText.textContent = 'Confirming...';
         const receipt = await tx.wait();
         if (receipt.status === 1) {
@@ -4535,11 +4518,6 @@ if (sbtConfirmMintBtn) sbtConfirmMintBtn.addEventListener('click', async () => {
                 const parsed = sbtContractInstance.interface.parseLog(event);
                 mintedTokenId = parsed.args.tokenId.toString();
             }
-            sbtConfirmText.textContent = 'Approving recipient...';
-            try {
-                const approveTx = await sbtContractInstance.approve(recipient, mintedTokenId);
-                await approveTx.wait();
-            } catch (e) { console.warn('SBT approve failed:', e); }
             showSoulboundSuccess(tx.hash, mintedTokenId);
             appendSessionTx(recipient, amount, tx.hash, 'soulbound-nft', message);
             await updateRealBalance();
@@ -5310,15 +5288,10 @@ window.convertSbtToBot = convertSbtToBot;
                     console.warn('Could not fetch on-chain gift data:', e);
                 }
 
-                if (btn) { btn.textContent = 'Claiming on-chain...'; btn.disabled = true; }
-
-                const claimTx = await sbtContractInstance.transferFrom(gift.sender, claimerAddress, gift.tokenId);
-                const claimReceipt = await claimTx.wait();
-                if (claimReceipt.status !== 1) throw new Error('Transfer failed on-chain');
+                if (btn) { btn.textContent = 'Claiming...'; btn.disabled = true; }
 
                 gift.claimed = true;
                 gift.claimedAt = Date.now();
-                gift.claimTxHash = claimTx.hash;
                 saveAllGifts(gifts);
 
                 if (btn) {
@@ -5459,19 +5432,14 @@ window.convertSbtToBot = convertSbtToBot;
 
                 btn.onclick = async () => {
                     btn.disabled = true;
-                    btn.textContent = 'Claiming on-chain...';
+                    btn.textContent = 'Claiming...';
                     statusEl.classList.remove('hidden');
-                    statusEl.textContent = 'Sending claim transaction...';
+                    statusEl.textContent = 'Verifying gift...';
                     try {
-                        const claimTx = await sbtContractInstance.transferFrom(data.sender, connectedAddr, tokenId);
-                        statusEl.textContent = 'Waiting for confirmation...';
-                        const claimReceipt = await claimTx.wait();
-                        if (claimReceipt.status !== 1) throw new Error('Transfer failed on-chain');
-
                         btn.textContent = 'Claimed!';
                         btn.style.background = 'rgba(82,82,91,0.3)';
                         btn.style.color = '#71717a';
-                        statusEl.textContent = 'NFT transferred to your wallet! Tx: ' + claimTx.hash.slice(0, 10) + '...';
+                        statusEl.textContent = 'NFT is now permanently in your wallet!';
                         const confetti = document.getElementById('giftClaimConfetti');
                         confetti.innerHTML = '';
                         for (let i = 0; i < 30; i++) {
@@ -5551,7 +5519,7 @@ window.convertSbtToBot = convertSbtToBot;
 
                 els.finalBtnText.textContent = 'Minting NFT...';
                 const amountWei = ethers.parseEther(amount);
-                const tx = await sbtContractInstance.mintSoulboundGift(realWalletAddress, tokenURI, message, { value: amountWei });
+                const tx = await sbtContractInstance.mintSoulboundGift(recipient, tokenURI, message, { value: amountWei });
 
                 els.finalBtnText.textContent = 'Confirming...';
                 const receipt = await tx.wait();
@@ -5564,14 +5532,6 @@ window.convertSbtToBot = convertSbtToBot;
                     if (event) {
                         const parsed = sbtContractInstance.interface.parseLog(event);
                         mintedTokenId = parsed.args.tokenId.toString();
-                    }
-
-                    els.finalBtnText.textContent = 'Approving recipient...';
-                    try {
-                        const approveTx = await sbtContractInstance.approve(recipient, mintedTokenId);
-                        await approveTx.wait();
-                    } catch (approveErr) {
-                        console.warn('Approve failed, claim may require sender:', approveErr);
                     }
 
                     addGift({
@@ -5757,21 +5717,11 @@ window.convertSbtToBot = convertSbtToBot;
                 let giftAmount = '0';
                 let giftAmountNum = 0;
                 let giftStyle = 'cryptoBro';
-                let giftSender = '';
                 try {
                     const data = await sbtContractInstance.getGiftData(tokenId);
                     giftAmount = ethers.formatEther(data[3]);
                     giftAmountNum = parseFloat(giftAmount);
-                    giftSender = data[0];
                 } catch (e) {}
-
-                const claimerAddr = await systemSigner.getAddress();
-                if (!giftSender) throw new Error('Could not read gift data from chain');
-
-                btn.textContent = 'Sending claim tx...';
-                const claimTx = await sbtContractInstance.transferFrom(giftSender, claimerAddr, tokenId);
-                const claimReceipt = await claimTx.wait();
-                if (claimReceipt.status !== 1) throw new Error('Transfer failed on-chain');
 
                 btn.textContent = 'Claimed ✅';
                 btn.className = 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-3 py-1.5 rounded-lg text-[10px] font-medium transition cursor-default whitespace-nowrap shrink-0';
@@ -7725,25 +7675,10 @@ window.convertSbtToBot = convertSbtToBot;
                     return;
                 }
 
-                document.getElementById('claimStep2Desc').textContent = 'Sending claim transaction to BOT Chain...';
-
-                let senderAddr = gift.sender;
-                if (!senderAddr) {
-                    try {
-                        const chainData = await window.sbtContractInstance.getGiftData(gift.tokenId);
-                        senderAddr = chainData[0];
-                    } catch (e) {}
-                }
-                if (!senderAddr) throw new Error('Could not determine gift sender');
-
-                const claimTx = await window.sbtContractInstance.transferFrom(senderAddr, gift.recipient, gift.tokenId);
-                document.getElementById('claimStep2Desc').textContent = 'Waiting for confirmation...';
-                const claimReceipt = await claimTx.wait();
-                if (claimReceipt.status !== 1) throw new Error('Transfer failed on-chain');
+                document.getElementById('claimStep2Desc').textContent = 'Verifying your ownership...';
 
                 gift.claimed = true;
                 gift.claimedAt = Date.now();
-                gift.claimTxHash = claimTx.hash;
                 saveAllGifts(getAllGifts().map(g => g.id === gift.id ? gift : g));
 
                 try {
@@ -7761,8 +7696,8 @@ window.convertSbtToBot = convertSbtToBot;
                     step2.classList.add('hidden');
                     step3.classList.remove('hidden');
                     document.getElementById('claimSuccessAmount').textContent = parseFloat(gift.amount).toFixed(4) + ' $BOT';
-                    document.getElementById('claimSuccessTx').href = 'https://scan.bohr.life/tx/' + claimTx.hash;
-                    document.getElementById('claimSuccessTx').textContent = 'View Tx ' + claimTx.hash.slice(0, 10) + '...';
+                    document.getElementById('claimSuccessTx').href = 'https://scan.bohr.life/token/' + gift.tokenId;
+                    document.getElementById('claimSuccessTx').textContent = 'View NFT #' + gift.tokenId;
 
                         const colors = giftThemeColor(gift.style);
                         const layer = document.getElementById('claimConfettiLayer');
