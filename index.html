@@ -1196,7 +1196,7 @@
                     </div>
                     <div id="notifList" class="notif-list">
                         <div class="notif-empty">
-                            <div class="notif-empty-icon">🔔</div>
+                            <div class="notif-empty-icon">&#x1F514;</div>
                             <p>No new gifts yet</p>
                         </div>
                     </div>
@@ -3035,7 +3035,7 @@
         }
 
         function connectMetaMask() {
-            if (typeof window.connectMetaMask === 'function') {
+            if (typeof window.connectMetaMask === 'function' && window.connectMetaMask !== connectMetaMask) {
                 return window.connectMetaMask();
             }
             if (typeof window.ethereum !== 'undefined') {
@@ -3053,7 +3053,7 @@
             }
         }
         function connectWalletConnect() {
-            if (typeof window.connectWalletConnect === 'function') {
+            if (typeof window.connectWalletConnect === 'function' && window.connectWalletConnect !== connectWalletConnect) {
                 return window.connectWalletConnect();
             }
             openWalletConnectModal();
@@ -3063,7 +3063,7 @@
             }, 3000);
         }
         function connectCoinbase() {
-            if (typeof window.connectCoinbase === 'function') {
+            if (typeof window.connectCoinbase === 'function' && window.connectCoinbase !== connectCoinbase) {
                 return window.connectCoinbase();
             }
             const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
@@ -3076,7 +3076,7 @@
             }
         }
         function connectPhantom() {
-            if (typeof window.connectPhantom === 'function') {
+            if (typeof window.connectPhantom === 'function' && window.connectPhantom !== connectPhantom) {
                 return window.connectPhantom();
             }
             const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
@@ -3095,9 +3095,6 @@
             }
         }
         function handleWalletConnect(address) {
-            if (typeof window.handleWalletConnect === 'function') {
-                return window.handleWalletConnect(address);
-            }
             isWalletConnected = true;
             window.isWalletConnected = true;
             walletAddress = address;
@@ -3146,7 +3143,7 @@
         els.closeWalletConnectModalBtn.addEventListener('click', closeWalletConnectModal);
         els.connectMetaMaskBtn.addEventListener('click', () => {
             console.log('[Web3GiftHub] MetaMask button clicked, window.connectMetaMask=' + typeof window.connectMetaMask);
-            if (window.connectMetaMask) window.connectMetaMask(); else connectMetaMask();
+            if (window.connectMetaMask) window.connectMetaMask().catch(function(e){ console.error('[Web3GiftHub] connectMetaMask error:', e); }); else connectMetaMask();
         });
         if (els.connectWalletConnectBtn) els.connectWalletConnectBtn.addEventListener('click', connectWalletConnect);
         if (els.connectCoinbaseBtn) els.connectCoinbaseBtn.addEventListener('click', connectCoinbase);
@@ -7970,7 +7967,7 @@ window.convertSbtToBot = convertSbtToBot;
         const list = document.getElementById('notifList');
         if (!list) return;
         if (notifGifts.length === 0) {
-            list.innerHTML = '<div class="notif-empty"><div class="notif-empty-icon">🔔</div><p>No new gifts yet</p></div>';
+            list.innerHTML = '<div class="notif-empty"><div class="notif-empty-icon">&#x1F514;</div><p>No new gifts yet</p></div>';
             return;
         }
         list.innerHTML = notifGifts.map((g, i) => {
