@@ -3611,7 +3611,7 @@
                 const mysteryAddr = await systemSigner.getAddress();
 
                 const mysteryTheme = getGiftTheme('mystery');
-                const mysteryDataUri = 'data:image/svg+xml,' + encodeURIComponent(mysteryTheme.nftImageSvg);
+                const mysteryDataUri = 'https://placehold.co/400x400/7C3AED/FFFFFF?text=Mystery+Box';
                 const metadata = {
                     name: mysteryTheme.successIcon + ' Mystery Box - ' + selectedMysteryTier.toUpperCase(),
                     description: 'A mystery gift containing ' + mysteryReward + ' BOT and a ' + gift + ' NFT!',
@@ -3758,8 +3758,8 @@
             for (let i = 0; i < valid.length; i++) {
                 btn.innerHTML = `Minting ${i + 1}/${valid.length}... <span class="text-sm">⏳</span>`;
                 try {
-                    const daoTheme = getGiftTheme('cryptoBro');
-                    const daoDataUri = 'data:image/svg+xml,' + encodeURIComponent(daoTheme.nftImageSvg);
+                const daoTheme = getGiftTheme('cryptoBro');
+                const daoDataUri = 'https://placehold.co/400x400/10B981/FFFFFF?text=DAO+Gift';
                     const metadata = {
                         name: '🏛️ DAO Treasury Gift',
                         description: 'DAO Treasury Distribution of ' + perAmount + ' BOT',
@@ -3988,7 +3988,7 @@
                 }
 
                 const designerTheme = getGiftTheme('cryptoBro');
-                const designerFallbackUri = 'data:image/svg+xml,' + encodeURIComponent(designerTheme.nftImageSvg);
+                const designerFallbackUri = 'https://res.cloudinary.com/dguexkgjw/image/upload/v1783197536/photo_5931304236568218968_y_djl9s6.jpg';
                 const metadata = {
                     name: '🎨 Custom Gift Card',
                     description: 'A custom designed gift card on BOT Chain',
@@ -4121,7 +4121,7 @@
 
             try {
                 const timelockTheme = getGiftTheme('cryptoBro');
-                const timelockDataUri = 'data:image/svg+xml,' + encodeURIComponent(timelockTheme.nftImageSvg);
+                const timelockDataUri = 'https://placehold.co/400x400/6366F1/FFFFFF?text=Time+Locked';
                 const metadata = {
                     name: '⏳ Time-Locked Gift',
                     description: 'Gift locked until ' + new Date(timeUnlock.value).toLocaleString() + ': ' + message,
@@ -5192,7 +5192,15 @@ window.convertSbtToBot = convertSbtToBot;
                 cryptoBro: 'https://res.cloudinary.com/dguexkgjw/image/upload/v1783088302/Gemini_Generated_Image_4z7vg14z7vg14z7v-removebg-preview_wqdjup.png',
                 dao: 'https://res.cloudinary.com/dguexkgjw/image/upload/v1783197571/photo_5931304236568218967_y_j2irwa.jpg',
                 timelock: 'https://res.cloudinary.com/dguexkgjw/image/upload/v1783197672/photo_5931304236568218965_y_fugghd.jpg',
-                designer: 'https://res.cloudinary.com/dguexkgjw/image/upload/v1783197536/photo_5931304236568218968_y_djl9s6.jpg'
+                designer: 'https://res.cloudinary.com/dguexkgjw/image/upload/v1783197536/photo_5931304236568218968_y_djl9s6.jpg',
+                loveletter: 'https://placehold.co/400x400/FF6B9D/FFFFFF?text=Love+Letter',
+                birthday: 'https://placehold.co/400x400/A855F7/FFFFFF?text=Birthday',
+                heart: 'https://placehold.co/400x400/EF4444/FFFFFF?text=Heart',
+                mystery: 'https://placehold.co/400x400/7C3AED/FFFFFF?text=Mystery+Box',
+                goldenticket: 'https://placehold.co/400x400/F59E0B/FFFFFF?text=Golden+Ticket',
+                treasure: 'https://placehold.co/400x400/D97706/FFFFFF?text=Treasure',
+                christmas: 'https://placehold.co/400x400/16A34A/FFFFFF?text=Christmas',
+                diamond: 'https://placehold.co/400x400/06B6D4/FFFFFF?text=Diamond'
             };
             const theme = getGiftTheme(style);
             const imageDataUri = cardImageUrls[style] || ('data:image/svg+xml,' + encodeURIComponent(theme.nftImageSvg));
