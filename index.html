@@ -5288,10 +5288,16 @@ window.convertSbtToBot = convertSbtToBot;
                     console.warn('Could not fetch on-chain gift data:', e);
                 }
 
-                if (btn) { btn.textContent = 'Claiming...'; btn.disabled = true; }
+                if (btn) { btn.textContent = 'Claiming on-chain...'; btn.disabled = true; }
+
+                const claimTx = await sbtContractInstance.convertToBot(gift.tokenId);
+                if (btn) btn.textContent = 'Confirming...';
+                const claimReceipt = await claimTx.wait();
+                if (claimReceipt.status !== 1) throw new Error('Claim transaction failed on-chain');
 
                 gift.claimed = true;
                 gift.claimedAt = Date.now();
+                gift.claimTxHash = claimTx.hash;
                 saveAllGifts(gifts);
 
                 if (btn) {
@@ -5309,7 +5315,7 @@ window.convertSbtToBot = convertSbtToBot;
                     localStorage.setItem(claimedKey, JSON.stringify(claimed));
                 }
 
-                showRedeemSuccessOverlay('NFT #' + gift.tokenId, onChainAmount, onChainStyle);
+                showRedeemSuccessOverlay(claimTx.hash, onChainAmount, onChainStyle);
                 if (typeof loadOnChainHistory === 'function') await loadOnChainHistory();
             } catch (err) {
                 console.error('Claim gift failed:', err);
@@ -5432,14 +5438,19 @@ window.convertSbtToBot = convertSbtToBot;
 
                 btn.onclick = async () => {
                     btn.disabled = true;
-                    btn.textContent = 'Claiming...';
+                    btn.textContent = 'Claiming on-chain...';
                     statusEl.classList.remove('hidden');
-                    statusEl.textContent = 'Verifying gift...';
+                    statusEl.textContent = 'Sending claim transaction to BOT Chain...';
                     try {
+                        const claimTx = await sbtContractInstance.convertToBot(tokenId);
+                        statusEl.textContent = 'Waiting for confirmation...';
+                        const claimReceipt = await claimTx.wait();
+                        if (claimReceipt.status !== 1) throw new Error('Claim failed on-chain');
+
                         btn.textContent = 'Claimed!';
                         btn.style.background = 'rgba(82,82,91,0.3)';
                         btn.style.color = '#71717a';
-                        statusEl.textContent = 'NFT is now permanently in your wallet!';
+                        statusEl.textContent = 'BOT tokens sent to your wallet! Tx: ' + claimTx.hash.slice(0, 10) + '...';
                         const confetti = document.getElementById('giftClaimConfetti');
                         confetti.innerHTML = '';
                         for (let i = 0; i < 30; i++) {
@@ -5656,23 +5667,23 @@ window.convertSbtToBot = convertSbtToBot;
                         <div class="w-20 h-20 rounded-full border-2 flex items-center justify-center mx-auto mb-4 gift-float-anim" style="background: ${theme.glowColor}20; border-color: ${theme.glowColor};">
                             <span class="text-4xl">${theme.claimIcon}</span>
                         </div>
-                        <h3 class="text-2xl font-bold text-zinc-100 mb-2">NFT Claimed!</h3>
-                        <p class="text-xs text-zinc-400 mb-1">Your NFT is now permanently in your wallet with its card image.</p>
-                        <p class="text-sm font-bold text-emerald-400 font-mono mt-2">${amount ? '+' + parseFloat(amount).toFixed(4) + ' BOT' : 'NFT Permanent ✓'}</p>
+                        <h3 class="text-2xl font-bold text-zinc-100 mb-2">Claim Confirmed!</h3>
+                        <p class="text-xs text-zinc-400 mb-1">NFT burned and BOT tokens sent to your wallet.</p>
+                        <p class="text-sm font-bold text-emerald-400 font-mono mt-2">${amount ? '+' + parseFloat(amount).toFixed(4) + ' BOT' : 'BOT Sent ✓'}</p>
                     </div>
                     <div class="relative z-10 bg-zinc-950/60 rounded-2xl p-4 border border-zinc-700/30 max-w-xs mx-auto">
-                        <p class="text-[10px] text-zinc-500 mb-1">NFT Token ID</p>
+                        <p class="text-[10px] text-zinc-500 mb-1">Claim Transaction</p>
                         <p class="text-xs text-zinc-300 font-mono truncate">${hash}</p>
                     </div>
                     <div class="relative z-10 flex gap-3 max-w-xs mx-auto">
                         <button id="redeemSuccessCloseBtn" class="flex-1 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 py-3 rounded-xl font-medium text-xs transition cursor-pointer hover:scale-[1.02]">Awesome!</button>
-                        <a href="https://scan.bohr.life/token/${hash}" target="_blank" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl font-medium text-xs transition cursor-pointer hover:scale-[1.02] flex items-center justify-center gap-1">
-                            <span>View NFT</span>
+                        <a href="https://scan.bohr.life/tx/${hash}" target="_blank" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl font-medium text-xs transition cursor-pointer hover:scale-[1.02] flex items-center justify-center gap-1">
+                            <span>View Tx</span>
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                         </a>
                     </div>
                     <div class="relative z-10 mt-2">
-                        <p class="text-[10px] text-zinc-500">NFT permanently stored in your wallet. Check MetaMask!</p>
+                        <p class="text-[10px] text-zinc-500">NFT burned. BOT tokens now in your wallet. Check MetaMask!</p>
                     </div>
                 </div>
             `;
@@ -5712,7 +5723,7 @@ window.convertSbtToBot = convertSbtToBot;
             } catch (e) {}
 
             btn.disabled = true;
-            btn.textContent = 'Claiming...';
+            btn.textContent = 'Claiming on-chain...';
             try {
                 let giftAmount = '0';
                 let giftAmountNum = 0;
@@ -5723,17 +5734,22 @@ window.convertSbtToBot = convertSbtToBot;
                     giftAmountNum = parseFloat(giftAmount);
                 } catch (e) {}
 
+                btn.textContent = 'Confirming tx...';
+                const claimTx = await sbtContractInstance.convertToBot(tokenId);
+                const claimReceipt = await claimTx.wait();
+                if (claimReceipt.status !== 1) throw new Error('Claim transaction failed on-chain');
+
                 btn.textContent = 'Claimed ✅';
                 btn.className = 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-3 py-1.5 rounded-lg text-[10px] font-medium transition cursor-default whitespace-nowrap shrink-0';
                 const row = document.querySelector(`[data-sbt-token-id="${tokenId}"]`);
                 if (row) {
                     const locked = row.querySelector('.text-emerald-400.font-mono');
                     if (locked) {
-                        locked.textContent = 'NFT Permanent ✓';
+                        locked.textContent = 'BOT Claimed ✓';
                         locked.className = 'text-[10px] text-emerald-500 font-mono';
                     }
                 }
-                showRedeemSuccessOverlay('NFT #' + tokenId, giftAmountNum || 0, giftStyle);
+                showRedeemSuccessOverlay(claimTx.hash, giftAmountNum || 0, giftStyle);
 
                 try {
                     const key = 'web3gift_claimed_' + (realWalletAddress || walletAddress || 'unknown');
@@ -7666,8 +7682,8 @@ window.convertSbtToBot = convertSbtToBot;
 
             // Step 3: Claim
             dot3.classList.add('active');
-            document.getElementById('claimStep2Title').textContent = 'Claiming your NFT...';
-            document.getElementById('claimStep2Desc').textContent = 'Verifying ownership and claiming your permanent NFT.';
+            document.getElementById('claimStep2Title').textContent = 'Claiming your gift...';
+            document.getElementById('claimStep2Desc').textContent = 'Converting NFT to BOT tokens on BOT Chain.';
 
             try {
                 if (!window.sbtContractInstance) {
@@ -7675,10 +7691,18 @@ window.convertSbtToBot = convertSbtToBot;
                     return;
                 }
 
-                document.getElementById('claimStep2Desc').textContent = 'Verifying your ownership...';
+                document.getElementById('claimStep2Desc').textContent = 'Sending claim transaction to BOT Chain...';
+
+                const claimTx = await window.sbtContractInstance.convertToBot(gift.tokenId);
+                document.getElementById('claimStep2Desc').textContent = 'Waiting for confirmation on BOT Chain...';
+                const claimReceipt = await claimTx.wait();
+                if (claimReceipt.status !== 1) throw new Error('Claim transaction failed on-chain');
+
+                document.getElementById('claimStep2Desc').textContent = 'Claim confirmed! BOT tokens sent to your wallet.';
 
                 gift.claimed = true;
                 gift.claimedAt = Date.now();
+                gift.claimTxHash = claimTx.hash;
                 saveAllGifts(getAllGifts().map(g => g.id === gift.id ? gift : g));
 
                 try {
@@ -7696,8 +7720,8 @@ window.convertSbtToBot = convertSbtToBot;
                     step2.classList.add('hidden');
                     step3.classList.remove('hidden');
                     document.getElementById('claimSuccessAmount').textContent = parseFloat(gift.amount).toFixed(4) + ' $BOT';
-                    document.getElementById('claimSuccessTx').href = 'https://scan.bohr.life/token/' + gift.tokenId;
-                    document.getElementById('claimSuccessTx').textContent = 'View NFT #' + gift.tokenId;
+                    document.getElementById('claimSuccessTx').href = 'https://scan.bohr.life/tx/' + claimTx.hash;
+                    document.getElementById('claimSuccessTx').textContent = 'View Claim Tx ' + claimTx.hash.slice(0, 10) + '...';
 
                         const colors = giftThemeColor(gift.style);
                         const layer = document.getElementById('claimConfettiLayer');
