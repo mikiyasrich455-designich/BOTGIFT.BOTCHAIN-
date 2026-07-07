@@ -2419,7 +2419,7 @@
                 <div class="shrink-0 px-4 py-3 border-t border-zinc-700/30" style="background: rgba(9,9,11,0.6);">
                     <div class="flex gap-2 items-center">
                         <input id="aiChatInput" type="text" placeholder="Type your message..." class="flex-1 bg-zinc-950/80 border border-zinc-700/50 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:outline-none focus:border-teal-500/50 transition input-glow">
-                        <button onclick="sendAiChatMessage()" id="aiChatSendBtn" class="w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-200 cursor-pointer hover:scale-105 shrink-0" style="background: linear-gradient(135deg, #0d9488, #14b8a6);">
+                        <button id="aiChatSendBtn" class="w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-200 cursor-pointer hover:scale-105 shrink-0" style="background: linear-gradient(135deg, #0d9488, #14b8a6);">
                             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7"></path></svg>
                         </button>
                     </div>
@@ -4245,7 +4245,7 @@
 // SOULBOUND SBT - REAL NFT MINTING WITH PINATA + CONTRACT V2
 // ==========================================
 
-const SBT_CONTRACT_ADDRESS = "0x740e1ce98364EfF4d5e3d89b2b1fa513e0F75b16";
+const SBT_CONTRACT_ADDRESS = "0x7EF2e0048f5bAeDe046f6BF797943daF4ED8CB47";
 const CLAIM_PAGE_BASE = window.location.origin + '/gifts/claim/';
 const CLAIM_GAS_GRANT = '0.02'; // BOT sent directly to recipient to cover claim gas
 window.SBT_CONTRACT_ADDRESS = SBT_CONTRACT_ADDRESS;
@@ -4313,7 +4313,7 @@ const SBT_CONTRACT_ABI = [
 window.SBT_CONTRACT_ABI = SBT_CONTRACT_ABI;
 
 // PINATA CONFIG — Demo/testnet key for IPFS pinning (Builder Challenge)
-const PINATA_JWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJjMTU0ZjBlMS1lOTdkLTRmYmYtODAxOS02ZjYwNTk0NzEzMTEiLCJlbWFpbCI6Im1pa2l5YXNyaWNoNDU1QGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaW5fcG9saWN5Ijp7InJlZ2lvbnMiOlt7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6IkZSQTEifSx7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6Ik5ZQzEifV0sInZlcnNpb24iOjF9LCJtZmFfZW5hYmxlZCI6ZmFsc2UsInN0YXR1cyI6IkFDVElWRSJ9LCJhdXRoZW50aWNhdGlvblR5cGUiOiJzY29wZWRLZXkiLCJzY29wZWRLZXlLZXkiOiIxYWI5YjdhZGQwYWU5ZGUzZjFjYyIsInNjb3BlZEtleVNlY3JldCI6IjkxOWIwOGZhOGM1ZDU0ZGQ2NDRlNDc5YThjZDdmOGM1Y2Q1ZjgxOTc0MWI1ODU0YjQ1NjE0OGU5MzI4MGRkMTYiLCJleHAiOjE4MTQ3Nzk0MDN9.7B78B3lf9gjwIXDQDdKFzepc02C1rJPgDua8h8aoKuM";
+const PINATA_JWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJjMTU0ZjBlMS1lOTdkLTRmYmYtODAxOS02ZjYwNTk0NzEzMTEiLCJlbWFpbCI6Im1pa2l5YXNyaWNoNDU1QGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaW5fcG9saWN5Ijp7InJlZ2lvbnMiOlt7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6IkZSQTEifSx7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6Ik5ZQzEifV0sInZlcnNpb24iOjF9LCJtZmFfZW5hYmxlZCI6ZmFsc2UsInN0YXR1cyI6IkFDVElWRSJ9LCJhdXRoZW50aWNhdGlvblR5cGUiOiJzY29wZWRLZXkiLCJzY29wZWRLZXlLZXkiOiI5ODRjY2JmNmEyMzMwNmYzYWNiMyIsInNjb3BlZEtleVNlY3JldCI6IjkxZmQ2N2E4MmQwNzdlOWRkNzlhNTQ5ZTJmMDU2NDc4ODIwZGE5ZGY3OWQ1MjhiZDM1YjkxMmYwNzUxY2QyNDUiLCJleHAiOjE4MTUwMDA4MTl9.cSTrsI-psdGuOXqQnzeNkny2eZnTXDojQR7LoIcI3sw";
 const PINATA_GATEWAY = "https://gateway.pinata.cloud/ipfs/";
 
 var sbtContractInstance = null;
@@ -4769,7 +4769,7 @@ window.convertSbtToBot = convertSbtToBot;
         // BOHR TESTNET REAL SYSTEM INTEGRATION
         // ==========================================
         // Safety: ensure contract refs available across script blocks
-        if (!window.SBT_CONTRACT_ADDRESS) window.SBT_CONTRACT_ADDRESS = "0x740e1ce98364EfF4d5e3d89b2b1fa513e0F75b16";
+        if (!window.SBT_CONTRACT_ADDRESS) window.SBT_CONTRACT_ADDRESS = "0x7EF2e0048f5bAeDe046f6BF797943daF4ED8CB47";
         if (!window.SBT_CONTRACT_ABI) window.SBT_CONTRACT_ABI = [{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"approve","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_tokenId","type":"uint256"}],"name":"convertToBot","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"address","name":"sender","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"address","name":"owner","type":"address"}],"name":"ERC721IncorrectOwner","type":"error"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ERC721NonexistentToken","type":"error"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ownerOf","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_recipient","type":"address"},{"internalType":"string","name":"_tokenURI","type":"string"},{"internalType":"string","name":"_message","type":"string"}],"name":"mintSoulboundGift","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"tokenURI","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"tokenCounter","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_tokenId","type":"uint256"}],"name":"getGiftData","outputs":[{"internalType":"address","name":"sender","type":"address"},{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"string","name":"message","type":"string"},{"internalType":"uint256","name":"timestamp","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"string","name":"tokenURI","type":"string"}],"name":"claimSbt","outputs":[],"stateMutability":"nonpayable","type":"function"}];
         if (!window.CLAIM_GAS_GRANT) window.CLAIM_GAS_GRANT = '0.02';
         const CONTRACT_ADDRESS = "0xd8b934580fcE35a11B58C6D73aDeE468a2833fa8";
@@ -5366,18 +5366,23 @@ window.convertSbtToBot = convertSbtToBot;
                     console.warn('Could not fetch on-chain gift data:', e);
                 }
 
-                if (btn) { btn.textContent = 'Claiming...'; btn.disabled = true; }
+                if (btn) { btn.textContent = 'Claiming on-chain...'; btn.disabled = true; }
+
+                const claimTx = await sbtContractInstance.convertToBot(gift.tokenId);
+                if (btn) btn.textContent = 'Confirming...';
+                const claimReceipt = await claimTx.wait();
+                if (claimReceipt.status !== 1) throw new Error('Claim transaction failed on-chain');
 
                 gift.claimed = true;
                 gift.claimedAt = Date.now();
-                gift.permanent = true;
+                gift.claimTxHash = claimTx.hash;
                 saveAllGifts(gifts);
 
                 if (btn) {
-                    btn.textContent = 'Claimed ✓ Permanent';
+                    btn.textContent = 'Claimed ✓';
                     btn.className = 'hist-claim-btn';
-                    btn.style.background = 'rgba(16,185,129,0.3)';
-                    btn.style.color = '#6ee7b7';
+                    btn.style.background = 'rgba(82,82,91,0.3)';
+                    btn.style.color = '#71717a';
                     btn.disabled = true;
                 }
 
@@ -5388,7 +5393,8 @@ window.convertSbtToBot = convertSbtToBot;
                     localStorage.setItem(claimedKey, JSON.stringify(claimed));
                 }
 
-                showRedeemSuccessOverlay('permanent-' + Date.now(), onChainAmount, onChainStyle);
+                showRedeemSuccessOverlay(claimTx.hash, onChainAmount, onChainStyle);
+                if (typeof updateRealBalance === 'function') await updateRealBalance();
                 if (typeof loadOnChainHistory === 'function') await loadOnChainHistory();
             } catch (err) {
                 console.error('Claim gift failed:', err);
@@ -5542,14 +5548,19 @@ window.convertSbtToBot = convertSbtToBot;
 
                 btn.onclick = async () => {
                     btn.disabled = true;
-                    btn.textContent = 'Claiming...';
+                    btn.textContent = 'Claiming on-chain...';
                     statusEl.classList.remove('hidden');
-                    statusEl.textContent = 'Claiming permanent NFT...';
+                    statusEl.textContent = 'Sending claim transaction to BOT Chain...';
                     try {
-                        btn.textContent = 'Claimed! Permanent NFT';
-                        btn.style.background = 'rgba(16,185,129,0.3)';
-                        btn.style.color = '#6ee7b7';
-                        statusEl.textContent = 'NFT is now your permanent collectible! It stays in your wallet forever.';
+                        const claimTx = await sbtContractInstance.convertToBot(tokenId);
+                        statusEl.textContent = 'Waiting for confirmation...';
+                        const claimReceipt = await claimTx.wait();
+                        if (claimReceipt.status !== 1) throw new Error('Claim failed on-chain');
+
+                        btn.textContent = 'Claimed!';
+                        btn.style.background = 'rgba(82,82,91,0.3)';
+                        btn.style.color = '#71717a';
+                        statusEl.textContent = 'BOT tokens sent to your wallet! Tx: ' + claimTx.hash.slice(0, 10) + '...';
                         const confetti = document.getElementById('giftClaimConfetti');
                         confetti.innerHTML = '';
                         for (let i = 0; i < 30; i++) {
@@ -5826,7 +5837,7 @@ window.convertSbtToBot = convertSbtToBot;
             } catch (e) {}
 
             btn.disabled = true;
-            btn.textContent = 'Claiming...';
+            btn.textContent = 'Claiming on-chain...';
             try {
                 let giftAmount = '0';
                 let giftAmountNum = 0;
@@ -5837,17 +5848,22 @@ window.convertSbtToBot = convertSbtToBot;
                     giftAmountNum = parseFloat(giftAmount);
                 } catch (e) {}
 
-                btn.textContent = 'Claimed ✅ Permanent';
+                btn.textContent = 'Confirming tx...';
+                const claimTx = await sbtContractInstance.convertToBot(tokenId);
+                const claimReceipt = await claimTx.wait();
+                if (claimReceipt.status !== 1) throw new Error('Claim transaction failed on-chain');
+
+                btn.textContent = 'Claimed ✅';
                 btn.className = 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-3 py-1.5 rounded-lg text-[10px] font-medium transition cursor-default whitespace-nowrap shrink-0';
                 const row = document.querySelector(`[data-sbt-token-id="${tokenId}"]`);
                 if (row) {
                     const locked = row.querySelector('.text-emerald-400.font-mono');
                     if (locked) {
-                        locked.textContent = 'Permanent NFT ✓';
+                        locked.textContent = 'BOT Claimed ✓';
                         locked.className = 'text-[10px] text-emerald-500 font-mono';
                     }
                 }
-                showRedeemSuccessOverlay('permanent-' + Date.now(), giftAmountNum || 0, giftStyle);
+                showRedeemSuccessOverlay(claimTx.hash, giftAmountNum || 0, giftStyle);
 
                 try {
                     const key = 'web3gift_claimed_' + (realWalletAddress || walletAddress || 'unknown');
@@ -5949,7 +5965,7 @@ window.convertSbtToBot = convertSbtToBot;
             let onChainSentGifts = [];
             let onChainTokenIds = new Set();
             try {
-                const sbtAddr = window.SBT_CONTRACT_ADDRESS || '0x740e1ce98364EfF4d5e3d89b2b1fa513e0F75b16';
+                const sbtAddr = window.SBT_CONTRACT_ADDRESS || '0x7EF2e0048f5bAeDe046f6BF797943daF4ED8CB47';
                 const sbtAbi = window.SBT_CONTRACT_ABI;
                 if (sbtAddr && sbtAbi && systemProvider) {
                     const sbtRead = new ethers.Contract(sbtAddr, sbtAbi, systemProvider);
@@ -7537,7 +7553,7 @@ window.convertSbtToBot = convertSbtToBot;
                     try {
                         const provider = new ethers.JsonRpcProvider('https://rpc.bohr.life');
                         const abi = window.SBT_CONTRACT_ABI || [];
-                        const addr = window.SBT_CONTRACT_ADDRESS || '0x740e1ce98364EfF4d5e3d89b2b1fa513e0F75b16';
+                        const addr = window.SBT_CONTRACT_ADDRESS || '0x7EF2e0048f5bAeDe046f6BF797943daF4ED8CB47';
                         if (!addr || abi.length === 0) throw new Error('Contract not configured');
                         const contract = new ethers.Contract(addr, abi, provider);
                         const data = await contract.getGiftData(tokenId);
@@ -7922,13 +7938,18 @@ window.convertSbtToBot = convertSbtToBot;
                     return;
                 }
 
-                document.getElementById('claimStep2Desc').textContent = 'Claiming permanent NFT...';
+                document.getElementById('claimStep2Desc').textContent = 'Sending claim transaction to BOT Chain...';
 
-                document.getElementById('claimStep2Desc').textContent = 'NFT claimed! It is now your permanent collectible.';
+                const claimTx = await window.sbtContractInstance.convertToBot(gift.tokenId);
+                document.getElementById('claimStep2Desc').textContent = 'Waiting for confirmation on BOT Chain...';
+                const claimReceipt = await claimTx.wait();
+                if (claimReceipt.status !== 1) throw new Error('Claim transaction failed on-chain');
+
+                document.getElementById('claimStep2Desc').textContent = 'Claim confirmed! BOT tokens sent to your wallet.';
 
                 gift.claimed = true;
                 gift.claimedAt = Date.now();
-                gift.permanent = true;
+                gift.claimTxHash = claimTx.hash;
                 saveAllGifts(getAllGifts().map(g => g.id === gift.id ? gift : g));
 
                 try {
