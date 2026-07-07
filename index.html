@@ -3635,7 +3635,7 @@
 
                 status.textContent = 'Uploading to IPFS...';
                 const metaHash = await uploadMetadataToPinata(metadata);
-                const tokenURI = (metaHash && metaHash.startsWith('data:')) ? metaHash : (PINATA_GATEWAY + metaHash);
+                const tokenURI = PINATA_GATEWAY + metaHash;
 
                 status.textContent = 'Minting NFT...';
                 const amountWei = ethers.parseEther(tier.min.toString());
@@ -3778,8 +3778,8 @@
                             { trait_type: 'Chain', value: 'BOT Chain Testnet' }
                         ]
                     };
-                    const metaHash = await uploadMetadataToPinata(metadata);
-                    const tokenURI = (metaHash && metaHash.startsWith('data:')) ? metaHash : (PINATA_GATEWAY + metaHash);
+                const metaHash = await uploadMetadataToPinata(metadata);
+                const tokenURI = PINATA_GATEWAY + metaHash;
 
                     const tx = await sbtContractInstance.mintSoulboundGift(valid[i], tokenURI, 'DAO Treasury Distribution', {
                         value: ethers.parseUnits(perAmount.toString(), 18)
@@ -4009,7 +4009,7 @@
                     ]
                 };
                 const metaHash = await uploadMetadataToPinata(metadata);
-                const tokenURI = (metaHash && metaHash.startsWith('data:')) ? metaHash : (PINATA_GATEWAY + metaHash);
+                const tokenURI = PINATA_GATEWAY + metaHash;
 
                 btn.textContent = 'Minting NFT...';
                 const tx = await sbtContractInstance.mintSoulboundGift(recipient, tokenURI, 'Custom Card Gift', {
@@ -4145,7 +4145,7 @@
                     ]
                 };
                 const metaHash = await uploadMetadataToPinata(metadata);
-                const tokenURI = (metaHash && metaHash.startsWith('data:')) ? metaHash : (PINATA_GATEWAY + metaHash);
+                const tokenURI = PINATA_GATEWAY + metaHash;
 
                 btn.innerHTML = 'Minting NFT...';
                 const tx = await sbtContractInstance.mintSoulboundGift(recipient, tokenURI, message, {
@@ -4363,25 +4363,18 @@ async function uploadImageToPinata(file) {
 
 async function uploadMetadataToPinata(metadata) {
     const url = "https://api.pinata.cloud/pinning/pinJSONToIPFS";
-    try {
-        const response = await fetch(url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${PINATA_JWT}` },
-            body: JSON.stringify({
-                pinataContent: metadata,
-                pinataMetadata: { name: `Soulbound-Metadata-${Date.now()}`, keyvalues: { type: "soulbound-gift-metadata" } }
-            })
-        });
-        if (!response.ok) { const error = await response.text(); throw new Error("Pinata metadata upload failed: " + error); }
-        const result = await response.json();
-        console.log("Metadata uploaded to IPFS:", result.IpfsHash);
-        return result.IpfsHash;
-    } catch (err) {
-        console.warn("Pinata metadata upload failed, using on-chain data URI fallback:", err);
-        const jsonStr = JSON.stringify(metadata);
-        const encoded = btoa(unescape(encodeURIComponent(jsonStr)));
-        return 'data:application/json;base64,' + encoded;
-    }
+    const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${PINATA_JWT}` },
+        body: JSON.stringify({
+            pinataContent: metadata,
+            pinataMetadata: { name: `Soulbound-Metadata-${Date.now()}`, keyvalues: { type: "soulbound-gift-metadata" } }
+        })
+    });
+    if (!response.ok) { const error = await response.text(); throw new Error("Pinata metadata upload failed: " + error); }
+    const result = await response.json();
+    console.log("Metadata uploaded to IPFS:", result.IpfsHash);
+    return result.IpfsHash;
 }
 
 // ==========================================
@@ -4512,7 +4505,7 @@ if (sbtConfirmMintBtn) sbtConfirmMintBtn.addEventListener('click', async () => {
     try {
         const recipient = sbtRecipient.value.trim();
         const amount = sbtAmount.value || '0';
-        const tokenURI = (sbtIpfsMetadataHash && sbtIpfsMetadataHash.startsWith('data:')) ? sbtIpfsMetadataHash : (`${PINATA_GATEWAY}${sbtIpfsMetadataHash}`);
+        const tokenURI = `${PINATA_GATEWAY}${sbtIpfsMetadataHash}`;
         const message = sbtMessage.value || '';
         const amountWei = ethers.parseEther(amount);
         const tx = await sbtContractInstance.mintSoulboundGift(recipient, tokenURI, message, { value: amountWei });
@@ -5236,7 +5229,7 @@ window.convertSbtToBot = convertSbtToBot;
             return getAllGifts().filter(g => g.recipient.toLowerCase() === addr.toLowerCase() && g.claimed);
         }
 
-        async function createGiftMetadata(senderAddr, style, message, amount) {
+        async function createGiftMetadata(senderAddr, style, message, amount, uploadedImage) {
             const giftIcons = { cryptoBro:'🎁', loveletter:'💌', birthday:'🎈', heart:'💖', mystery:'🎲', goldenticket:'🎫', treasure:'🏴\u200D☠️', christmas:'🎄', rocket:'🚀', diamond:'💎', dao:'🏛️', timelock:'⏳', designer:'🎨', gift:'🎁' };
             const cardImageUrls = {
                 cryptoBro: 'https://res.cloudinary.com/dguexkgjw/image/upload/v1783088302/Gemini_Generated_Image_4z7vg14z7vg14z7v-removebg-preview_wqdjup.png',
@@ -5245,11 +5238,21 @@ window.convertSbtToBot = convertSbtToBot;
                 designer: 'https://res.cloudinary.com/dguexkgjw/image/upload/v1783197536/photo_5931304236568218968_y_djl9s6.jpg'
             };
             const theme = getGiftTheme(style);
-            const imageDataUri = cardImageUrls[style] || ('data:image/svg+xml,' + encodeURIComponent(theme.nftImageSvg));
+            let imageDataUrl = cardImageUrls[style] || ('data:image/svg+xml,' + encodeURIComponent(theme.nftImageSvg));
+            if (uploadedImage) {
+                try {
+                    const imgFile = dataUriToFile(uploadedImage, 'gift-image.png');
+                    const imgHash = await uploadImageToPinata(imgFile);
+                    imageDataUrl = PINATA_GATEWAY + imgHash;
+                    console.log('[GIFT BOT] User image uploaded to IPFS:', imageDataUrl);
+                } catch (e) {
+                    console.warn('[GIFT BOT] Image upload failed, using default:', e);
+                }
+            }
             const metadata = {
                 name: theme.successIcon + ' ' + (giftTypes[style] ? giftTypes[style].title : 'Gift') + ' from ' + senderAddr.slice(0,6) + '...' + senderAddr.slice(-4),
                 description: message || 'A gift on BOT Chain Testnet',
-                image: imageDataUri,
+                image: imageDataUrl,
                 attributes: [
                     { trait_type: 'Gift Type', value: style },
                     { trait_type: 'Amount', value: amount, display_type: 'number' },
@@ -5259,14 +5262,19 @@ window.convertSbtToBot = convertSbtToBot;
                     { trait_type: 'Chain', value: 'BOT Chain Testnet' }
                 ]
             };
-            try {
-                return await uploadMetadataToPinata(metadata);
-            } catch (e) {
-                console.warn('[GIFT BOT] Pinata upload failed, using on-chain data URI fallback:', e);
-                const jsonStr = JSON.stringify(metadata);
-                const encoded = btoa(unescape(encodeURIComponent(jsonStr)));
-                return 'data:application/json;base64,' + encoded;
-            }
+            const ipfsHash = await uploadMetadataToPinata(metadata);
+            if (ipfsHash && !ipfsHash.startsWith('data:')) return ipfsHash;
+            throw new Error('Failed to upload metadata to IPFS');
+        }
+
+        function dataUriToFile(dataUri, filename) {
+            const arr = dataUri.split(',');
+            const mime = arr[0].match(/:(.*?);/)[1];
+            const bstr = atob(arr[1]);
+            let n = bstr.length;
+            const u8arr = new Uint8Array(n);
+            while (n--) u8arr[n] = bstr.charCodeAt(n);
+            return new File([u8arr], filename, { type: mime });
         }
 
         async function claimGift(giftId) {
@@ -5609,8 +5617,8 @@ window.convertSbtToBot = convertSbtToBot;
                 const giftId = 'gift_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
 
                 els.finalBtnText.textContent = 'Uploading to IPFS...';
-                const tokenURIHash = await createGiftMetadata(realWalletAddress, style, message, amount);
-                const tokenURI = (tokenURIHash && tokenURIHash.startsWith('data:')) ? tokenURIHash : (PINATA_GATEWAY + tokenURIHash);
+                const tokenURIHash = await createGiftMetadata(realWalletAddress, style, message, amount, sbtUploadedImageData);
+                const tokenURI = PINATA_GATEWAY + tokenURIHash;
 
                 els.finalBtnText.textContent = 'Minting NFT...';
                 const amountWei = ethers.parseEther(amount);
