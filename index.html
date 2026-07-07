@@ -5937,7 +5937,7 @@ window.convertSbtToBot = convertSbtToBot;
                             const amount = ethers.formatEther(ev.args.amount);
                             let isClaimed = false;
                             try { await sbtRead.ownerOf(tokenId); } catch (e) { isClaimed = true; }
-                            let message = '', style = 'gift', senderName = shortAddr(sender), timestamp = Date.now();
+                            let message = '', style = 'gift', senderName = shortAddr(sender), timestamp = Date.now(), unlockTime = null;
                             try {
                                 const gd = await sbtRead.getGiftData(tokenId);
                                 if (gd[2]) message = gd[2];
@@ -5955,6 +5955,8 @@ window.convertSbtToBot = convertSbtToBot;
                                             if (ta) style = ta.value;
                                             const na = m.attributes.find(a => a.trait_type === 'Sender Name');
                                             if (na && na.value) senderName = na.value;
+                                            const ut = m.attributes.find(a => a.trait_type === 'Unlock Time');
+                                            if (ut && ut.value) unlockTime = Number(ut.value) * 1000;
                                         }
                                     } catch (e) {}
                                 } else if (uri && uri.startsWith('data:image/svg+xml')) {
@@ -5973,11 +5975,13 @@ window.convertSbtToBot = convertSbtToBot;
                                             if (ta) style = ta.value;
                                             const na = m.attributes.find(a => a.trait_type === 'Sender Name');
                                             if (na && na.value) senderName = na.value;
+                                            const ut = m.attributes.find(a => a.trait_type === 'Unlock Time');
+                                            if (ut && ut.value) unlockTime = Number(ut.value) * 1000;
                                         } }
                                     } catch (e) {}
                                 }
                             } catch (e) {}
-                            onChainReceivedGifts.push({ id:'ocr_'+tokenId, sender, recipient:realWalletAddress, senderName, amount, style, message, tokenId, txHash:ev.transactionHash, timestamp, claimed:isClaimed, source:'onchain' });
+                            onChainReceivedGifts.push({ id:'ocr_'+tokenId, sender, recipient:realWalletAddress, senderName, amount, style, message, tokenId, txHash:ev.transactionHash, timestamp, claimed:isClaimed, unlockTime:unlockTime, source:'onchain' });
                         } catch (e) {}
                     }
                     for (const ev of sentEvts) {
@@ -5989,7 +5993,7 @@ window.convertSbtToBot = convertSbtToBot;
                             const amount = ethers.formatEther(ev.args.amount);
                             let isClaimed = false;
                             try { await sbtRead.ownerOf(tokenId); } catch (e) { isClaimed = true; }
-                            let message = '', style = 'gift', timestamp = Date.now();
+                            let message = '', style = 'gift', timestamp = Date.now(), unlockTime = null;
                             try {
                                 const gd = await sbtRead.getGiftData(tokenId);
                                 if (gd[2]) message = gd[2];
@@ -6005,6 +6009,8 @@ window.convertSbtToBot = convertSbtToBot;
                                         if (m && m.attributes) {
                                             const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
                                             if (ta) style = ta.value;
+                                            const ut = m.attributes.find(a => a.trait_type === 'Unlock Time');
+                                            if (ut && ut.value) unlockTime = Number(ut.value) * 1000;
                                         }
                                     } catch (e) {}
                                 } else if (uri && uri.startsWith('data:image/svg+xml')) {
@@ -6021,11 +6027,13 @@ window.convertSbtToBot = convertSbtToBot;
                                         if (r && r.ok) { const m = await r.json().catch(() => null); if (m && m.attributes) {
                                             const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
                                             if (ta) style = ta.value;
+                                            const ut = m.attributes.find(a => a.trait_type === 'Unlock Time');
+                                            if (ut && ut.value) unlockTime = Number(ut.value) * 1000;
                                         } }
                                     } catch (e) {}
                                 }
                             } catch (e) {}
-                            onChainSentGifts.push({ id:'ocs_'+tokenId, sender:realWalletAddress, recipient, senderName:shortAddr(realWalletAddress), amount, style, message, tokenId, txHash:ev.transactionHash, timestamp, claimed:isClaimed, source:'onchain' });
+                            onChainSentGifts.push({ id:'ocs_'+tokenId, sender:realWalletAddress, recipient, senderName:shortAddr(realWalletAddress), amount, style, message, tokenId, txHash:ev.transactionHash, timestamp, claimed:isClaimed, unlockTime:unlockTime, source:'onchain' });
                         } catch (e) {}
                     }
                 }
@@ -6043,6 +6051,7 @@ window.convertSbtToBot = convertSbtToBot;
                 const cs = onChainSentGifts.find(c => c.tokenId === g.tokenId);
                 if (cs && cs.claimed) g.claimed = true;
                 if (cs && cs.senderName !== shortAddr(cs.sender)) g.senderName = cs.senderName;
+                if (cs && cs.unlockTime && !g.unlockTime) g.unlockTime = cs.unlockTime;
             });
             localPending.forEach(g => {
                 if (g.tokenId) seenTokenIds.add(g.tokenId);
@@ -6061,8 +6070,10 @@ window.convertSbtToBot = convertSbtToBot;
                     const ep = localPending.find(p => p.tokenId === c.tokenId);
                     if (ep && c.claimed) ep.claimed = true;
                     if (ep && c.senderName) ep.senderName = c.senderName;
+                    if (ep && c.unlockTime && !ep.unlockTime) ep.unlockTime = c.unlockTime;
                     const es = localSent.find(p => p.tokenId === c.tokenId);
                     if (es && c.claimed) es.claimed = true;
+                    if (es && c.unlockTime && !es.unlockTime) es.unlockTime = c.unlockTime;
                 } else {
                     if (c.claimed) { localClaimed.push(c); } else { localPending.push(c); }
                     seenTokenIds.add(c.tokenId);
@@ -7501,6 +7512,26 @@ window.convertSbtToBot = convertSbtToBot;
                         } catch(e) {}
                         let isClaimed = false;
                         try { await contract.ownerOf(tokenId); } catch(e) { isClaimed = true; }
+                        let unlockTime = null;
+                        try {
+                            const uri2 = await contract.tokenURI(tokenId);
+                            if (uri2 && uri2.startsWith('data:application/json')) {
+                                try {
+                                    const jp = uri2.split(',')[1] || '';
+                                    const js = decodeURIComponent(escape(atob(jp)));
+                                    const mj = JSON.parse(js);
+                                    if (mj && mj.attributes) {
+                                        const ut = mj.attributes.find(a => a.trait_type === 'Unlock Time');
+                                        if (ut && ut.value) unlockTime = Number(ut.value) * 1000;
+                                    }
+                                } catch(e2) {}
+                            } else if (uri2 && uri2.startsWith('http')) {
+                                try {
+                                    const r2 = await fetch(uri2);
+                                    if (r2.ok) { const mj = await r2.json().catch(() => null); if (mj && mj.attributes) { const ut = mj.attributes.find(a => a.trait_type === 'Unlock Time'); if (ut && ut.value) unlockTime = Number(ut.value) * 1000; } }
+                                } catch(e2) {}
+                            }
+                        } catch(e2) {}
                         gift = {
                             id: 'chain_' + tokenId,
                             sender: sender,
@@ -7513,6 +7544,7 @@ window.convertSbtToBot = convertSbtToBot;
                             txHash: '',
                             timestamp: Number(data[4] || data.timestamp || 0) * 1000 || Date.now(),
                             claimed: isClaimed,
+                            unlockTime: unlockTime,
                             source: 'onchain'
                         };
                         addGift(gift);
