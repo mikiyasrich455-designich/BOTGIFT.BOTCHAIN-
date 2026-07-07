@@ -3629,7 +3629,7 @@
 
                 status.textContent = 'Uploading to IPFS...';
                 const metaHash = await uploadMetadataToPinata(metadata);
-                const tokenURI = PINATA_GATEWAY + metaHash;
+                const tokenURI = (metaHash && metaHash.startsWith('data:')) ? metaHash : (PINATA_GATEWAY + metaHash);
 
                 status.textContent = 'Minting NFT...';
                 const amountWei = ethers.parseEther(tier.min.toString());
@@ -3773,7 +3773,7 @@
                         ]
                     };
                     const metaHash = await uploadMetadataToPinata(metadata);
-                    const tokenURI = PINATA_GATEWAY + metaHash;
+                    const tokenURI = (metaHash && metaHash.startsWith('data:')) ? metaHash : (PINATA_GATEWAY + metaHash);
 
                     const tx = await sbtContractInstance.mintSoulboundGift(valid[i], tokenURI, 'DAO Treasury Distribution', {
                         value: ethers.parseUnits(perAmount.toString(), 18)
@@ -4004,7 +4004,7 @@
                     ]
                 };
                 const metaHash = await uploadMetadataToPinata(metadata);
-                const tokenURI = PINATA_GATEWAY + metaHash;
+                const tokenURI = (metaHash && metaHash.startsWith('data:')) ? metaHash : (PINATA_GATEWAY + metaHash);
 
                 btn.textContent = 'Minting NFT...';
                 const tx = await sbtContractInstance.mintSoulboundGift(recipient, tokenURI, 'Custom Card Gift', {
@@ -4141,7 +4141,7 @@
                     ]
                 };
                 const metaHash = await uploadMetadataToPinata(metadata);
-                const tokenURI = PINATA_GATEWAY + metaHash;
+                const tokenURI = (metaHash && metaHash.startsWith('data:')) ? metaHash : (PINATA_GATEWAY + metaHash);
 
                 btn.innerHTML = 'Minting NFT...';
                 const tx = await sbtContractInstance.mintSoulboundGift(recipient, tokenURI, message, {
@@ -4242,6 +4242,7 @@ const SBT_CONTRACT_ADDRESS = "0x740e1ce98364EfF4d5e3d89b2b1fa513e0F75b16";
 const CLAIM_PAGE_BASE = window.location.origin + '/gifts/claim/';
 const CLAIM_GAS_GRANT = '0.01'; // BOT sent directly to recipient to cover claim gas
 window.SBT_CONTRACT_ADDRESS = SBT_CONTRACT_ADDRESS;
+window.SBT_CONTRACT_ABI = SBT_CONTRACT_ABI;
 window.CLAIM_GAS_GRANT = CLAIM_GAS_GRANT;
 
 async function grantGasToRecipient(recipientAddr) {
@@ -4373,9 +4374,10 @@ async function uploadMetadataToPinata(metadata) {
         console.log("Metadata uploaded to IPFS:", result.IpfsHash);
         return result.IpfsHash;
     } catch (err) {
-        console.error("Pinata metadata upload error:", err);
-        alert("Failed to upload metadata to IPFS: " + err.message);
-        throw err;
+        console.warn("Pinata metadata upload failed, using on-chain data URI fallback:", err);
+        const jsonStr = JSON.stringify(metadata);
+        const encoded = btoa(unescape(encodeURIComponent(jsonStr)));
+        return 'data:application/json;base64,' + encoded;
     }
 }
 
@@ -4507,7 +4509,7 @@ if (sbtConfirmMintBtn) sbtConfirmMintBtn.addEventListener('click', async () => {
     try {
         const recipient = sbtRecipient.value.trim();
         const amount = sbtAmount.value || '0';
-        const tokenURI = `${PINATA_GATEWAY}${sbtIpfsMetadataHash}`;
+        const tokenURI = (sbtIpfsMetadataHash && sbtIpfsMetadataHash.startsWith('data:')) ? sbtIpfsMetadataHash : (`${PINATA_GATEWAY}${sbtIpfsMetadataHash}`);
         const message = sbtMessage.value || '';
         const amountWei = ethers.parseEther(amount);
         const tx = await sbtContractInstance.mintSoulboundGift(recipient, tokenURI, message, { value: amountWei });
@@ -5216,7 +5218,14 @@ window.convertSbtToBot = convertSbtToBot;
                     { trait_type: 'Chain', value: 'BOT Chain Testnet' }
                 ]
             };
-            return await uploadMetadataToPinata(metadata);
+            try {
+                return await uploadMetadataToPinata(metadata);
+            } catch (e) {
+                console.warn('[GIFT BOT] Pinata upload failed, using on-chain data URI fallback:', e);
+                const jsonStr = JSON.stringify(metadata);
+                const encoded = btoa(unescape(encodeURIComponent(jsonStr)));
+                return 'data:application/json;base64,' + encoded;
+            }
         }
 
         async function claimGift(giftId) {
@@ -5268,9 +5277,16 @@ window.convertSbtToBot = convertSbtToBot;
                     if (parseFloat(rawAmount) > 0) {
                         onChainAmount = rawAmount;
                     }
-                    // Detect style from SVG
+                    // Detect style from tokenURI
                     const uri = await sbtContractInstance.tokenURI(gift.tokenId);
-                    if (uri && uri.startsWith('data:image/svg+xml')) {
+                    if (uri && uri.startsWith('data:application/json')) {
+                        try {
+                            const jsonPart = uri.split(',')[1] || '';
+                            const jsonStr = decodeURIComponent(escape(atob(jsonPart)));
+                            const m = JSON.parse(jsonStr);
+                            if (m && m.attributes) { const ta = m.attributes.find(a => a.trait_type === 'Gift Type'); if (ta) onChainStyle = ta.value; }
+                        } catch (e) {}
+                    } else if (uri && uri.startsWith('data:image/svg+xml')) {
                         const svgStr = decodeURIComponent(uri.split(',')[1]);
                         const match = svgStr.match(/CRYPTO BRO|LOVE LETTER|HAPPY BIRTHDAY|YOUR HEART|MYSTERY BOX|GOLDEN TICKET|TREASURE CHEST|CHRISTMAS|DIAMOND HANDS/);
                         if (match) {
@@ -5376,7 +5392,17 @@ window.convertSbtToBot = convertSbtToBot;
                 let giftStyle = 'gift';
                 try {
                     const uri = await sbtContractInstance.tokenURI(tokenId);
-                    if (uri && uri.startsWith('data:image/svg+xml')) {
+                    if (uri && uri.startsWith('data:application/json')) {
+                        try {
+                            const jsonPart = uri.split(',')[1] || '';
+                            const jsonStr = decodeURIComponent(escape(atob(jsonPart)));
+                            const m = JSON.parse(jsonStr);
+                            if (m && m.attributes) {
+                                const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
+                                if (ta) giftStyle = ta.value;
+                            }
+                        } catch (e) {}
+                    } else if (uri && uri.startsWith('data:image/svg+xml')) {
                         const svgPart = uri.split(',')[1] || '';
                         const svgStr = svgPart.includes('%') ? decodeURIComponent(svgPart) : (svgPart.length > 100 && !svgPart.includes(' ') ? atob(svgPart) : svgPart);
                         const match = svgStr.match(/CRYPTO BRO|LOVE LETTER|HAPPY BIRTHDAY|YOUR HEART|MYSTERY BOX|GOLDEN TICKET|TREASURE CHEST|CHRISTMAS|DIAMOND HANDS/);
@@ -5384,6 +5410,14 @@ window.convertSbtToBot = convertSbtToBot;
                             const nameMap = { 'CRYPTO BRO':'cryptoBro', 'LOVE LETTER':'loveletter', 'HAPPY BIRTHDAY':'birthday', 'YOUR HEART':'heart', 'MYSTERY BOX':'mystery', 'GOLDEN TICKET':'goldenticket', 'TREASURE CHEST':'treasure', 'CHRISTMAS':'christmas', 'TO THE MOON':'rocket', 'DIAMOND HANDS':'diamond' };
                             giftStyle = nameMap[match[0]] || 'gift';
                         }
+                    } else if (uri && uri.startsWith('http')) {
+                        try {
+                            const r = await fetch(uri).catch(() => null);
+                            if (r && r.ok) { const m = await r.json().catch(() => null); if (m && m.attributes) {
+                                const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
+                                if (ta) giftStyle = ta.value;
+                            } }
+                        } catch (e) {}
                     }
                 } catch (e) {}
 
@@ -5491,7 +5525,7 @@ window.convertSbtToBot = convertSbtToBot;
 
                 els.finalBtnText.textContent = 'Uploading to IPFS...';
                 const tokenURIHash = await createGiftMetadata(realWalletAddress, style, message, amount);
-                const tokenURI = PINATA_GATEWAY + tokenURIHash;
+                const tokenURI = (tokenURIHash && tokenURIHash.startsWith('data:')) ? tokenURIHash : (PINATA_GATEWAY + tokenURIHash);
 
                 els.finalBtnText.textContent = 'Minting NFT...';
                 const amountWei = ethers.parseEther(amount);
@@ -5843,7 +5877,19 @@ window.convertSbtToBot = convertSbtToBot;
                             } catch (e) {}
                             try {
                                 const uri = await sbtRead.tokenURI(tokenId);
-                                if (uri && uri.startsWith('data:image/svg+xml')) {
+                                if (uri && uri.startsWith('data:application/json')) {
+                                    try {
+                                        const jsonPart = uri.split(',')[1] || '';
+                                        const jsonStr = decodeURIComponent(escape(atob(jsonPart)));
+                                        const m = JSON.parse(jsonStr);
+                                        if (m && m.attributes) {
+                                            const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
+                                            if (ta) style = ta.value;
+                                            const na = m.attributes.find(a => a.trait_type === 'Sender Name');
+                                            if (na && na.value) senderName = na.value;
+                                        }
+                                    } catch (e) {}
+                                } else if (uri && uri.startsWith('data:image/svg+xml')) {
                                     const svgPart = uri.split(',')[1] || '';
                                     const svgStr = svgPart.includes('%') ? decodeURIComponent(svgPart) : (svgPart.length > 100 && !svgPart.includes(' ') ? atob(svgPart) : svgPart);
                                     const match = svgStr.match(/CRYPTO BRO|LOVE LETTER|HAPPY BIRTHDAY|YOUR HEART|MYSTERY BOX|GOLDEN TICKET|TREASURE CHEST|CHRISTMAS|DIAMOND HANDS/);
@@ -5851,9 +5897,15 @@ window.convertSbtToBot = convertSbtToBot;
                                         const nm = { 'CRYPTO BRO':'cryptoBro','LOVE LETTER':'loveletter','HAPPY BIRTHDAY':'birthday','YOUR HEART':'heart','MYSTERY BOX':'mystery','GOLDEN TICKET':'goldenticket','TREASURE CHEST':'treasure','CHRISTMAS':'christmas','DIAMOND HANDS':'diamond' };
                                         style = nm[match[0]] || 'gift';
                                     }
+                                } else if (uri && uri.startsWith('http')) {
                                     try {
                                         const r = await fetch(uri).catch(() => null);
-                                        if (r && r.ok) { const m = await r.json().catch(() => null); if (m && m.attributes) { const na = m.attributes.find(a => a.trait_type === 'Sender Name'); if (na && na.value) senderName = na.value; } }
+                                        if (r && r.ok) { const m = await r.json().catch(() => null); if (m && m.attributes) {
+                                            const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
+                                            if (ta) style = ta.value;
+                                            const na = m.attributes.find(a => a.trait_type === 'Sender Name');
+                                            if (na && na.value) senderName = na.value;
+                                        } }
                                     } catch (e) {}
                                 }
                             } catch (e) {}
@@ -5877,7 +5929,17 @@ window.convertSbtToBot = convertSbtToBot;
                             } catch (e) {}
                             try {
                                 const uri = await sbtRead.tokenURI(tokenId);
-                                if (uri && uri.startsWith('data:image/svg+xml')) {
+                                if (uri && uri.startsWith('data:application/json')) {
+                                    try {
+                                        const jsonPart = uri.split(',')[1] || '';
+                                        const jsonStr = decodeURIComponent(escape(atob(jsonPart)));
+                                        const m = JSON.parse(jsonStr);
+                                        if (m && m.attributes) {
+                                            const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
+                                            if (ta) style = ta.value;
+                                        }
+                                    } catch (e) {}
+                                } else if (uri && uri.startsWith('data:image/svg+xml')) {
                                     const svgPart = uri.split(',')[1] || '';
                                     const svgStr = svgPart.includes('%') ? decodeURIComponent(svgPart) : (svgPart.length > 100 && !svgPart.includes(' ') ? atob(svgPart) : svgPart);
                                     const match = svgStr.match(/CRYPTO BRO|LOVE LETTER|HAPPY BIRTHDAY|YOUR HEART|MYSTERY BOX|GOLDEN TICKET|TREASURE CHEST|CHRISTMAS|DIAMOND HANDS/);
@@ -5885,6 +5947,14 @@ window.convertSbtToBot = convertSbtToBot;
                                         const nm = { 'CRYPTO BRO':'cryptoBro','LOVE LETTER':'loveletter','HAPPY BIRTHDAY':'birthday','YOUR HEART':'heart','MYSTERY BOX':'mystery','GOLDEN TICKET':'goldenticket','TREASURE CHEST':'treasure','CHRISTMAS':'christmas','DIAMOND HANDS':'diamond' };
                                         style = nm[match[0]] || 'gift';
                                     }
+                                } else if (uri && uri.startsWith('http')) {
+                                    try {
+                                        const r = await fetch(uri).catch(() => null);
+                                        if (r && r.ok) { const m = await r.json().catch(() => null); if (m && m.attributes) {
+                                            const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
+                                            if (ta) style = ta.value;
+                                        } }
+                                    } catch (e) {}
                                 }
                             } catch (e) {}
                             onChainSentGifts.push({ id:'ocs_'+tokenId, sender:realWalletAddress, recipient, senderName:shortAddr(realWalletAddress), amount, style, message, tokenId, txHash:ev.transactionHash, timestamp, claimed:isClaimed, source:'onchain' });
@@ -7270,12 +7340,72 @@ window.convertSbtToBot = convertSbtToBot;
             step3.classList.add('hidden');
 
             const gifts = getAllGifts();
-            const gift = gifts.find(g => String(g.tokenId) === String(tokenId));
+            let gift = gifts.find(g => String(g.tokenId) === String(tokenId));
 
             if (!gift) {
-                document.getElementById('claimSenderText').textContent = 'Gift not found';
-                document.getElementById('claimGiftTypeText').textContent = 'This gift may have already been claimed or does not exist.';
+                // Try loading from on-chain data
+                document.getElementById('claimSenderText').textContent = 'Loading gift from chain...';
+                document.getElementById('claimGiftTypeText').textContent = 'Fetching on-chain data.';
                 document.getElementById('claimGiftBoxWrap').style.display = 'none';
+                document.getElementById('claimOpenBtn').classList.add('hidden');
+
+                (async function() {
+                    try {
+                        const provider = new ethers.JsonRpcProvider('https://rpc.bohr.life');
+                        const abi = window.SBT_CONTRACT_ABI || [];
+                        const addr = window.SBT_CONTRACT_ADDRESS || '0x740e1ce98364EfF4d5e3d89b2b1fa513e0F75b16';
+                        if (!addr || abi.length === 0) throw new Error('Contract not configured');
+                        const contract = new ethers.Contract(addr, abi, provider);
+                        const data = await contract.getGiftData(tokenId);
+                        const sender = data[0] || data.sender;
+                        const recipient = data[1] || data.recipient;
+                        const message = data[2] || data.message || '';
+                        const amount = data[3] || data.amount || 0n;
+                        const amountEth = ethers.formatEther(amount);
+                        let style = 'gift';
+                        try {
+                            const uri = await contract.tokenURI(tokenId);
+                            if (uri && uri.startsWith('data:image/svg+xml')) {
+                                const svgPart = uri.split(',')[1] || '';
+                                const svgStr = svgPart.includes('%') ? decodeURIComponent(svgPart) : (svgPart.length > 100 ? atob(svgPart) : svgPart);
+                                const match = svgStr.match(/CRYPTO BRO|LOVE LETTER|HAPPY BIRTHDAY|YOUR HEART|MYSTERY BOX|GOLDEN TICKET|TREASURE CHEST|CHRISTMAS|DIAMOND HANDS/);
+                                if (match) {
+                                    const nm = { 'CRYPTO BRO':'cryptoBro','LOVE LETTER':'loveletter','HAPPY BIRTHDAY':'birthday','YOUR HEART':'heart','MYSTERY BOX':'mystery','GOLDEN TICKET':'goldenticket','TREASURE CHEST':'treasure','CHRISTMAS':'christmas','DIAMOND HANDS':'diamond' };
+                                    style = nm[match[0]] || 'gift';
+                                }
+                            }
+                            if (uri && uri.startsWith('http')) {
+                                try {
+                                    const r = await fetch(uri);
+                                    if (r.ok) { const m = await r.json(); if (m && m.attributes) { const ta = m.attributes.find(a => a.trait_type === 'Gift Type'); if (ta) style = ta.value; } }
+                                } catch(e) {}
+                            }
+                        } catch(e) {}
+                        let isClaimed = false;
+                        try { await contract.ownerOf(tokenId); } catch(e) { isClaimed = true; }
+                        gift = {
+                            id: 'chain_' + tokenId,
+                            sender: sender,
+                            recipient: recipient,
+                            senderName: sender.slice(0,6) + '...' + sender.slice(-4),
+                            amount: amountEth,
+                            style: style,
+                            message: message,
+                            tokenId: String(tokenId),
+                            txHash: '',
+                            timestamp: Number(data[4] || data.timestamp || 0) * 1000 || Date.now(),
+                            claimed: isClaimed,
+                            source: 'onchain'
+                        };
+                        addGift(gift);
+                        // Re-render with loaded data
+                        showGiftClaimPage(tokenId);
+                    } catch (e) {
+                        console.error('[Claim] Failed to load gift from chain:', e);
+                        document.getElementById('claimSenderText').textContent = 'Gift not found';
+                        document.getElementById('claimGiftTypeText').textContent = 'Could not load gift data. Please try again later.';
+                    }
+                })();
                 return;
             }
 
