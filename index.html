@@ -1256,7 +1256,7 @@
                         <button class="info-btn w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-white text-xs font-bold relative z-10" data-info="diamond">i</button>
                     </div>
 
-                    <div class="gift-type-card stagger-card rounded-2xl p-6 flex items-center gap-4" style="background: linear-gradient(135deg, #0d9488 0%, #14b8a6 50%, #2dd4bf 100%); animation-delay: 450ms; cursor: pointer;" id="aiChatGiftCard">
+                    <div class="gift-type-card stagger-card rounded-2xl p-6 flex items-center gap-4" style="background: linear-gradient(135deg, #0d9488 0%, #14b8a6 50%, #2dd4bf 100%); animation-delay: 450ms; cursor: pointer;" id="aiChatGiftCard" onclick="window.openAiChat && openAiChat('gifts')">
                         <div class="gift-icon" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.25));">🤖</div>
                         <div class="flex-1 relative z-10 min-w-0">
                             <h3 class="text-lg font-bold text-white">AI Chat</h3>
@@ -1675,7 +1675,7 @@
                 <!-- AI Chat Card -->
                 <div class="special-gift-card stagger-card rounded-2xl overflow-hidden flex flex-col relative" 
                      style="animation-delay: 540ms; cursor: pointer;" 
-                     id="aiChatSpecialCard">
+                     id="aiChatSpecialCard" onclick="window.openAiChat && openAiChat('special')">
                     <div class="relative h-48 overflow-hidden" style="background: linear-gradient(135deg, #0d9488, #14b8a6, #2dd4bf);">
                         <div class="absolute inset-0 flex items-center justify-center">
                             <span class="text-7xl">🤖</span>
@@ -4245,7 +4245,7 @@
 // SOULBOUND SBT - REAL NFT MINTING WITH PINATA + CONTRACT V2
 // ==========================================
 
-const SBT_CONTRACT_ADDRESS = "0x7EF2e0048f5bAeDe046f6BF797943daF4ED8CB47";
+const SBT_CONTRACT_ADDRESS = "0x740e1ce98364EfF4d5e3d89b2b1fa513e0F75b16";
 const CLAIM_PAGE_BASE = window.location.origin + '/gifts/claim/';
 const CLAIM_GAS_GRANT = '0.02'; // BOT sent directly to recipient to cover claim gas
 window.SBT_CONTRACT_ADDRESS = SBT_CONTRACT_ADDRESS;
@@ -4291,7 +4291,7 @@ const SBT_CONTRACT_ABI = [
     {"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},
     {"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},
     {"inputs":[{"internalType":"address","name":"operator","type":"address"},{"internalType":"bool","name":"approved","type":"bool"}],"name":"setApprovalForAll","outputs":[],"stateMutability":"nonpayable","type":"function"},
-    {"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"},{"indexed":true,"internalType":"address","name":"sender","type":"address"},{"indexed":true,"internalType":"address","name":"recipient","type":"address"},{"indexed":false,"internalType":"string","name":"tokenURI","type":"string"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"SoulboundGiftMinted","type":"event"},
+    {"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"},{"indexed":true,"internalType":"address","name":"sender","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"SoulboundGiftMinted","type":"event"},
     {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Transfer","type":"event"},
     {"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"transferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},
     {"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},
@@ -4769,7 +4769,7 @@ window.convertSbtToBot = convertSbtToBot;
         // BOHR TESTNET REAL SYSTEM INTEGRATION
         // ==========================================
         // Safety: ensure contract refs available across script blocks
-        if (!window.SBT_CONTRACT_ADDRESS) window.SBT_CONTRACT_ADDRESS = "0x7EF2e0048f5bAeDe046f6BF797943daF4ED8CB47";
+        if (!window.SBT_CONTRACT_ADDRESS) window.SBT_CONTRACT_ADDRESS = "0x740e1ce98364EfF4d5e3d89b2b1fa513e0F75b16";
         if (!window.SBT_CONTRACT_ABI) window.SBT_CONTRACT_ABI = [{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"approve","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_tokenId","type":"uint256"}],"name":"convertToBot","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"address","name":"sender","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"address","name":"owner","type":"address"}],"name":"ERC721IncorrectOwner","type":"error"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ERC721NonexistentToken","type":"error"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ownerOf","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_recipient","type":"address"},{"internalType":"string","name":"_tokenURI","type":"string"},{"internalType":"string","name":"_message","type":"string"}],"name":"mintSoulboundGift","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"tokenURI","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"tokenCounter","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_tokenId","type":"uint256"}],"name":"getGiftData","outputs":[{"internalType":"address","name":"sender","type":"address"},{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"string","name":"message","type":"string"},{"internalType":"uint256","name":"timestamp","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"string","name":"tokenURI","type":"string"}],"name":"claimSbt","outputs":[],"stateMutability":"nonpayable","type":"function"}];
         if (!window.CLAIM_GAS_GRANT) window.CLAIM_GAS_GRANT = '0.02';
         const CONTRACT_ADDRESS = "0xd8b934580fcE35a11B58C6D73aDeE468a2833fa8";
@@ -5961,39 +5961,66 @@ window.convertSbtToBot = convertSbtToBot;
             }
 
             // ===== QUERY SBT CONTRACT EVENTS (on-chain, cross-browser) =====
+            // NOTE: ABI defines event as (uint256,address,address,string,uint256) but on-chain
+            // it's actually (uint256 indexed tokenId, address indexed sender, uint256 amount).
+            // We use raw eth_getLogs + manual decoding to avoid ABI mismatch issues.
             let onChainReceivedGifts = [];
             let onChainSentGifts = [];
             let onChainTokenIds = new Set();
             try {
-                const sbtAddr = window.SBT_CONTRACT_ADDRESS || '0x7EF2e0048f5bAeDe046f6BF797943daF4ED8CB47';
+                const sbtAddr = window.SBT_CONTRACT_ADDRESS || '0x740e1ce98364EfF4d5e3d89b2b1fa513e0F75b16';
                 const sbtAbi = window.SBT_CONTRACT_ABI;
                 if (sbtAddr && sbtAbi && systemProvider) {
                     const sbtRead = new ethers.Contract(sbtAddr, sbtAbi, systemProvider);
                     console.log('[History] Querying SBT SoulboundGiftMinted events for:', realWalletAddress);
-                    const filterRecv = sbtRead.filters.SoulboundGiftMinted(null, null, realWalletAddress);
-                    const filterSent = sbtRead.filters.SoulboundGiftMinted(null, realWalletAddress, null);
-                    const [recvEvts, sentEvts] = await Promise.all([
-                        sbtRead.queryFilter(filterRecv, 0, 'latest').catch(e => { console.warn('[History] recv query failed:', e); return []; }),
-                        sbtRead.queryFilter(filterSent, 0, 'latest').catch(e => { console.warn('[History] sent query failed:', e); return []; })
-                    ]);
-                    console.log('[History] SBT events found: received=' + recvEvts.length + ' sent=' + sentEvts.length);
-                    for (const ev of recvEvts) {
+                    // Event signature: SoulboundGiftMinted(uint256,address,uint256)
+                    const EVENT_TOPIC = '0xa0ebaf2a4b1dfb60c926826384f931391e4881e2250e4be34b621dca5ee35d2b';
+                    let allLogs = [];
+                    try {
+                        const rawLogs = await systemProvider.send('eth_getLogs', [{
+                            address: sbtAddr,
+                            topics: [EVENT_TOPIC],
+                            fromBlock: '0x0',
+                            toBlock: 'latest'
+                        }]);
+                        allLogs = rawLogs || [];
+                    } catch (e) { console.warn('[History] eth_getLogs failed:', e); }
+                    console.log('[History] Raw SoulboundGiftMinted logs found:', allLogs.length);
+                    const walletAddrPadded = '0x000000000000000000000000' + realWalletAddress.slice(2).toLowerCase();
+                    for (const log of allLogs) {
                         try {
-                            const tokenId = ev.args.tokenId.toString();
+                            const tokenId = parseInt(log.topics[1], 16).toString();
+                            const senderPadded = log.topics[2];
+                            const senderAddr = '0x' + senderPadded.slice(26);
+                            const amountHex = log.data;
+                            const amount = ethers.formatEther('0x' + amountHex.slice(2));
+                            const isSender = senderPadded.toLowerCase() === walletAddrPadded;
+                            if (!isSender) continue;
                             onChainTokenIds.add(tokenId);
-                            const sender = ev.args.sender;
-                            const amount = ethers.formatEther(ev.args.amount);
                             let isClaimed = false;
                             try { await sbtRead.ownerOf(tokenId); } catch (e) { isClaimed = true; }
-                            let message = '', style = 'gift', senderName = shortAddr(sender), timestamp = Date.now(), unlockTime = null, image = '';
+                            let message = '', style = 'gift', recipient = '', timestamp = Date.now(), unlockTime = null, image = '';
                             try {
                                 const gd = await sbtRead.getGiftData(tokenId);
+                                if (gd[1] && gd[1] !== ethers.ZeroAddress) recipient = gd[1];
                                 if (gd[2]) message = gd[2];
                                 if (gd[4]) timestamp = Number(gd[4]) * 1000;
                             } catch (e) {}
                             try {
                                 const uri = await sbtRead.tokenURI(tokenId);
-                                if (uri && uri.startsWith('data:application/json')) {
+                                if (uri && uri.startsWith('http')) {
+                                    try {
+                                        const r = await fetch(uri).catch(() => null);
+                                        if (r && r.ok) { const m = await r.json().catch(() => null); if (m && m.attributes) {
+                                            const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
+                                            if (ta) style = ta.value;
+                                            const na = m.attributes.find(a => a.trait_type === 'Sender Name');
+                                            if (na && na.value) {} else {}
+                                            const ut = m.attributes.find(a => a.trait_type === 'Unlock Time');
+                                            if (ut && ut.value) unlockTime = Number(ut.value) * 1000;
+                                        } if (m && m.image) image = m.image; }
+                                    } catch (e) {}
+                                } else if (uri && uri.startsWith('data:application/json')) {
                                     try {
                                         const jsonPart = uri.split(',')[1] || '';
                                         const jsonStr = decodeURIComponent(escape(atob(jsonPart)));
@@ -6003,7 +6030,7 @@ window.convertSbtToBot = convertSbtToBot;
                                             const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
                                             if (ta) style = ta.value;
                                             const na = m.attributes.find(a => a.trait_type === 'Sender Name');
-                                            if (na && na.value) senderName = na.value;
+                                            if (na && na.value) {}
                                             const ut = m.attributes.find(a => a.trait_type === 'Unlock Time');
                                             if (ut && ut.value) unlockTime = Number(ut.value) * 1000;
                                         }
@@ -6016,76 +6043,16 @@ window.convertSbtToBot = convertSbtToBot;
                                         const nm = { 'CRYPTO BRO':'cryptoBro','LOVE LETTER':'loveletter','HAPPY BIRTHDAY':'birthday','YOUR HEART':'heart','MYSTERY BOX':'mystery','GOLDEN TICKET':'goldenticket','TREASURE CHEST':'treasure','CHRISTMAS':'christmas','DIAMOND HANDS':'diamond' };
                                         style = nm[match[0]] || 'gift';
                                     }
-                                } else if (uri && uri.startsWith('http')) {
-                                    try {
-                                        const r = await fetch(uri).catch(() => null);
-                                        if (r && r.ok) { const m = await r.json().catch(() => null); if (m && m.attributes) {
-                                            const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
-                                            if (ta) style = ta.value;
-                                            const na = m.attributes.find(a => a.trait_type === 'Sender Name');
-                                            if (na && na.value) senderName = na.value;
-                                            const ut = m.attributes.find(a => a.trait_type === 'Unlock Time');
-                                            if (ut && ut.value) unlockTime = Number(ut.value) * 1000;
-                                        } if (m && m.image) image = m.image; }
-                                    } catch (e) {}
                                 }
                             } catch (e) {}
-                            onChainReceivedGifts.push({ id:'ocr_'+tokenId, sender, recipient:realWalletAddress, senderName, amount, style, message, image, tokenId, txHash:ev.transactionHash, timestamp, claimed:isClaimed, unlockTime:unlockTime, source:'onchain' });
-                        } catch (e) {}
+                            if (recipient && recipient.toLowerCase() === realWalletAddress.toLowerCase()) {
+                                onChainReceivedGifts.push({ id:'ocr_'+tokenId, sender:senderAddr, recipient:realWalletAddress, senderName:shortAddr(senderAddr), amount, style, message, image, tokenId, txHash:log.transactionHash, timestamp, claimed:isClaimed, unlockTime:unlockTime, source:'onchain' });
+                            } else {
+                                onChainSentGifts.push({ id:'ocs_'+tokenId, sender:realWalletAddress, recipient:recipient || 'unknown', senderName:shortAddr(realWalletAddress), amount, style, message, image, tokenId, txHash:log.transactionHash, timestamp, claimed:isClaimed, unlockTime:unlockTime, source:'onchain' });
+                            }
+                        } catch (e) { console.warn('[History] Failed to parse event log:', e); }
                     }
-                    for (const ev of sentEvts) {
-                        try {
-                            const tokenId = ev.args.tokenId.toString();
-                            if (onChainTokenIds.has(tokenId)) continue;
-                            onChainTokenIds.add(tokenId);
-                            const recipient = ev.args.recipient;
-                            const amount = ethers.formatEther(ev.args.amount);
-                            let isClaimed = false;
-                            try { await sbtRead.ownerOf(tokenId); } catch (e) { isClaimed = true; }
-                            let message = '', style = 'gift', timestamp = Date.now(), unlockTime = null, image = '';
-                            try {
-                                const gd = await sbtRead.getGiftData(tokenId);
-                                if (gd[2]) message = gd[2];
-                                if (gd[4]) timestamp = Number(gd[4]) * 1000;
-                            } catch (e) {}
-                            try {
-                                const uri = await sbtRead.tokenURI(tokenId);
-                                if (uri && uri.startsWith('data:application/json')) {
-                                    try {
-                                        const jsonPart = uri.split(',')[1] || '';
-                                        const jsonStr = decodeURIComponent(escape(atob(jsonPart)));
-                                        const m = JSON.parse(jsonStr);
-                                        if (m && m.image) image = m.image;
-                                        if (m && m.attributes) {
-                                            const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
-                                            if (ta) style = ta.value;
-                                            const ut = m.attributes.find(a => a.trait_type === 'Unlock Time');
-                                            if (ut && ut.value) unlockTime = Number(ut.value) * 1000;
-                                        }
-                                    } catch (e) {}
-                                } else if (uri && uri.startsWith('data:image/svg+xml')) {
-                                    const svgPart = uri.split(',')[1] || '';
-                                    const svgStr = svgPart.includes('%') ? decodeURIComponent(svgPart) : (svgPart.length > 100 && !svgPart.includes(' ') ? atob(svgPart) : svgPart);
-                                    const match = svgStr.match(/CRYPTO BRO|LOVE LETTER|HAPPY BIRTHDAY|YOUR HEART|MYSTERY BOX|GOLDEN TICKET|TREASURE CHEST|CHRISTMAS|DIAMOND HANDS/);
-                                    if (match) {
-                                        const nm = { 'CRYPTO BRO':'cryptoBro','LOVE LETTER':'loveletter','HAPPY BIRTHDAY':'birthday','YOUR HEART':'heart','MYSTERY BOX':'mystery','GOLDEN TICKET':'goldenticket','TREASURE CHEST':'treasure','CHRISTMAS':'christmas','DIAMOND HANDS':'diamond' };
-                                        style = nm[match[0]] || 'gift';
-                                    }
-                                } else if (uri && uri.startsWith('http')) {
-                                    try {
-                                        const r = await fetch(uri).catch(() => null);
-                                        if (r && r.ok) { const m = await r.json().catch(() => null); if (m && m.attributes) {
-                                            const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
-                                            if (ta) style = ta.value;
-                                            const ut = m.attributes.find(a => a.trait_type === 'Unlock Time');
-                                            if (ut && ut.value) unlockTime = Number(ut.value) * 1000;
-                                        } if (m && m.image) image = m.image; }
-                                    } catch (e) {}
-                                }
-                            } catch (e) {}
-                            onChainSentGifts.push({ id:'ocs_'+tokenId, sender:realWalletAddress, recipient, senderName:shortAddr(realWalletAddress), amount, style, message, image, tokenId, txHash:ev.transactionHash, timestamp, claimed:isClaimed, unlockTime:unlockTime, source:'onchain' });
-                        } catch (e) {}
-                    }
+                    console.log('[History] On-chain gifts: received=' + onChainReceivedGifts.length + ' sent=' + onChainSentGifts.length);
                 }
             } catch (e) { console.error('[History] SBT event query failed:', e); }
 
@@ -7553,7 +7520,7 @@ window.convertSbtToBot = convertSbtToBot;
                     try {
                         const provider = new ethers.JsonRpcProvider('https://rpc.bohr.life');
                         const abi = window.SBT_CONTRACT_ABI || [];
-                        const addr = window.SBT_CONTRACT_ADDRESS || '0x7EF2e0048f5bAeDe046f6BF797943daF4ED8CB47';
+                        const addr = window.SBT_CONTRACT_ADDRESS || '0x740e1ce98364EfF4d5e3d89b2b1fa513e0F75b16';
                         if (!addr || abi.length === 0) throw new Error('Contract not configured');
                         const contract = new ethers.Contract(addr, abi, provider);
                         const data = await contract.getGiftData(tokenId);
