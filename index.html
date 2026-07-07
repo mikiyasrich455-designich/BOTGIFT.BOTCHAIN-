@@ -3132,6 +3132,7 @@
             els.walletDropdown.classList.remove('show');
         }
         function disconnectWallet() {
+            if (window.disconnectWallet) { window.disconnectWallet(); return; }
             isWalletConnected = false;
             window.isWalletConnected = false;
             walletAddress = '';
@@ -5192,15 +5193,15 @@ window.convertSbtToBot = convertSbtToBot;
             try { sessionStorage.removeItem('web3gift_explicit_disconnect'); } catch (e) {}
 
             if (!window.ethereum || !address) {
-                isWalletConnected = true;
-                window.isWalletConnected = true;
+                isWalletConnected = false;
+                window.isWalletConnected = false;
                 walletAddress = address || '';
                 window.realWalletAddress = address || '';
                 closeWalletModal();
                 closeWalletConnectModal();
-                els.connectWalletBtn.classList.add('hidden');
-                els.walletConnectedDisplay.classList.remove('hidden');
-                if (address) els.connectedAddress.textContent = address.slice(0, 6) + '...' + address.slice(-4);
+                els.connectWalletBtn.classList.remove('hidden');
+                els.walletConnectedDisplay.classList.add('hidden');
+                alert('No wallet detected. Please install MetaMask and try again.');
                 return;
             }
 
@@ -5241,21 +5242,13 @@ window.convertSbtToBot = convertSbtToBot;
                 try { if (typeof initNotifications === 'function') initNotifications(); } catch(e) { console.warn('[Notif] init error:', e); }
 
                 // Update balances immediately and set up interval
-                try {
-                    await updateRealBalance();
+                if (balanceInterval) clearInterval(balanceInterval);
+                balanceInterval = setInterval(() => {
+                    updateRealBalance();
                     updateSbtBalance();
-                    if (balanceInterval) clearInterval(balanceInterval);
-                    balanceInterval = setInterval(() => {
-                        updateRealBalance();
-                        updateSbtBalance();
-                    }, 15000);
-                } catch (e) {
-                    console.error("Balance setup error:", e);
-                }
+                }, 10000);
 
                 await updateRealBalance();
-                if (balanceInterval) clearInterval(balanceInterval);
-                balanceInterval = setInterval(updateRealBalance, 8000);
 
                 await loadOnChainHistory();
             } catch (err) {
