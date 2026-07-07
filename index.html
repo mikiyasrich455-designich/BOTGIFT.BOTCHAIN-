@@ -2708,11 +2708,11 @@
             }
         };
         function getGiftTheme(style) { return GIFT_THEME[style] || GIFT_THEME.cryptoBro; }
-        let selectedGiftType = null;
-        let currentStep = 1;
-        let isWalletConnected = false;
+        var selectedGiftType = null;
+        var currentStep = 1;
+        var isWalletConnected = false;
         window.isWalletConnected = false;
-        let walletAddress = '';
+        var walletAddress = '';
         window.realWalletAddress = null;
 
         const els = {
@@ -4242,7 +4242,6 @@ const SBT_CONTRACT_ADDRESS = "0x740e1ce98364EfF4d5e3d89b2b1fa513e0F75b16";
 const CLAIM_PAGE_BASE = window.location.origin + '/gifts/claim/';
 const CLAIM_GAS_GRANT = '0.01'; // BOT sent directly to recipient to cover claim gas
 window.SBT_CONTRACT_ADDRESS = SBT_CONTRACT_ADDRESS;
-window.SBT_CONTRACT_ABI = SBT_CONTRACT_ABI;
 window.CLAIM_GAS_GRANT = CLAIM_GAS_GRANT;
 
 async function grantGasToRecipient(recipientAddr) {
@@ -4310,7 +4309,7 @@ window.SBT_CONTRACT_ABI = SBT_CONTRACT_ABI;
 const PINATA_JWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJjMTU0ZjBlMS1lOTdkLTRmYmYtODAxOS02ZjYwNTk0NzEzMTEiLCJlbWFpbCI6Im1pa2l5YXNyaWNoNDU1QGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaW5fcG9saWN5Ijp7InJlZ2lvbnMiOlt7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6IkZSQTEifSx7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6Ik5ZQzEifV0sInZlcnNpb24iOjF9LCJtZmFfZW5hYmxlZCI6ZmFsc2UsInN0YXR1cyI6IkFDVElWRSJ9LCJhdXRoZW50aWNhdGlvblR5cGUiOiJzY29wZWRLZXkiLCJzY29wZWRLZXlLZXkiOiIxYWI5YjdhZGQwYWU5ZGUzZjFjYyIsInNjb3BlZEtleVNlY3JldCI6IjkxOWIwOGZhOGM1ZDU0ZGQ2NDRlNDc5YThjZDdmOGM1Y2Q1ZjgxOTc0MWI1ODU0YjQ1NjE0OGU5MzI4MGRkMTYiLCJleHAiOjE4MTQ3Nzk0MDN9.7B78B3lf9gjwIXDQDdKFzepc02C1rJPgDua8h8aoKuM";
 const PINATA_GATEWAY = "https://gateway.pinata.cloud/ipfs/";
 
-let sbtContractInstance = null;
+var sbtContractInstance = null;
 let sbtUploadedImageFile = null;
 let sbtIpfsImageHash = null;
 let sbtIpfsMetadataHash = null;
@@ -4757,7 +4756,7 @@ window.convertSbtToBot = convertSbtToBot;
         // ==========================================
         // Safety: ensure contract refs available across script blocks
         if (!window.SBT_CONTRACT_ADDRESS) window.SBT_CONTRACT_ADDRESS = "0x740e1ce98364EfF4d5e3d89b2b1fa513e0F75b16";
-        if (!window.SBT_CONTRACT_ABI) window.SBT_CONTRACT_ABI = [{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"approve","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_tokenId","type":"uint256"}],"name":"convertToBot","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"address","name":"sender","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"address","name":"owner","type":"address"}],"name":"ERC721IncorrectOwner","type":"error"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ERC721NonexistentToken","type":"error"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ownerOf","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"sender","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"string","name":"tokenURI","type":"string"},{"internalType":"string","name":"message","type":"string"}],"name":"mintSoulboundGift","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"tokenURI","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"tokenCounter","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_tokenId","type":"uint256"}],"name":"getGiftData","outputs":[{"internalType":"address","name":"sender","type":"address"},{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"string","name":"message","type":"string"},{"internalType":"uint256","name":"timestamp","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"string","name":"tokenURI","type":"string"}],"name":"claimSbt","outputs":[],"stateMutability":"nonpayable","type":"function"}];
+        if (!window.SBT_CONTRACT_ABI) window.SBT_CONTRACT_ABI = [{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"approve","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_tokenId","type":"uint256"}],"name":"convertToBot","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"address","name":"sender","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"address","name":"owner","type":"address"}],"name":"ERC721IncorrectOwner","type":"error"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ERC721NonexistentToken","type":"error"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ownerOf","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_recipient","type":"address"},{"internalType":"string","name":"_tokenURI","type":"string"},{"internalType":"string","name":"_message","type":"string"}],"name":"mintSoulboundGift","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"tokenURI","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"tokenCounter","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_tokenId","type":"uint256"}],"name":"getGiftData","outputs":[{"internalType":"address","name":"sender","type":"address"},{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"string","name":"message","type":"string"},{"internalType":"uint256","name":"timestamp","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"string","name":"tokenURI","type":"string"}],"name":"claimSbt","outputs":[],"stateMutability":"nonpayable","type":"function"}];
         if (!window.CLAIM_GAS_GRANT) window.CLAIM_GAS_GRANT = '0.01';
         const CONTRACT_ADDRESS = "0xd8b934580fcE35a11B58C6D73aDeE468a2833fa8";
         window.VAULT_CONTRACT_ADDRESS = CONTRACT_ADDRESS;
@@ -4809,10 +4808,10 @@ window.convertSbtToBot = convertSbtToBot;
             }
         ];
 
-        let systemProvider = null;
-        let systemSigner = null;
-        let realWalletAddress = null;
-        let balanceInterval = null;
+        var systemProvider = null;
+        var systemSigner = null;
+        var realWalletAddress = null;
+        var balanceInterval = null;
 
         // BOT Chain Testnet Configuration
         const BOT_CHAIN_TESTNET = {
