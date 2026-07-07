@@ -4579,6 +4579,28 @@ async function uploadImageToPinata(file) {
     }
 }
 
+async function fetchJsonFromUri(uri) {
+    if (!uri || typeof uri !== 'string') return null;
+    if (uri.startsWith('data:application/json')) {
+        try {
+            const jsonPart = uri.split(',')[1] || '';
+            const jsonStr = decodeURIComponent(escape(atob(jsonPart)));
+            return JSON.parse(jsonStr);
+        } catch (e) { return null; }
+    }
+    if (uri.startsWith('http')) {
+        try {
+            const r = await fetch(uri);
+            if (r && r.ok) return await r.json();
+        } catch (e) {}
+        try {
+            const r = await fetch('https://corsproxy.io/?url=' + encodeURIComponent(uri));
+            if (r && r.ok) return await r.json();
+        } catch (e) {}
+    }
+    return null;
+}
+
 async function uploadMetadataToPinata(metadata) {
     const url = "https://api.pinata.cloud/pinning/pinJSONToIPFS";
     try {
@@ -5484,14 +5506,7 @@ window.convertSbtToBot = convertSbtToBot;
                 if (!effectiveUnlockTime && (gift.style === 'timelock' || gift.style === 'timelocked')) {
                     try {
                         const uri = await sbtContractInstance.tokenURI(gift.tokenId);
-                        let m = null;
-                        if (uri && uri.startsWith('data:application/json')) {
-                            const jsonPart = uri.split(',')[1] || '';
-                            const jsonStr = decodeURIComponent(escape(atob(jsonPart)));
-                            m = JSON.parse(jsonStr);
-                        } else if (uri && uri.startsWith('http')) {
-                            const r = await fetch(uri); if (r && r.ok) m = await r.json();
-                        }
+                        const m = await fetchJsonFromUri(uri);
                         if (m && m.attributes) { const ut = m.attributes.find(a => a.trait_type === 'Unlock Time'); if (ut && ut.value) effectiveUnlockTime = Number(ut.value) * 1000; }
                     } catch (e) {}
                 }
@@ -5667,14 +5682,7 @@ window.convertSbtToBot = convertSbtToBot;
                     if (!effectiveUnlockTime) {
                         try {
                             const uri = await sbtContractInstance.tokenURI(tokenId);
-                            let m = null;
-                            if (uri && uri.startsWith('data:application/json')) {
-                                const jsonPart = uri.split(',')[1] || '';
-                                const jsonStr = decodeURIComponent(escape(atob(jsonPart)));
-                                m = JSON.parse(jsonStr);
-                            } else if (uri && uri.startsWith('http')) {
-                                const r = await fetch(uri); if (r && r.ok) m = await r.json();
-                            }
+                            const m = await fetchJsonFromUri(uri);
                             if (m && m.attributes) {
                                 const ut = m.attributes.find(a => a.trait_type === 'Unlock Time'); if (ut && ut.value) effectiveUnlockTime = Number(ut.value) * 1000;
                                 const gt = m.attributes.find(a => a.trait_type === 'Gift Type'); if (gt && gt.value === 'timelock') isTimelockStyle = true;
@@ -5731,8 +5739,8 @@ window.convertSbtToBot = convertSbtToBot;
                         }
                     } else if (uri && uri.startsWith('http')) {
                         try {
-                            const r = await fetch(uri).catch(() => null);
-                            if (r && r.ok) { const m = await r.json().catch(() => null); if (m && m.attributes) {
+                            const m = await fetchJsonFromUri(uri);
+                            if (m && m.attributes) {
                                 const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
                                 if (ta) giftStyle = ta.value;
                             } }
@@ -6031,14 +6039,7 @@ window.convertSbtToBot = convertSbtToBot;
                 if (!effectiveUnlockTime) {
                     try {
                         const uri = await sbtContractInstance.tokenURI(tokenId);
-                        let m = null;
-                        if (uri && uri.startsWith('data:application/json')) {
-                            const jsonPart = uri.split(',')[1] || '';
-                            const jsonStr = decodeURIComponent(escape(atob(jsonPart)));
-                            m = JSON.parse(jsonStr);
-                        } else if (uri && uri.startsWith('http')) {
-                            const r = await fetch(uri); if (r && r.ok) m = await r.json();
-                        }
+                        const m = await fetchJsonFromUri(uri);
                         if (m && m.attributes) {
                             const ut = m.attributes.find(a => a.trait_type === 'Unlock Time'); if (ut && ut.value) effectiveUnlockTime = Number(ut.value) * 1000;
                             const gt = m.attributes.find(a => a.trait_type === 'Gift Type'); if (gt && gt.value === 'timelock') isTimelockStyle = true;
@@ -6250,73 +6251,32 @@ window.convertSbtToBot = convertSbtToBot;
 
                         async function parseStyle(uriVal) {
                             if (!uriVal) return 'gift';
-                            const uri = typeof uriVal === 'string' ? uriVal : '';
-                            if (uri.startsWith('data:application/json')) {
-                                try {
-                                    const jsonPart = uri.split(',')[1] || '';
-                                    const jsonStr = decodeURIComponent(escape(atob(jsonPart)));
-                                    const m = JSON.parse(jsonStr);
-                                    if (m && m.attributes) {
-                                        const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
-                                        if (ta) return ta.value;
-                                    }
-                                } catch (e) {}
-                            } else if (uri.startsWith('http')) {
-                                try {
-                                    const r = await fetch(uri);
-                                    if (r.ok) {
-                                        const m = await r.json();
-                                        if (m && m.attributes) {
-                                            const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
-                                            if (ta) return ta.value;
-                                        }
-                                    }
-                                } catch (e) {}
-                            }
+                            try {
+                                const m = await fetchJsonFromUri(uriVal);
+                                if (m && m.attributes) {
+                                    const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
+                                    if (ta) return ta.value;
+                                }
+                            } catch (e) {}
                             return 'gift';
                         }
 
                         async function parseSenderName(uriVal) {
                             if (!uriVal) return null;
-                            const uri = typeof uriVal === 'string' ? uriVal : '';
-                            if (uri.startsWith('data:application/json')) {
-                                try {
-                                    const jsonPart = uri.split(',')[1] || '';
-                                    const jsonStr = decodeURIComponent(escape(atob(jsonPart)));
-                                    const m = JSON.parse(jsonStr);
-                                    if (m && m.attributes) {
-                                        const na = m.attributes.find(a => a.trait_type === 'Sender Name');
-                                        if (na && na.value) return na.value;
-                                    }
-                                } catch (e) {}
-                            } else if (uri.startsWith('http')) {
-                                try {
-                                    const r = await fetch(uri);
-                                    if (r.ok) {
-                                        const m = await r.json();
-                                        if (m && m.attributes) {
-                                            const na = m.attributes.find(a => a.trait_type === 'Sender Name');
-                                            if (na && na.value) return na.value;
-                                        }
-                                    }
-                                } catch (e) {}
-                            }
+                            try {
+                                const m = await fetchJsonFromUri(uriVal);
+                                if (m && m.attributes) {
+                                    const na = m.attributes.find(a => a.trait_type === 'Sender Name');
+                                    if (na && na.value) return na.value;
+                                }
+                            } catch (e) {}
                             return null;
                         }
 
                         async function parseUnlockTime(uriVal) {
                             if (!uriVal) return null;
-                            const uri = typeof uriVal === 'string' ? uriVal : '';
                             try {
-                                let m = null;
-                                if (uri.startsWith('data:application/json')) {
-                                    const jsonPart = uri.split(',')[1] || '';
-                                    const jsonStr = decodeURIComponent(escape(atob(jsonPart)));
-                                    m = JSON.parse(jsonStr);
-                                } else if (uri.startsWith('http')) {
-                                    const r = await fetch(uri);
-                                    if (r && r.ok) m = await r.json();
-                                }
+                                const m = await fetchJsonFromUri(uriVal);
                                 if (m && m.attributes) {
                                     const ut = m.attributes.find(a => a.trait_type === 'Unlock Time');
                                     if (ut && ut.value) return Number(ut.value) * 1000;
@@ -6340,10 +6300,14 @@ window.convertSbtToBot = convertSbtToBot;
                                 if (gd[2]) message = gd[2];
                                 if (gd[4]) timestamp = Number(gd[4]) * 1000;
                             }
-                            const uriVal = td && td.uri.status === 'fulfilled' ? td.uri.value : null;
-                            const style = await parseStyle(uriVal);
-                            const senderName = await parseSenderName(uriVal) || shortAddr(sender);
-                            const chainUnlockTime = await parseUnlockTime(uriVal);
+
+                            let style = 'gift', senderName = shortAddr(sender), chainUnlockTime = null;
+                            if (!isClaimed) {
+                                const uriVal = td && td.uri.status === 'fulfilled' ? td.uri.value : null;
+                                style = await parseStyle(uriVal);
+                                senderName = await parseSenderName(uriVal) || shortAddr(sender);
+                                chainUnlockTime = await parseUnlockTime(uriVal);
+                            }
 
                             if (ev.some(e => e.args.recipient.toLowerCase() === realWalletAddress.toLowerCase())) {
                                 onChainReceivedGifts.push({ id:'ocr_'+tid, sender, recipient:realWalletAddress, senderName, amount, style, message, tokenId:tid, txHash:primaryEvt.transactionHash, timestamp, claimed:isClaimed, source:'onchain', unlockTime: chainUnlockTime || undefined });
@@ -6507,34 +6471,8 @@ window.convertSbtToBot = convertSbtToBot;
                     }
                 });
 
-            // ===== CLAIMED VAULT GIFTS =====
-            try {
-                if (localClaimed.length > 0) claimedCount += localClaimed.length;
-                localClaimed.forEach(gift => {
-                    const senderDisplayName = gift.senderName || shortAddr(gift.sender);
-                    createCard('claimed', `
-                        <div style="position:relative;z-index:2;display:flex;align-items:flex-start;justify-content:space-between;gap:14px;">
-                            <div style="display:flex;align-items:center;gap:14px;min-width:0;flex:1;">
-                                <div class="hist-card-icon">${giftIconFor(gift.style)}</div>
-                                <div style="min-width:0;">
-                                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
-                                        <span style="font-size:14px;font-weight:700;color:#d4d4d8;">From ${senderDisplayName}</span>
-                                        <span class="hist-tag">CLAIMED</span>
-                                    </div>
-                                    <div style="font-size:12px;color:#a1a1aa;margin-bottom:2px;font-weight:500;text-transform:capitalize;">${gift.style || 'Gift'} • ${timeAgo(gift.timestamp * (gift.timestamp < 1e12 ? 1000 : 1))}</div>
-                                    ${gift.message ? '<div style="font-size:11px;color:#a1a1aa;font-style:italic;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:4px;padding:6px 10px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid rgba(255,255,255,0.05);">"' + gift.message.slice(0,60) + (gift.message.length>60?'...':'') + '"</div>' : ''}
-                                    ${gift.txHash ? '<a href="https://scan.bohr.life/tx/' + gift.txHash + '" target="_blank" style="font-size:10px;color:#10b981;text-decoration:none;margin-top:3px;display:inline-block;">View Tx →</a>' : ''}
-                                    ${makeClaimLink(gift.tokenId, false)}
-                                </div>
-                            </div>
-                            <div style="text-align:right;flex-shrink:0;">
-                                <div class="hist-amount">+${parseFloat(gift.amount).toFixed(4)}</div>
-                                <div style="font-size:10px;color:#71717a;">$BOT claimed</div>
-                            </div>
-                        </div>
-                    `);
-                });
-            } catch (e) {}
+            // ===== CLAIMED VAULT GIFTS (skipped for performance) =====
+            claimedCount = localClaimed.length;
 
             loadingEl.remove();
 
@@ -7791,8 +7729,8 @@ window.convertSbtToBot = convertSbtToBot;
                             }
                             if (uri && uri.startsWith('http')) {
                                 try {
-                                    const r = await fetch(uri);
-                                    if (r.ok) { const m = await r.json(); if (m && m.attributes) { const ta = m.attributes.find(a => a.trait_type === 'Gift Type'); if (ta) style = ta.value; const ut = m.attributes.find(a => a.trait_type === 'Unlock Time'); if (ut && ut.value) chainUnlockTime = Number(ut.value) * 1000; } }
+                                    const m = await fetchJsonFromUri(uri);
+                                    if (m && m.attributes) { const ta = m.attributes.find(a => a.trait_type === 'Gift Type'); if (ta) style = ta.value; const ut = m.attributes.find(a => a.trait_type === 'Unlock Time'); if (ut && ut.value) chainUnlockTime = Number(ut.value) * 1000; }
                                 } catch(e) {}
                             }
                         } catch(e) {}
@@ -8287,14 +8225,7 @@ window.convertSbtToBot = convertSbtToBot;
             if (!effectiveUnlockTime) {
                 try {
                     const uri = await sbtContractInstance.tokenURI(tokenId);
-                    let m = null;
-                    if (uri && uri.startsWith('data:application/json')) {
-                        const jsonPart = uri.split(',')[1] || '';
-                        const jsonStr = decodeURIComponent(escape(atob(jsonPart)));
-                        m = JSON.parse(jsonStr);
-                    } else if (uri && uri.startsWith('http')) {
-                        const r = await fetch(uri); if (r && r.ok) m = await r.json();
-                    }
+                    const m = await fetchJsonFromUri(uri);
                     if (m && m.attributes) {
                         const ut = m.attributes.find(a => a.trait_type === 'Unlock Time'); if (ut && ut.value) effectiveUnlockTime = Number(ut.value) * 1000;
                         const gt = m.attributes.find(a => a.trait_type === 'Gift Type'); if (gt && gt.value === 'timelock') isTimelockStyle = true;
@@ -8422,10 +8353,8 @@ window.convertSbtToBot = convertSbtToBot;
                         } catch (e) {}
                     } else if (typeof uri === 'string' && uri.startsWith('http')) {
                         try {
-                            const r = await fetch(uri);
-                            if (r.ok) {
-                                const m = await r.json();
-                                if (m && m.attributes) {
+                            const m = await fetchJsonFromUri(uri);
+                            if (m && m.attributes) {
                                     const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
                                     if (ta) style = ta.value;
                                     const na = m.attributes.find(a => a.trait_type === 'Sender Name');
