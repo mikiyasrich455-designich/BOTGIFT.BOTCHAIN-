@@ -5862,112 +5862,130 @@ window.convertSbtToBot = convertSbtToBot;
                 const sbtAbi = window.SBT_CONTRACT_ABI;
                 if (sbtAddr && sbtAbi && systemProvider) {
                     const sbtRead = new ethers.Contract(sbtAddr, sbtAbi, systemProvider);
-                    console.log('[History] Querying SBT SoulboundGiftMinted events for:', realWalletAddress);
+                    console.log('[History] Querying SBT events for:', realWalletAddress);
                     const filterRecv = sbtRead.filters.SoulboundGiftMinted(null, null, realWalletAddress);
                     const filterSent = sbtRead.filters.SoulboundGiftMinted(null, realWalletAddress, null);
                     const [recvEvts, sentEvts] = await Promise.all([
-                        sbtRead.queryFilter(filterRecv, 0, 'latest').catch(e => { console.warn('[History] recv query failed:', e); return []; }),
-                        sbtRead.queryFilter(filterSent, 0, 'latest').catch(e => { console.warn('[History] sent query failed:', e); return []; })
+                        sbtRead.queryFilter(filterRecv, 0, 'latest').catch(() => []),
+                        sbtRead.queryFilter(filterSent, 0, 'latest').catch(() => [])
                     ]);
-                    console.log('[History] SBT events found: received=' + recvEvts.length + ' sent=' + sentEvts.length);
-                    for (const ev of recvEvts) {
-                        try {
-                            const tokenId = ev.args.tokenId.toString();
-                            onChainTokenIds.add(tokenId);
-                            const sender = ev.args.sender;
-                            const amount = ethers.formatEther(ev.args.amount);
-                            let isClaimed = false;
-                            try { await sbtRead.ownerOf(tokenId); } catch (e) { isClaimed = true; }
-                            let message = '', style = 'gift', senderName = shortAddr(sender), timestamp = Date.now();
-                            try {
-                                const gd = await sbtRead.getGiftData(tokenId);
-                                if (gd[2]) message = gd[2];
-                                if (gd[4]) timestamp = Number(gd[4]) * 1000;
-                            } catch (e) {}
-                            try {
-                                const uri = await sbtRead.tokenURI(tokenId);
-                                if (uri && uri.startsWith('data:application/json')) {
-                                    try {
-                                        const jsonPart = uri.split(',')[1] || '';
-                                        const jsonStr = decodeURIComponent(escape(atob(jsonPart)));
-                                        const m = JSON.parse(jsonStr);
-                                        if (m && m.attributes) {
-                                            const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
-                                            if (ta) style = ta.value;
-                                            const na = m.attributes.find(a => a.trait_type === 'Sender Name');
-                                            if (na && na.value) senderName = na.value;
-                                        }
-                                    } catch (e) {}
-                                } else if (uri && uri.startsWith('data:image/svg+xml')) {
-                                    const svgPart = uri.split(',')[1] || '';
-                                    const svgStr = svgPart.includes('%') ? decodeURIComponent(svgPart) : (svgPart.length > 100 && !svgPart.includes(' ') ? atob(svgPart) : svgPart);
-                                    const match = svgStr.match(/CRYPTO BRO|LOVE LETTER|HAPPY BIRTHDAY|YOUR HEART|MYSTERY BOX|GOLDEN TICKET|TREASURE CHEST|CHRISTMAS|DIAMOND HANDS/);
-                                    if (match) {
-                                        const nm = { 'CRYPTO BRO':'cryptoBro','LOVE LETTER':'loveletter','HAPPY BIRTHDAY':'birthday','YOUR HEART':'heart','MYSTERY BOX':'mystery','GOLDEN TICKET':'goldenticket','TREASURE CHEST':'treasure','CHRISTMAS':'christmas','DIAMOND HANDS':'diamond' };
-                                        style = nm[match[0]] || 'gift';
-                                    }
-                                } else if (uri && uri.startsWith('http')) {
-                                    try {
-                                        const r = await fetch(uri).catch(() => null);
-                                        if (r && r.ok) { const m = await r.json().catch(() => null); if (m && m.attributes) {
-                                            const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
-                                            if (ta) style = ta.value;
-                                            const na = m.attributes.find(a => a.trait_type === 'Sender Name');
-                                            if (na && na.value) senderName = na.value;
-                                        } }
-                                    } catch (e) {}
-                                }
-                            } catch (e) {}
-                            onChainReceivedGifts.push({ id:'ocr_'+tokenId, sender, recipient:realWalletAddress, senderName, amount, style, message, tokenId, txHash:ev.transactionHash, timestamp, claimed:isClaimed, source:'onchain' });
-                        } catch (e) {}
+                    console.log('[History] Events: received=' + recvEvts.length + ' sent=' + sentEvts.length);
+
+                    const allTokenIds = new Set();
+                    const evtsByToken = {};
+                    for (const ev of [...recvEvts, ...sentEvts]) {
+                        const tid = ev.args.tokenId.toString();
+                        allTokenIds.add(tid);
+                        if (!evtsByToken[tid]) evtsByToken[tid] = [];
+                        evtsByToken[tid].push(ev);
                     }
-                    for (const ev of sentEvts) {
-                        try {
-                            const tokenId = ev.args.tokenId.toString();
-                            if (onChainTokenIds.has(tokenId)) continue;
-                            onChainTokenIds.add(tokenId);
-                            const recipient = ev.args.recipient;
-                            const amount = ethers.formatEther(ev.args.amount);
-                            let isClaimed = false;
-                            try { await sbtRead.ownerOf(tokenId); } catch (e) { isClaimed = true; }
-                            let message = '', style = 'gift', timestamp = Date.now();
-                            try {
-                                const gd = await sbtRead.getGiftData(tokenId);
-                                if (gd[2]) message = gd[2];
-                                if (gd[4]) timestamp = Number(gd[4]) * 1000;
-                            } catch (e) {}
-                            try {
-                                const uri = await sbtRead.tokenURI(tokenId);
-                                if (uri && uri.startsWith('data:application/json')) {
-                                    try {
-                                        const jsonPart = uri.split(',')[1] || '';
-                                        const jsonStr = decodeURIComponent(escape(atob(jsonPart)));
-                                        const m = JSON.parse(jsonStr);
+                    const tokenIds = [...allTokenIds];
+
+                    if (tokenIds.length > 0) {
+                        const batchSize = 20;
+                        const batches = [];
+                        for (let i = 0; i < tokenIds.length; i += batchSize) {
+                            batches.push(tokenIds.slice(i, i + batchSize));
+                        }
+
+                        const tokenData = {};
+                        for (const batch of batches) {
+                            const results = await Promise.allSettled(batch.map(async (tid) => {
+                                const [giftData, uri, owner] = await Promise.allSettled([
+                                    sbtRead.getGiftData(tid),
+                                    sbtRead.tokenURI(tid),
+                                    sbtRead.ownerOf(tid)
+                                ]);
+                                return { tid, giftData, uri, owner };
+                            }));
+                            for (const r of results) {
+                                if (r.status === 'fulfilled') tokenData[r.value.tid] = r.value;
+                            }
+                        }
+
+                        function parseStyle(uriVal) {
+                            if (!uriVal) return 'gift';
+                            const uri = typeof uriVal === 'string' ? uriVal : '';
+                            if (uri.startsWith('data:application/json')) {
+                                try {
+                                    const jsonPart = uri.split(',')[1] || '';
+                                    const jsonStr = decodeURIComponent(escape(atob(jsonPart)));
+                                    const m = JSON.parse(jsonStr);
+                                    if (m && m.attributes) {
+                                        const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
+                                        if (ta) return ta.value;
+                                    }
+                                } catch (e) {}
+                            } else if (uri.startsWith('http')) {
+                                try {
+                                    const r = await fetch(uri);
+                                    if (r.ok) {
+                                        const m = await r.json();
                                         if (m && m.attributes) {
                                             const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
-                                            if (ta) style = ta.value;
+                                            if (ta) return ta.value;
                                         }
-                                    } catch (e) {}
-                                } else if (uri && uri.startsWith('data:image/svg+xml')) {
-                                    const svgPart = uri.split(',')[1] || '';
-                                    const svgStr = svgPart.includes('%') ? decodeURIComponent(svgPart) : (svgPart.length > 100 && !svgPart.includes(' ') ? atob(svgPart) : svgPart);
-                                    const match = svgStr.match(/CRYPTO BRO|LOVE LETTER|HAPPY BIRTHDAY|YOUR HEART|MYSTERY BOX|GOLDEN TICKET|TREASURE CHEST|CHRISTMAS|DIAMOND HANDS/);
-                                    if (match) {
-                                        const nm = { 'CRYPTO BRO':'cryptoBro','LOVE LETTER':'loveletter','HAPPY BIRTHDAY':'birthday','YOUR HEART':'heart','MYSTERY BOX':'mystery','GOLDEN TICKET':'goldenticket','TREASURE CHEST':'treasure','CHRISTMAS':'christmas','DIAMOND HANDS':'diamond' };
-                                        style = nm[match[0]] || 'gift';
                                     }
-                                } else if (uri && uri.startsWith('http')) {
-                                    try {
-                                        const r = await fetch(uri).catch(() => null);
-                                        if (r && r.ok) { const m = await r.json().catch(() => null); if (m && m.attributes) {
-                                            const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
-                                            if (ta) style = ta.value;
-                                        } }
-                                    } catch (e) {}
-                                }
-                            } catch (e) {}
-                            onChainSentGifts.push({ id:'ocs_'+tokenId, sender:realWalletAddress, recipient, senderName:shortAddr(realWalletAddress), amount, style, message, tokenId, txHash:ev.transactionHash, timestamp, claimed:isClaimed, source:'onchain' });
-                        } catch (e) {}
+                                } catch (e) {}
+                            }
+                            return 'gift';
+                        }
+
+                        function parseSenderName(uriVal) {
+                            if (!uriVal) return null;
+                            const uri = typeof uriVal === 'string' ? uriVal : '';
+                            if (uri.startsWith('data:application/json')) {
+                                try {
+                                    const jsonPart = uri.split(',')[1] || '';
+                                    const jsonStr = decodeURIComponent(escape(atob(jsonPart)));
+                                    const m = JSON.parse(jsonStr);
+                                    if (m && m.attributes) {
+                                        const na = m.attributes.find(a => a.trait_type === 'Sender Name');
+                                        if (na && na.value) return na.value;
+                                    }
+                                } catch (e) {}
+                            } else if (uri.startsWith('http')) {
+                                try {
+                                    const r = await fetch(uri);
+                                    if (r.ok) {
+                                        const m = await r.json();
+                                        if (m && m.attributes) {
+                                            const na = m.attributes.find(a => a.trait_type === 'Sender Name');
+                                            if (na && na.value) return na.value;
+                                        }
+                                    }
+                                } catch (e) {}
+                            }
+                            return null;
+                        }
+
+                        for (const tid of tokenIds) {
+                            const td = tokenData[tid];
+                            const evts = evtsByToken[tid];
+                            if (!evts || evts.length === 0) continue;
+                            const primaryEvt = evts[0];
+                            const sender = primaryEvt.args.sender;
+                            const recipient = primaryEvt.args.recipient;
+                            const amount = ethers.formatEther(primaryEvt.args.amount);
+                            const isClaimed = td ? td.owner.status === 'rejected' : false;
+                            let message = '', timestamp = Date.now();
+                            if (td && td.giftData.status === 'fulfilled') {
+                                const gd = td.giftData.value;
+                                if (gd[2]) message = gd[2];
+                                if (gd[4]) timestamp = Number(gd[4]) * 1000;
+                            }
+                            const uriVal = td && td.uri.status === 'fulfilled' ? td.uri.value : null;
+                            const style = await parseStyle(uriVal);
+                            const senderName = await parseSenderName(uriVal) || shortAddr(sender);
+
+                            if (ev.some(e => e.args.recipient.toLowerCase() === realWalletAddress.toLowerCase())) {
+                                onChainReceivedGifts.push({ id:'ocr_'+tid, sender, recipient:realWalletAddress, senderName, amount, style, message, tokenId:tid, txHash:primaryEvt.transactionHash, timestamp, claimed:isClaimed, source:'onchain' });
+                            }
+                            if (ev.some(e => e.args.sender.toLowerCase() === realWalletAddress.toLowerCase())) {
+                                onChainSentGifts.push({ id:'ocs_'+tid, sender:realWalletAddress, recipient, senderName:shortAddr(realWalletAddress), amount, style, message, tokenId:tid, txHash:primaryEvt.transactionHash, timestamp, claimed:isClaimed, source:'onchain' });
+                            }
+                            onChainTokenIds.add(tid);
+                        }
                     }
                 }
             } catch (e) { console.error('[History] SBT event query failed:', e); }
