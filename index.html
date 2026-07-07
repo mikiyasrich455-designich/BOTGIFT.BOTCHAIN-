@@ -3104,15 +3104,12 @@
             window.realWalletAddress = address;
             closeWalletModal();
             closeWalletConnectModal();
-                els.connectWalletBtn.classList.add('hidden');
-                els.walletConnectedDisplay.classList.remove('hidden');
-                const bellWrap2 = document.getElementById('notifBellWrap');
-                if (bellWrap2) bellWrap2.classList.remove('hidden');
-                if (typeof initNotifications === 'function') initNotifications();
+            els.connectWalletBtn.classList.add('hidden');
+            els.walletConnectedDisplay.classList.remove('hidden');
             els.connectedAddress.textContent = address.slice(0, 6) + '...' + address.slice(-4);
             const bellWrap = document.getElementById('notifBellWrap');
             if (bellWrap) bellWrap.classList.remove('hidden');
-            if (typeof initNotifications === 'function') initNotifications();
+            try { if (typeof initNotifications === 'function') initNotifications(); } catch(e) { console.warn('[Notif] init error:', e); }
         }
         function toggleWalletDropdown() {
             els.walletDropdown.classList.toggle('show');
@@ -5133,7 +5130,7 @@ window.convertSbtToBot = convertSbtToBot;
                 els.connectedAddress.textContent = realWalletAddress.slice(0, 6) + '...' + realWalletAddress.slice(-4);
                 const bellWrap3 = document.getElementById('notifBellWrap');
                 if (bellWrap3) bellWrap3.classList.remove('hidden');
-                if (typeof initNotifications === 'function') initNotifications();
+                try { if (typeof initNotifications === 'function') initNotifications(); } catch(e) { console.warn('[Notif] init error:', e); }
 
                 // Update balances immediately and set up interval
                 try {
@@ -7944,6 +7941,8 @@ window.convertSbtToBot = convertSbtToBot;
     let notifGifts = [];
     let notifPollTimer = null;
     let notifLastCount = 0;
+    function _notifShortAddr(a) { return a ? a.slice(0,6) + '...' + a.slice(-4) : '0x...'; }
+    function _notifTimeAgo(ts) { const d = Date.now() - ts; if (d < 60000) return 'just now'; if (d < 3600000) return Math.floor(d/60000) + 'm ago'; if (d < 86400000) return Math.floor(d/3600000) + 'h ago'; return Math.floor(d/86400000) + 'd ago'; }
 
     function toggleNotifDropdown(e) {
         e.stopPropagation();
@@ -7976,14 +7975,14 @@ window.convertSbtToBot = convertSbtToBot;
         }
         list.innerHTML = notifGifts.map((g, i) => {
             const iconHtml = getNotifIcon(g.style);
-            const timeStr = timeAgo(g.timestamp);
+            const timeStr = _notifTimeAgo(g.timestamp);
             const claimDisabled = g.claimed ? 'disabled' : '';
             const claimText = g.claimed ? 'Claimed ✓' : (g.timelocked ? '🔒 Locked' : 'Claim');
             const claimClass = g.claimed ? 'notif-claim-btn" style="opacity:0.4;cursor:default;' : (g.timelocked ? 'notif-claim-btn" style="opacity:0.6;cursor:default;' : 'notif-claim-btn');
             return '<div class="notif-item" onclick="event.stopPropagation();">' +
                 '<div class="notif-item-icon">' + iconHtml + '</div>' +
                 '<div class="notif-item-body">' +
-                    '<div class="notif-item-title">' + (g.senderName || shortAddr(g.sender)) + ' sent you a gift</div>' +
+                    '<div class="notif-item-title">' + (g.senderName || _notifShortAddr(g.sender)) + ' sent you a gift</div>' +
                     '<div class="notif-item-meta">' +
                         '<span>' + (g.style || 'Gift') + '</span>' +
                         '<span>·</span>' +
@@ -8090,7 +8089,7 @@ window.convertSbtToBot = convertSbtToBot;
                 const isLocalClaimed = claimedIds.includes(tid);
                 if (isClaimed || isLocalClaimed) continue;
 
-                let message = '', style = 'gift', senderName = shortAddr(ev.args.sender), timestamp = Date.now();
+                let message = '', style = 'gift', senderName = _notifShortAddr(ev.args.sender), timestamp = Date.now();
                 if (td && td.giftData.status === 'fulfilled') {
                     const gd = td.giftData.value;
                     if (gd[2]) message = gd[2];
