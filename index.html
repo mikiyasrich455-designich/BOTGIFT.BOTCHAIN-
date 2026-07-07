@@ -100,18 +100,6 @@
         .tl-unlocked-badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 700; letter-spacing: 0.3px; background: rgba(16,185,129,0.1); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.2); }
         .tl-countdown-mini { display: inline-flex; align-items: center; gap: 3px; }
         .tl-countdown-mini span { font-family: monospace; font-size: 11px; font-weight: 700; }
-        .tl-live-countdown { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 10px; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.15); }
-        .tl-live-countdown .tl-cd-segment { display: flex; flex-direction: column; align-items: center; min-width: 32px; }
-        .tl-live-countdown .tl-cd-num { font-family: monospace; font-size: 18px; font-weight: 800; color: #fca5a5; line-height: 1; }
-        .tl-live-countdown .tl-cd-label { font-size: 8px; color: #71717a; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
-        .tl-live-countdown .tl-cd-sep { font-size: 16px; font-weight: 700; color: #52525b; margin: 0 1px; align-self: flex-start; }
-        .tl-unlock-progress { width: 100%; height: 3px; background: rgba(239,68,68,0.1); border-radius: 2px; overflow: hidden; margin-top: 6px; }
-        .tl-unlock-progress-bar { height: 100%; background: linear-gradient(90deg, #ef4444, #f97316); border-radius: 2px; transition: width 1s linear; }
-        .tl-claim-ready { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 10px; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); animation: tlReadyPulse 2s ease-in-out infinite; }
-        @keyframes tlReadyPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.2); } 50% { box-shadow: 0 0 12px 2px rgba(16,185,129,0.15); } }
-        .tl-locked-icon { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 8px; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.15); font-size: 14px; animation: tlLockPulse 2s ease-in-out infinite; }
-        @keyframes tlLockPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-        .tl-msg-waiting { font-size: 11px; color: #fca5a5; font-style: italic; margin-top: 4px; padding: 4px 8px; background: rgba(239,68,68,0.05); border-radius: 6px; border-left: 2px solid rgba(239,68,68,0.3); }
 
         /* ===== GIFT CLAIM PAGE ===== */
         .claim-float-anim { animation: claimFloat 3s ease-in-out infinite; }
@@ -1054,123 +1042,7 @@
         @keyframes fadeSlideUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
         .fade-slide-up { opacity: 0; animation: fadeSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
-        /* ===== NOTIFICATION BELL & DROPDOWN ===== */
-    .notif-bell-btn {
-        position: relative;
-        width: 38px; height: 38px;
-        display: flex; align-items: center; justify-content: center;
-        border-radius: 50%;
-        background: rgba(9,9,11,0.6);
-        border: 1px solid rgba(16,185,129,0.2);
-        cursor: pointer;
-        transition: all 0.25s ease;
-    }
-    .notif-bell-btn:hover { border-color: rgba(16,185,129,0.5); background: rgba(16,185,129,0.08); box-shadow: 0 0 20px rgba(16,185,129,0.15); }
-    .notif-bell-btn svg { width: 18px; height: 18px; color: #a1a1aa; transition: color 0.2s; }
-    .notif-bell-btn:hover svg { color: #34d399; }
-    .notif-bell-btn.has-gifts svg { color: #34d399; }
-    .notif-badge {
-        position: absolute; top: -2px; right: -2px;
-        min-width: 18px; height: 18px;
-        padding: 0 5px;
-        border-radius: 9px;
-        background: linear-gradient(135deg, #10b981, #059669);
-        color: #fff; font-size: 10px; font-weight: 700;
-        display: flex; align-items: center; justify-content: center;
-        border: 2px solid #09090b;
-        animation: notifPulse 2s ease-in-out infinite;
-        pointer-events: none;
-    }
-    .notif-badge:empty, .notif-badge[data-count="0"] { display: none; }
-    @keyframes notifPulse {
-        0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.4); }
-        50% { box-shadow: 0 0 0 6px rgba(16,185,129,0); }
-    }
-    .notif-dropdown {
-        position: absolute; right: 0; top: calc(100% + 8px);
-        width: 340px; max-height: 420px;
-        background: rgba(9,9,11,0.95);
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(16,185,129,0.15);
-        border-radius: 16px;
-        overflow: hidden;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(16,185,129,0.05);
-        z-index: 100;
-        opacity: 0; transform: translateY(-8px) scale(0.97);
-        pointer-events: none;
-        transition: all 0.2s ease;
-    }
-    .notif-dropdown.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
-    .notif-dropdown-header {
-        padding: 14px 16px 10px;
-        border-bottom: 1px solid rgba(255,255,255,0.06);
-        display: flex; align-items: center; justify-content: space-between;
-    }
-    .notif-dropdown-header h4 { font-size: 13px; font-weight: 700; color: #f4f4f5; }
-    .notif-dropdown-header .notif-clear-btn {
-        font-size: 10px; color: #71717a; cursor: pointer; background: none; border: none;
-        transition: color 0.2s;
-    }
-    .notif-dropdown-header .notif-clear-btn:hover { color: #ef4444; }
-    .notif-list { max-height: 320px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(16,185,129,0.2) transparent; }
-    .notif-list::-webkit-scrollbar { width: 4px; }
-    .notif-list::-webkit-scrollbar-track { background: transparent; }
-    .notif-list::-webkit-scrollbar-thumb { background: rgba(16,185,129,0.2); border-radius: 4px; }
-    .notif-item {
-        padding: 12px 16px;
-        border-bottom: 1px solid rgba(255,255,255,0.04);
-        display: flex; align-items: flex-start; gap: 10px;
-        transition: background 0.15s;
-        cursor: pointer;
-    }
-    .notif-item:hover { background: rgba(16,185,129,0.05); }
-    .notif-item-icon {
-        width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 18px;
-        background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.15);
-    }
-    .notif-item-icon img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
-    .notif-item-body { flex: 1; min-width: 0; }
-    .notif-item-title { font-size: 12px; font-weight: 600; color: #e4e4e7; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .notif-item-meta { font-size: 10px; color: #71717a; display: flex; align-items: center; gap: 6px; }
-    .notif-item-amount { font-size: 12px; font-weight: 700; color: #34d399; font-family: monospace; white-space: nowrap; }
-    .notif-claim-btn {
-        margin-top: 6px; padding: 4px 12px;
-        font-size: 10px; font-weight: 600;
-        background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(5,150,105,0.2));
-        border: 1px solid rgba(16,185,129,0.3);
-        color: #6ee7b7; border-radius: 8px;
-        cursor: pointer; transition: all 0.2s;
-        white-space: nowrap;
-    }
-    .notif-claim-btn:hover { background: rgba(16,185,129,0.25); border-color: rgba(16,185,129,0.5); box-shadow: 0 0 12px rgba(16,185,129,0.2); transform: scale(1.03); }
-    .notif-claim-btn:disabled { opacity: 0.4; cursor: default; transform: none; }
-    .notif-empty {
-        padding: 30px 16px; text-align: center;
-        color: #52525b; font-size: 12px;
-    }
-    .notif-empty-icon { font-size: 28px; margin-bottom: 8px; opacity: 0.5; }
-    .notif-toast {
-        position: fixed; bottom: 24px; right: 24px;
-        padding: 12px 20px;
-        background: rgba(9,9,11,0.95); backdrop-filter: blur(12px);
-        border: 1px solid rgba(16,185,129,0.3);
-        border-radius: 12px;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-        z-index: 200;
-        display: flex; align-items: center; gap: 10px;
-        animation: notifToastIn 0.3s ease-out;
-        max-width: 340px;
-    }
-    .notif-toast.hide { animation: notifToastOut 0.3s ease-in forwards; }
-    @keyframes notifToastIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes notifToastOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(20px); } }
-    .notif-toast-icon { font-size: 20px; }
-    .notif-toast-text { font-size: 12px; color: #e4e4e7; }
-    .notif-toast-text strong { color: #34d399; }
-
-</style>
+    </style>
 </head>
 <body id="globalBody" class="bg-zinc-950 text-zinc-100 min-h-screen w-screen flex flex-col select-none bg-fitted-canvas relative overflow-hidden transition-all duration-500" style="background-image: url('https://res.cloudinary.com/dguexkgjw/image/upload/v1783022328/ChatGPT_Image_Jul_2_2026_05_57_35_PM_qqg2qs.png');">
     <div id="giftBgOverlay" class="gift-bg-overlay"></div>
@@ -1195,24 +1067,6 @@
             <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-950/40 border border-emerald-500/20 text-[10px] text-emerald-400 font-medium">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                 BOT Chain
-            </div>
-            <div id="notifBellWrap" class="hidden relative">
-                <button id="notifBellBtn" class="notif-bell-btn" onclick="toggleNotifDropdown(event)">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-                    <span id="notifBadge" class="notif-badge" data-count="0"></span>
-                </button>
-                <div id="notifDropdown" class="notif-dropdown">
-                    <div class="notif-dropdown-header">
-                        <h4>Gift Notifications</h4>
-                        <button class="notif-clear-btn" onclick="clearNotifDropdown()">Clear All</button>
-                    </div>
-                    <div id="notifList" class="notif-list">
-                        <div class="notif-empty">
-                            <div class="notif-empty-icon">&#x1F514;</div>
-                            <p>No new gifts yet</p>
-                        </div>
-                    </div>
-                </div>
             </div>
             <button id="connectWalletBtn" class="wallet-btn wallet-pulse action-pill-btn premium-nav-pill transition bg-zinc-950 text-zinc-100 px-7 py-2.5 rounded-full text-xs font-medium tracking-wide border border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.15)] flex items-center gap-2 cursor-pointer">
                 <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
@@ -3047,7 +2901,7 @@
         }
 
         function connectMetaMask() {
-            if (typeof window.connectMetaMask === 'function' && window.connectMetaMask !== connectMetaMask) {
+            if (typeof window.connectMetaMask === 'function') {
                 return window.connectMetaMask();
             }
             if (typeof window.ethereum !== 'undefined') {
@@ -3065,7 +2919,7 @@
             }
         }
         function connectWalletConnect() {
-            if (typeof window.connectWalletConnect === 'function' && window.connectWalletConnect !== connectWalletConnect) {
+            if (typeof window.connectWalletConnect === 'function') {
                 return window.connectWalletConnect();
             }
             openWalletConnectModal();
@@ -3075,7 +2929,7 @@
             }, 3000);
         }
         function connectCoinbase() {
-            if (typeof window.connectCoinbase === 'function' && window.connectCoinbase !== connectCoinbase) {
+            if (typeof window.connectCoinbase === 'function') {
                 return window.connectCoinbase();
             }
             const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
@@ -3088,7 +2942,7 @@
             }
         }
         function connectPhantom() {
-            if (typeof window.connectPhantom === 'function' && window.connectPhantom !== connectPhantom) {
+            if (typeof window.connectPhantom === 'function') {
                 return window.connectPhantom();
             }
             const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
@@ -3107,6 +2961,9 @@
             }
         }
         function handleWalletConnect(address) {
+            if (typeof window.handleWalletConnect === 'function') {
+                return window.handleWalletConnect(address);
+            }
             isWalletConnected = true;
             window.isWalletConnected = true;
             walletAddress = address;
@@ -3116,9 +2973,12 @@
             els.connectWalletBtn.classList.add('hidden');
             els.walletConnectedDisplay.classList.remove('hidden');
             els.connectedAddress.textContent = address.slice(0, 6) + '...' + address.slice(-4);
-            const bellWrap = document.getElementById('notifBellWrap');
-            if (bellWrap) bellWrap.classList.remove('hidden');
-            try { if (typeof initNotifications === 'function') initNotifications(); } catch(e) { console.warn('[Notif] init error:', e); }
+            var wbt = document.getElementById('walletBtnText');
+            if (wbt) wbt.textContent = address.slice(0, 6) + '...' + address.slice(-4);
+            var npn = document.getElementById('navProfileName');
+            if (npn) { npn.textContent = address.slice(0, 6) + '...' + address.slice(-4); npn.classList.remove('hidden'); }
+            var dpa = document.getElementById('dropdownProfileAddress');
+            if (dpa) dpa.textContent = address.slice(0, 6) + '...' + address.slice(-4);
         }
         function toggleWalletDropdown() {
             els.walletDropdown.classList.toggle('show');
@@ -3132,18 +2992,12 @@
             els.walletDropdown.classList.remove('show');
         }
         function disconnectWallet() {
-            if (window.disconnectWallet) { window.disconnectWallet(); return; }
             isWalletConnected = false;
             window.isWalletConnected = false;
             walletAddress = '';
             els.connectWalletBtn.classList.remove('hidden');
             els.walletConnectedDisplay.classList.add('hidden');
             els.walletDropdown.classList.remove('show');
-            const bellWrap = document.getElementById('notifBellWrap');
-            if (bellWrap) bellWrap.classList.add('hidden');
-            const dd = document.getElementById('notifDropdown');
-            if (dd) dd.classList.remove('open');
-            try { sessionStorage.setItem('web3gift_explicit_disconnect', 'true'); } catch (e) {}
         }
 
         els.connectWalletBtn.addEventListener('click', () => {
@@ -3157,7 +3011,7 @@
         els.closeWalletConnectModalBtn.addEventListener('click', closeWalletConnectModal);
         els.connectMetaMaskBtn.addEventListener('click', () => {
             console.log('[Web3GiftHub] MetaMask button clicked, window.connectMetaMask=' + typeof window.connectMetaMask);
-            if (window.connectMetaMask) window.connectMetaMask().catch(function(e){ console.error('[Web3GiftHub] connectMetaMask error:', e); }); else connectMetaMask();
+            if (window.connectMetaMask) window.connectMetaMask(); else connectMetaMask();
         });
         if (els.connectWalletConnectBtn) els.connectWalletConnectBtn.addEventListener('click', connectWalletConnect);
         if (els.connectCoinbaseBtn) els.connectCoinbaseBtn.addEventListener('click', connectCoinbase);
@@ -3204,13 +3058,9 @@
 
         window.addEventListener('load', () => {
             if (typeof window.ethereum !== 'undefined') {
-                let wasExplicitDisconnect = false;
-                try { wasExplicitDisconnect = sessionStorage.getItem('web3gift_explicit_disconnect') === 'true'; } catch (e) {}
-                if (!wasExplicitDisconnect) {
-                    window.ethereum.request({ method: 'eth_accounts' })
-                        .then(accounts => { if (accounts.length > 0) handleWalletConnect(accounts[0]); })
-                        .catch(() => {});
-                }
+                window.ethereum.request({ method: 'eth_accounts' })
+                    .then(accounts => { if (accounts.length > 0) handleWalletConnect(accounts[0]); })
+                    .catch(() => {});
             }
         });
 
@@ -3767,7 +3617,7 @@
                 const mysteryAddr = await systemSigner.getAddress();
 
                 const mysteryTheme = getGiftTheme('mystery');
-                const mysteryDataUri = 'https://placehold.co/400x400/7C3AED/FFFFFF?text=Mystery+Box';
+                const mysteryDataUri = 'data:image/svg+xml,' + encodeURIComponent(mysteryTheme.nftImageSvg);
                 const metadata = {
                     name: mysteryTheme.successIcon + ' Mystery Box - ' + selectedMysteryTier.toUpperCase(),
                     description: 'A mystery gift containing ' + mysteryReward + ' BOT and a ' + gift + ' NFT!',
@@ -3914,8 +3764,8 @@
             for (let i = 0; i < valid.length; i++) {
                 btn.innerHTML = `Minting ${i + 1}/${valid.length}... <span class="text-sm">⏳</span>`;
                 try {
-                const daoTheme = getGiftTheme('cryptoBro');
-                const daoDataUri = 'https://placehold.co/400x400/10B981/FFFFFF?text=DAO+Gift';
+                    const daoTheme = getGiftTheme('cryptoBro');
+                    const daoDataUri = 'data:image/svg+xml,' + encodeURIComponent(daoTheme.nftImageSvg);
                     const metadata = {
                         name: '🏛️ DAO Treasury Gift',
                         description: 'DAO Treasury Distribution of ' + perAmount + ' BOT',
@@ -4144,7 +3994,7 @@
                 }
 
                 const designerTheme = getGiftTheme('cryptoBro');
-                const designerFallbackUri = 'https://res.cloudinary.com/dguexkgjw/image/upload/v1783197536/photo_5931304236568218968_y_djl9s6.jpg';
+                const designerFallbackUri = 'data:image/svg+xml,' + encodeURIComponent(designerTheme.nftImageSvg);
                 const metadata = {
                     name: '🎨 Custom Gift Card',
                     description: 'A custom designed gift card on BOT Chain',
@@ -4277,7 +4127,7 @@
 
             try {
                 const timelockTheme = getGiftTheme('cryptoBro');
-                const timelockDataUri = 'https://placehold.co/400x400/6366F1/FFFFFF?text=Time+Locked';
+                const timelockDataUri = 'data:image/svg+xml,' + encodeURIComponent(timelockTheme.nftImageSvg);
                 const metadata = {
                     name: '⏳ Time-Locked Gift',
                     description: 'Gift locked until ' + new Date(timeUnlock.value).toLocaleString() + ': ' + message,
@@ -4357,78 +4207,6 @@
         // ==========================================
         // SPECIAL SUCCESS MODAL
         // ==========================================
-
-        // ==========================================
-        // LIVE TIMELOCK COUNTDOWN SYSTEM
-        // ==========================================
-        const _tlActiveTimers = {};
-
-        function _tlFormatCountdown(unlockTime) {
-            const diff = unlockTime - Date.now();
-            if (diff <= 0) return null;
-            const d = Math.floor(diff / 86400000);
-            const h = Math.floor((diff % 86400000) / 3600000);
-            const m = Math.floor((diff % 3600000) / 60000);
-            const s = Math.floor((diff % 60000) / 1000);
-            return { d, h, m, s, total: diff };
-        }
-
-        function _tlRenderCountdownHTML(unlockTime) {
-            const cd = _tlFormatCountdown(unlockTime);
-            if (!cd) return null;
-            return '<div class="tl-live-countdown">' +
-                (cd.d > 0 ? '<div class="tl-cd-segment"><span class="tl-cd-num">' + String(cd.d).padStart(2,'0') + '</span><span class="tl-cd-label">Days</span></div><span class="tl-cd-sep">:</span>' : '') +
-                '<div class="tl-cd-segment"><span class="tl-cd-num">' + String(cd.h).padStart(2,'0') + '</span><span class="tl-cd-label">Hrs</span></div><span class="tl-cd-sep">:</span>' +
-                '<div class="tl-cd-segment"><span class="tl-cd-num">' + String(cd.m).padStart(2,'0') + '</span><span class="tl-cd-label">Min</span></div><span class="tl-cd-sep">:</span>' +
-                '<div class="tl-cd-segment"><span class="tl-cd-num">' + String(cd.s).padStart(2,'0') + '</span><span class="tl-cd-label">Sec</span></div>' +
-                '</div>' +
-                '<div class="tl-msg-waiting">🔒 This gift is locked. Wait until the timer ends to claim.</div>' +
-                '<div class="tl-unlock-progress"><div class="tl-unlock-progress-bar" style="width:0%"></div></div>' +
-                '<div style="font-size:10px;color:#71717a;margin-top:4px;">📅 Unlocks: ' + new Date(unlockTime).toLocaleString() + '</div>';
-        }
-
-        function _tlStartTimer(tokenId, unlockTime, containerId, cardId) {
-            if (_tlActiveTimers[tokenId]) clearInterval(_tlActiveTimers[tokenId]);
-            const container = document.getElementById(containerId);
-            if (!container) return;
-            const startTime = Date.now();
-            const totalDuration = unlockTime - startTime;
-            function tick() {
-                const cd = _tlFormatCountdown(unlockTime);
-                if (!cd) {
-                    clearInterval(_tlActiveTimers[tokenId]);
-                    delete _tlActiveTimers[tokenId];
-                    container.innerHTML = '<div class="tl-claim-ready">✅ Ready to claim!</div>';
-                    const card = cardId ? document.getElementById(cardId) : null;
-                    if (card) {
-                        const lockBadge = card.querySelector('.tl-locked-badge');
-                        if (lockBadge) { lockBadge.className = 'tl-unlocked-badge'; lockBadge.textContent = '✅ UNLOCKED'; }
-                        const lockIcon = card.querySelector('.tl-locked-icon');
-                        if (lockIcon) { lockIcon.textContent = '✅'; lockIcon.style.background = 'rgba(16,185,129,0.1)'; lockIcon.style.borderColor = 'rgba(16,185,129,0.15)'; }
-                        const msgWait = card.querySelector('.tl-msg-waiting');
-                        if (msgWait) { msgWait.textContent = '✅ Time is up! You can now claim this gift.'; msgWait.style.color = '#6ee7b7'; msgWait.style.background = 'rgba(16,185,129,0.05)'; msgWait.style.borderLeftColor = 'rgba(16,185,129,0.3)'; }
-                    }
-                    return;
-                }
-                const elapsed = Date.now() - startTime;
-                const pct = Math.min(100, (elapsed / totalDuration) * 100);
-                const progressBar = container.querySelector('.tl-unlock-progress-bar');
-                if (progressBar) progressBar.style.width = pct + '%';
-                const nums = container.querySelectorAll('.tl-cd-num');
-                const vals = [];
-                if (cd.d > 0) vals.push(String(cd.d).padStart(2,'0'));
-                vals.push(String(cd.h).padStart(2,'0'));
-                vals.push(String(cd.m).padStart(2,'0'));
-                vals.push(String(cd.s).padStart(2,'0'));
-                nums.forEach((el, i) => { if (vals[i] !== undefined) el.textContent = vals[i]; });
-            }
-            tick();
-            _tlActiveTimers[tokenId] = setInterval(tick, 1000);
-        }
-
-        function _tlStopAllTimers() {
-            Object.keys(_tlActiveTimers).forEach(k => { clearInterval(_tlActiveTimers[k]); delete _tlActiveTimers[k]; });
-        }
         function showSpecialSuccess(title, desc, realHash) {
             const modal = document.getElementById('specialSuccessModal');
             const hash = realHash || ('0x' + Array(64).fill(0).map(() => Math.floor(Math.random() * 16).toString(16)).join(''));
@@ -4578,28 +4356,6 @@ async function uploadImageToPinata(file) {
         alert("Failed to upload image to IPFS: " + err.message);
         throw err;
     }
-}
-
-async function fetchJsonFromUri(uri) {
-    if (!uri || typeof uri !== 'string') return null;
-    if (uri.startsWith('data:application/json')) {
-        try {
-            const jsonPart = uri.split(',')[1] || '';
-            const jsonStr = decodeURIComponent(escape(atob(jsonPart)));
-            return JSON.parse(jsonStr);
-        } catch (e) { return null; }
-    }
-    if (uri.startsWith('http')) {
-        try {
-            const r = await fetch(uri);
-            if (r && r.ok) return await r.json();
-        } catch (e) {}
-        try {
-            const r = await fetch('https://corsproxy.io/?url=' + encodeURIComponent(uri));
-            if (r && r.ok) return await r.json();
-        } catch (e) {}
-    }
-    return null;
 }
 
 async function uploadMetadataToPinata(metadata) {
@@ -5193,15 +4949,15 @@ window.convertSbtToBot = convertSbtToBot;
             try { sessionStorage.removeItem('web3gift_explicit_disconnect'); } catch (e) {}
 
             if (!window.ethereum || !address) {
-                isWalletConnected = false;
-                window.isWalletConnected = false;
+                isWalletConnected = true;
+                window.isWalletConnected = true;
                 walletAddress = address || '';
                 window.realWalletAddress = address || '';
                 closeWalletModal();
                 closeWalletConnectModal();
-                els.connectWalletBtn.classList.remove('hidden');
-                els.walletConnectedDisplay.classList.add('hidden');
-                alert('No wallet detected. Please install MetaMask and try again.');
+                els.connectWalletBtn.classList.add('hidden');
+                els.walletConnectedDisplay.classList.remove('hidden');
+                if (address) els.connectedAddress.textContent = address.slice(0, 6) + '...' + address.slice(-4);
                 return;
             }
 
@@ -5237,18 +4993,30 @@ window.convertSbtToBot = convertSbtToBot;
                 els.connectWalletBtn.classList.add('hidden');
                 els.walletConnectedDisplay.classList.remove('hidden');
                 els.connectedAddress.textContent = realWalletAddress.slice(0, 6) + '...' + realWalletAddress.slice(-4);
-                const bellWrap3 = document.getElementById('notifBellWrap');
-                if (bellWrap3) bellWrap3.classList.remove('hidden');
-                try { if (typeof initNotifications === 'function') initNotifications(); } catch(e) { console.warn('[Notif] init error:', e); }
+                var wbt2 = document.getElementById('walletBtnText');
+                if (wbt2) wbt2.textContent = realWalletAddress.slice(0, 6) + '...' + realWalletAddress.slice(-4);
+                var npn2 = document.getElementById('navProfileName');
+                if (npn2) { npn2.textContent = realWalletAddress.slice(0, 6) + '...' + realWalletAddress.slice(-4); npn2.classList.remove('hidden'); }
+                var dpa2 = document.getElementById('dropdownProfileAddress');
+                if (dpa2) dpa2.textContent = realWalletAddress.slice(0, 6) + '...' + realWalletAddress.slice(-4);
+                try { if (typeof updateNavProfile === 'function') updateNavProfile(); } catch(e) {}
 
                 // Update balances immediately and set up interval
-                if (balanceInterval) clearInterval(balanceInterval);
-                balanceInterval = setInterval(() => {
-                    updateRealBalance();
+                try {
+                    await updateRealBalance();
                     updateSbtBalance();
-                }, 10000);
+                    if (balanceInterval) clearInterval(balanceInterval);
+                    balanceInterval = setInterval(() => {
+                        updateRealBalance();
+                        updateSbtBalance();
+                    }, 15000);
+                } catch (e) {
+                    console.error("Balance setup error:", e);
+                }
 
                 await updateRealBalance();
+                if (balanceInterval) clearInterval(balanceInterval);
+                balanceInterval = setInterval(updateRealBalance, 8000);
 
                 await loadOnChainHistory();
             } catch (err) {
@@ -5264,10 +5032,23 @@ window.convertSbtToBot = convertSbtToBot;
             els.connectWalletBtn.classList.remove('hidden');
             els.walletConnectedDisplay.classList.add('hidden');
             els.walletDropdown.classList.remove('show');
-            const bellWrap4 = document.getElementById('notifBellWrap');
-            if (bellWrap4) bellWrap4.classList.add('hidden');
-            const dd4 = document.getElementById('notifDropdown');
-            if (dd4) dd4.classList.remove('open');
+
+            // Clear wallet button text
+            var wbt3 = document.getElementById('walletBtnText');
+            if (wbt3) wbt3.textContent = 'Connect Wallet';
+            // Clear connected address display
+            if (els.connectedAddress) els.connectedAddress.textContent = '0x...';
+            // Clear profile displays
+            var npn3 = document.getElementById('navProfileName');
+            if (npn3) { npn3.textContent = ''; npn3.classList.add('hidden'); }
+            var npa3 = document.getElementById('navProfileAvatar');
+            if (npa3) npa3.innerHTML = '<span>👤</span>';
+            var dpn3 = document.getElementById('dropdownProfileName');
+            if (dpn3) dpn3.textContent = 'User';
+            var dpa3 = document.getElementById('dropdownProfileAddress');
+            if (dpa3) dpa3.textContent = '0x...';
+            var dpa4 = document.getElementById('dropdownProfileAvatar');
+            if (dpa4) dpa4.innerHTML = '<span>👤</span>';
 
             if (balanceInterval) clearInterval(balanceInterval);
             systemProvider = null;
@@ -5306,11 +5087,6 @@ window.convertSbtToBot = convertSbtToBot;
 
             // Mark as explicitly disconnected so we don't auto-reconnect
             try { sessionStorage.setItem('web3gift_explicit_disconnect', 'true'); } catch (e) {}
-
-            // Revoke MetaMask permissions so it shows popup on next connect
-            if (window.ethereum && window.ethereum.request) {
-                window.ethereum.request({ method: 'wallet_revokePermissions', params: [{ eth_accounts: {} }] }).catch(() => {});
-            }
         };
 
         window.copyAddress = function() {
@@ -5446,15 +5222,7 @@ window.convertSbtToBot = convertSbtToBot;
                 cryptoBro: 'https://res.cloudinary.com/dguexkgjw/image/upload/v1783088302/Gemini_Generated_Image_4z7vg14z7vg14z7v-removebg-preview_wqdjup.png',
                 dao: 'https://res.cloudinary.com/dguexkgjw/image/upload/v1783197571/photo_5931304236568218967_y_j2irwa.jpg',
                 timelock: 'https://res.cloudinary.com/dguexkgjw/image/upload/v1783197672/photo_5931304236568218965_y_fugghd.jpg',
-                designer: 'https://res.cloudinary.com/dguexkgjw/image/upload/v1783197536/photo_5931304236568218968_y_djl9s6.jpg',
-                loveletter: 'https://placehold.co/400x400/FF6B9D/FFFFFF?text=Love+Letter',
-                birthday: 'https://placehold.co/400x400/A855F7/FFFFFF?text=Birthday',
-                heart: 'https://placehold.co/400x400/EF4444/FFFFFF?text=Heart',
-                mystery: 'https://placehold.co/400x400/7C3AED/FFFFFF?text=Mystery+Box',
-                goldenticket: 'https://placehold.co/400x400/F59E0B/FFFFFF?text=Golden+Ticket',
-                treasure: 'https://placehold.co/400x400/D97706/FFFFFF?text=Treasure',
-                christmas: 'https://placehold.co/400x400/16A34A/FFFFFF?text=Christmas',
-                diamond: 'https://placehold.co/400x400/06B6D4/FFFFFF?text=Diamond'
+                designer: 'https://res.cloudinary.com/dguexkgjw/image/upload/v1783197536/photo_5931304236568218968_y_djl9s6.jpg'
             };
             const theme = getGiftTheme(style);
             const imageDataUri = cardImageUrls[style] || ('data:image/svg+xml,' + encodeURIComponent(theme.nftImageSvg));
@@ -5489,40 +5257,23 @@ window.convertSbtToBot = convertSbtToBot;
             if (gift.claimed) { alert("Already claimed."); return; }
             if (!gift.tokenId) { alert("This gift does not have an on-chain NFT. It may have been created with the old system."); return; }
 
-            // Check timelock
+            // Check timelock (uses gift's own unlockTime field as primary, localStorage as fallback)
             try {
-                let effectiveUnlockTime = null;
                 const lockData = JSON.parse(localStorage.getItem('web3gift_timelocks') || '[]');
-                const lockEntry = lockData.find(l => String(l.tokenId) === String(gift.tokenId) || l.txHash === gift.txHash);
-                if (lockEntry && lockEntry.unlockTime) effectiveUnlockTime = lockEntry.unlockTime;
-                if (!effectiveUnlockTime && gift.unlockTime) effectiveUnlockTime = gift.unlockTime;
-                if (!effectiveUnlockTime && (gift.style === 'timelock' || gift.style === 'timelocked')) {
-                    try {
-                        const uri = await sbtContractInstance.tokenURI(gift.tokenId);
-                        const m = await fetchJsonFromUri(uri);
-                        if (m && m.attributes) { const ut = m.attributes.find(a => a.trait_type === 'Unlock Time'); if (ut && ut.value) effectiveUnlockTime = Number(ut.value) * 1000; }
-                    } catch (e) {}
-                }
-                if (effectiveUnlockTime && Date.now() < effectiveUnlockTime) {
-                    const modal = document.getElementById('giftClaimModal');
-                    const icon = document.getElementById('giftClaimIcon');
-                    const iconWrap = document.getElementById('giftClaimIconWrap');
-                    const btnWrap = document.getElementById('giftClaimBtnWrap');
-                    const closeBtn = document.getElementById('giftClaimCloseBtn');
-                    modal.classList.remove('hidden');
-                    icon.textContent = '🔒';
-                    iconWrap.style.borderColor = 'rgba(239,68,68,0.4)';
-                    iconWrap.style.background = 'rgba(239,68,68,0.15)';
-                    document.getElementById('giftClaimTitle').textContent = '🔒 Gift Time-Locked';
-                    document.getElementById('giftClaimSubtext').innerHTML = '<div id="tl-local-cd-' + gift.tokenId + '" class="tl-countdown-container" style="margin-top:8px;"></div>';
-                    document.getElementById('giftClaimDetails').classList.add('hidden');
-                    btnWrap.classList.add('hidden');
-                    closeBtn.onclick = () => { modal.classList.add('hidden'); _tlStopAllTimers(); };
-                    setTimeout(function() { _tlStartTimer(gift.tokenId, effectiveUnlockTime, 'tl-local-cd-' + gift.tokenId, null); }, 100);
-                    return;
-                }
-                if (gift.style === 'timelock' && !effectiveUnlockTime) {
-                    alert('This is a time-locked gift. Could not verify unlock time. Please try again later.');
+                const lockEntry = lockData.find(l => l.tokenId === gift.tokenId || l.txHash === gift.txHash);
+                const unlockTime = gift.unlockTime || (lockEntry && lockEntry.unlockTime);
+                if (unlockTime && Date.now() < unlockTime) {
+                    const remaining = unlockTime - Date.now();
+                    const days = Math.floor(remaining / 86400000);
+                    const hours = Math.floor((remaining % 86400000) / 3600000);
+                    const mins = Math.floor((remaining % 3600000) / 60000);
+                    const secs = Math.floor((remaining % 60000) / 1000);
+                    let timeStr = '';
+                    if (days > 0) timeStr += days + 'd ';
+                    if (hours > 0) timeStr += hours + 'h ';
+                    if (mins > 0) timeStr += mins + 'm ';
+                    timeStr += secs + 's';
+                    alert('🔒 This gift is time-locked! It unlocks in ' + timeStr.trim() + '.\n\nUnlock date: ' + new Date(unlockTime).toLocaleString());
                     return;
                 }
             } catch (e) {}
@@ -5596,6 +5347,7 @@ window.convertSbtToBot = convertSbtToBot;
                 }
 
                 showRedeemSuccessOverlay(claimTx.hash, onChainAmount, onChainStyle);
+                if (typeof updateRealBalance === 'function') await updateRealBalance();
                 if (typeof loadOnChainHistory === 'function') await loadOnChainHistory();
             } catch (err) {
                 console.error('Claim gift failed:', err);
@@ -5666,42 +5418,30 @@ window.convertSbtToBot = convertSbtToBot;
                     return;
                 }
 
+                // HARD TIME-LOCK CHECK: use gift's own unlockTime field
                 try {
-                    let effectiveUnlockTime = null;
-                    let isTimelockStyle = false;
+                    const allGifts = getAllGifts();
+                    const localGift = allGifts.find(g => String(g.tokenId) === String(tokenId));
                     const lockData = JSON.parse(localStorage.getItem('web3gift_timelocks') || '[]');
                     const lockEntry = lockData.find(l => String(l.tokenId) === String(tokenId));
-                    if (lockEntry && lockEntry.unlockTime) effectiveUnlockTime = lockEntry.unlockTime;
-                    if (!effectiveUnlockTime) {
-                        try {
-                            const uri = await sbtContractInstance.tokenURI(tokenId);
-                            const m = await fetchJsonFromUri(uri);
-                            if (m && m.attributes) {
-                                const ut = m.attributes.find(a => a.trait_type === 'Unlock Time'); if (ut && ut.value) effectiveUnlockTime = Number(ut.value) * 1000;
-                                const gt = m.attributes.find(a => a.trait_type === 'Gift Type'); if (gt && gt.value === 'timelock') isTimelockStyle = true;
-                            }
-                        } catch (e) {}
-                    }
-                    if (effectiveUnlockTime && Date.now() < effectiveUnlockTime) {
+                    const unlockTime = (localGift && localGift.unlockTime) || (lockEntry && lockEntry.unlockTime);
+                    if (unlockTime && Date.now() < unlockTime) {
+                        const remaining = unlockTime - Date.now();
+                        const days = Math.floor(remaining / 86400000);
+                        const hours = Math.floor((remaining % 86400000) / 3600000);
+                        const mins = Math.floor((remaining % 3600000) / 60000);
+                        const secs = Math.floor((remaining % 60000) / 1000);
+                        let timeStr = '';
+                        if (days > 0) timeStr += days + 'd ';
+                        if (hours > 0) timeStr += hours + 'h ';
+                        if (mins > 0) timeStr += mins + 'm ';
+                        timeStr += secs + 's';
                         modal.classList.remove('hidden');
                         icon.textContent = '🔒';
                         iconWrap.style.borderColor = 'rgba(239,68,68,0.4)';
                         iconWrap.style.background = 'rgba(239,68,68,0.15)';
-                        document.getElementById('giftClaimTitle').textContent = '🔒 Gift Time-Locked';
-                        document.getElementById('giftClaimSubtext').innerHTML = '<div id="tl-modal-cd-' + tokenId + '" class="tl-countdown-container" style="margin-top:8px;"></div>';
-                        document.getElementById('giftClaimDetails').classList.add('hidden');
-                        btnWrap.classList.add('hidden');
-                        closeBtn.onclick = () => { modal.classList.add('hidden'); _tlStopAllTimers(); };
-                        setTimeout(function() { _tlStartTimer(tokenId, effectiveUnlockTime, 'tl-modal-cd-' + tokenId, null); }, 100);
-                        return;
-                    }
-                    if (isTimelockStyle && !effectiveUnlockTime) {
-                        modal.classList.remove('hidden');
-                        icon.textContent = '⏳';
-                        iconWrap.style.borderColor = 'rgba(148,163,184,0.4)';
-                        iconWrap.style.background = 'rgba(148,163,184,0.15)';
-                        document.getElementById('giftClaimTitle').textContent = 'Gift Time-Locked';
-                        document.getElementById('giftClaimSubtext').textContent = 'Could not verify unlock time. Please try again later.';
+                        document.getElementById('giftClaimTitle').textContent = '🔒 Time-Locked Gift';
+                        document.getElementById('giftClaimSubtext').textContent = 'This gift unlocks in ' + timeStr.trim() + '. Unlock date: ' + new Date(unlockTime).toLocaleString();
                         document.getElementById('giftClaimDetails').classList.add('hidden');
                         btnWrap.classList.add('hidden');
                         closeBtn.onclick = () => modal.classList.add('hidden');
@@ -5732,8 +5472,8 @@ window.convertSbtToBot = convertSbtToBot;
                         }
                     } else if (uri && uri.startsWith('http')) {
                         try {
-                            const m = await fetchJsonFromUri(uri);
-                            if (m && m.attributes) {
+                            const r = await fetch(uri).catch(() => null);
+                            if (r && r.ok) { const m = await r.json().catch(() => null); if (m && m.attributes) {
                                 const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
                                 if (ta) giftStyle = ta.value;
                             } }
@@ -5794,6 +5534,7 @@ window.convertSbtToBot = convertSbtToBot;
                                 localStorage.setItem(claimedKey, JSON.stringify(claimed));
                             }
                         } catch (e) {}
+                        if (typeof updateRealBalance === 'function') await updateRealBalance();
                         if (typeof loadOnChainHistory === 'function') await loadOnChainHistory();
                     } catch (err) {
                         console.error('Claim failed:', err);
@@ -6022,45 +5763,25 @@ window.convertSbtToBot = convertSbtToBot;
             if (!btn) return;
             if (!sbtContractInstance) { alert("Connect wallet first"); return; }
 
-            // Check if this is a time-locked gift that hasn't unlocked yet
+            // Check if this is a time-locked gift that hasn't unlocked yet (uses gift's own unlockTime)
             try {
-                let effectiveUnlockTime = null;
-                let isTimelockStyle = false;
+                const allGifts = getAllGifts();
+                const localGift = allGifts.find(g => String(g.tokenId) === String(tokenId));
                 const lockData = JSON.parse(localStorage.getItem('web3gift_timelocks') || '[]');
                 const lockEntry = lockData.find(l => String(l.tokenId) === String(tokenId));
-                if (lockEntry && lockEntry.unlockTime) effectiveUnlockTime = lockEntry.unlockTime;
-                if (!effectiveUnlockTime) {
-                    try {
-                        const uri = await sbtContractInstance.tokenURI(tokenId);
-                        const m = await fetchJsonFromUri(uri);
-                        if (m && m.attributes) {
-                            const ut = m.attributes.find(a => a.trait_type === 'Unlock Time'); if (ut && ut.value) effectiveUnlockTime = Number(ut.value) * 1000;
-                            const gt = m.attributes.find(a => a.trait_type === 'Gift Type'); if (gt && gt.value === 'timelock') isTimelockStyle = true;
-                        }
-                    } catch (e) {}
-                }
-                if (effectiveUnlockTime && Date.now() < effectiveUnlockTime) {
-                    const modal = document.getElementById('giftClaimModal');
-                    const icon = document.getElementById('giftClaimIcon');
-                    const iconWrap = document.getElementById('giftClaimIconWrap');
-                    const btnWrap = document.getElementById('giftClaimBtnWrap');
-                    const closeBtn = document.getElementById('giftClaimCloseBtn');
-                    modal.classList.remove('hidden');
-                    icon.textContent = '🔒';
-                    iconWrap.style.borderColor = 'rgba(239,68,68,0.4)';
-                    iconWrap.style.background = 'rgba(239,68,68,0.15)';
-                    document.getElementById('giftClaimTitle').textContent = '🔒 Gift Time-Locked';
-                    document.getElementById('giftClaimSubtext').innerHTML = '<div id="tl-hist-cd-' + tokenId + '" class="tl-countdown-container" style="margin-top:8px;"></div>';
-                    document.getElementById('giftClaimDetails').classList.add('hidden');
-                    btnWrap.classList.add('hidden');
-                    closeBtn.onclick = () => { modal.classList.add('hidden'); _tlStopAllTimers(); };
-                    setTimeout(function() { _tlStartTimer(tokenId, effectiveUnlockTime, 'tl-hist-cd-' + tokenId, null); }, 100);
-                    btn.disabled = false;
-                    btn.textContent = 'Locked 🔒';
-                    return;
-                }
-                if (isTimelockStyle && !effectiveUnlockTime) {
-                    alert('This is a time-locked gift. Could not verify unlock time. Please try again later.');
+                const unlockTime = (localGift && localGift.unlockTime) || (lockEntry && lockEntry.unlockTime);
+                if (unlockTime && Date.now() < unlockTime) {
+                    const remaining = unlockTime - Date.now();
+                    const days = Math.floor(remaining / 86400000);
+                    const hours = Math.floor((remaining % 86400000) / 3600000);
+                    const mins = Math.floor((remaining % 3600000) / 60000);
+                    const secs = Math.floor((remaining % 60000) / 1000);
+                    let timeStr = '';
+                    if (days > 0) timeStr += days + 'd ';
+                    if (hours > 0) timeStr += hours + 'h ';
+                    if (mins > 0) timeStr += mins + 'm ';
+                    timeStr += secs + 's';
+                    alert('🔒 This gift is time-locked! It unlocks in ' + timeStr.trim() + '.\n\nUnlock date: ' + new Date(unlockTime).toLocaleString());
                     btn.disabled = false;
                     btn.textContent = 'Locked ⏳';
                     return;
@@ -6105,6 +5826,7 @@ window.convertSbtToBot = convertSbtToBot;
                     }
                 } catch (e) {}
 
+                if (typeof updateRealBalance === 'function') await updateRealBalance();
                 if (typeof loadOnChainHistory === 'function') await loadOnChainHistory();
             } catch (err) {
                 console.error("Claim failed:", err);
@@ -6115,7 +5837,6 @@ window.convertSbtToBot = convertSbtToBot;
         }
 
         async function loadOnChainHistory() {
-            _tlStopAllTimers();
             const grid = document.getElementById('historyCardsGrid');
             const emptyState = document.getElementById('historyEmptyState');
             const pendingCountEl = document.getElementById('histPendingCount');
@@ -6167,11 +5888,10 @@ window.convertSbtToBot = convertSbtToBot;
                 if (d < 86400000) return Math.floor(d/3600000) + 'h ago';
                 return Math.floor(d/86400000) + 'd ago';
             }
-            function createCard(type, html, cardId) {
+            function createCard(type, html) {
                 const card = document.createElement('div');
                 card.className = 'history-gift-card hist-card-' + type + ' hist-card-enter';
                 card.style.animationDelay = (cardIndex * 60) + 'ms';
-                if (cardId) card.id = cardId;
                 card.innerHTML = html;
                 grid.appendChild(card);
                 cardIndex++;
@@ -6201,115 +5921,112 @@ window.convertSbtToBot = convertSbtToBot;
                 const sbtAbi = window.SBT_CONTRACT_ABI;
                 if (sbtAddr && sbtAbi && systemProvider) {
                     const sbtRead = new ethers.Contract(sbtAddr, sbtAbi, systemProvider);
-                    console.log('[History] Querying SBT events for:', realWalletAddress);
+                    console.log('[History] Querying SBT SoulboundGiftMinted events for:', realWalletAddress);
                     const filterRecv = sbtRead.filters.SoulboundGiftMinted(null, null, realWalletAddress);
                     const filterSent = sbtRead.filters.SoulboundGiftMinted(null, realWalletAddress, null);
                     const [recvEvts, sentEvts] = await Promise.all([
-                        sbtRead.queryFilter(filterRecv, 0, 'latest').catch(() => []),
-                        sbtRead.queryFilter(filterSent, 0, 'latest').catch(() => [])
+                        sbtRead.queryFilter(filterRecv, 0, 'latest').catch(e => { console.warn('[History] recv query failed:', e); return []; }),
+                        sbtRead.queryFilter(filterSent, 0, 'latest').catch(e => { console.warn('[History] sent query failed:', e); return []; })
                     ]);
-                    console.log('[History] Events: received=' + recvEvts.length + ' sent=' + sentEvts.length);
-
-                    const allTokenIds = new Set();
-                    const evtsByToken = {};
-                    for (const ev of [...recvEvts, ...sentEvts]) {
-                        const tid = ev.args.tokenId.toString();
-                        allTokenIds.add(tid);
-                        if (!evtsByToken[tid]) evtsByToken[tid] = [];
-                        evtsByToken[tid].push(ev);
-                    }
-                    const tokenIds = [...allTokenIds];
-
-                    if (tokenIds.length > 0) {
-                        const batchSize = 20;
-                        const batches = [];
-                        for (let i = 0; i < tokenIds.length; i += batchSize) {
-                            batches.push(tokenIds.slice(i, i + batchSize));
-                        }
-
-                        const tokenData = {};
-                        for (const batch of batches) {
-                            const results = await Promise.allSettled(batch.map(async (tid) => {
-                                const [giftData, uri, owner] = await Promise.allSettled([
-                                    sbtRead.getGiftData(tid),
-                                    sbtRead.tokenURI(tid),
-                                    sbtRead.ownerOf(tid)
-                                ]);
-                                return { tid, giftData, uri, owner };
-                            }));
-                            for (const r of results) {
-                                if (r.status === 'fulfilled') tokenData[r.value.tid] = r.value;
-                            }
-                        }
-
-                        async function parseStyle(uriVal) {
-                            if (!uriVal) return 'gift';
+                    console.log('[History] SBT events found: received=' + recvEvts.length + ' sent=' + sentEvts.length);
+                    for (const ev of recvEvts) {
+                        try {
+                            const tokenId = ev.args.tokenId.toString();
+                            onChainTokenIds.add(tokenId);
+                            const sender = ev.args.sender;
+                            const amount = ethers.formatEther(ev.args.amount);
+                            let isClaimed = false;
+                            try { await sbtRead.ownerOf(tokenId); } catch (e) { isClaimed = true; }
+                            let message = '', style = 'gift', senderName = shortAddr(sender), timestamp = Date.now();
                             try {
-                                const m = await fetchJsonFromUri(uriVal);
-                                if (m && m.attributes) {
-                                    const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
-                                    if (ta) return ta.value;
-                                }
-                            } catch (e) {}
-                            return 'gift';
-                        }
-
-                        async function parseSenderName(uriVal) {
-                            if (!uriVal) return null;
-                            try {
-                                const m = await fetchJsonFromUri(uriVal);
-                                if (m && m.attributes) {
-                                    const na = m.attributes.find(a => a.trait_type === 'Sender Name');
-                                    if (na && na.value) return na.value;
-                                }
-                            } catch (e) {}
-                            return null;
-                        }
-
-                        async function parseUnlockTime(uriVal) {
-                            if (!uriVal) return null;
-                            try {
-                                const m = await fetchJsonFromUri(uriVal);
-                                if (m && m.attributes) {
-                                    const ut = m.attributes.find(a => a.trait_type === 'Unlock Time');
-                                    if (ut && ut.value) return Number(ut.value) * 1000;
-                                }
-                            } catch (e) {}
-                            return null;
-                        }
-
-                        for (const tid of tokenIds) {
-                            const td = tokenData[tid];
-                            const evts = evtsByToken[tid];
-                            if (!evts || evts.length === 0) continue;
-                            const primaryEvt = evts[0];
-                            const sender = primaryEvt.args.sender;
-                            const recipient = primaryEvt.args.recipient;
-                            const amount = ethers.formatEther(primaryEvt.args.amount);
-                            const isClaimed = td ? td.owner.status === 'rejected' : false;
-                            let message = '', timestamp = Date.now();
-                            if (td && td.giftData.status === 'fulfilled') {
-                                const gd = td.giftData.value;
+                                const gd = await sbtRead.getGiftData(tokenId);
                                 if (gd[2]) message = gd[2];
                                 if (gd[4]) timestamp = Number(gd[4]) * 1000;
-                            }
-
-                            let style = 'gift', senderName = shortAddr(sender), chainUnlockTime = null;
-                            if (!isClaimed) {
-                                const uriVal = td && td.uri.status === 'fulfilled' ? td.uri.value : null;
-                                style = await parseStyle(uriVal);
-                                senderName = await parseSenderName(uriVal) || shortAddr(sender);
-                                chainUnlockTime = await parseUnlockTime(uriVal);
-                            }
-
-                            if (ev.some(e => e.args.recipient.toLowerCase() === realWalletAddress.toLowerCase())) {
-                                onChainReceivedGifts.push({ id:'ocr_'+tid, sender, recipient:realWalletAddress, senderName, amount, style, message, tokenId:tid, txHash:primaryEvt.transactionHash, timestamp, claimed:isClaimed, source:'onchain', unlockTime: chainUnlockTime || undefined });
-                            }
-                            if (ev.some(e => e.args.sender.toLowerCase() === realWalletAddress.toLowerCase())) {
-                                onChainSentGifts.push({ id:'ocs_'+tid, sender:realWalletAddress, recipient, senderName:shortAddr(realWalletAddress), amount, style, message, tokenId:tid, txHash:primaryEvt.transactionHash, timestamp, claimed:isClaimed, source:'onchain', unlockTime: chainUnlockTime || undefined });
-                            }
-                            onChainTokenIds.add(tid);
-                        }
+                            } catch (e) {}
+                            try {
+                                const uri = await sbtRead.tokenURI(tokenId);
+                                if (uri && uri.startsWith('data:application/json')) {
+                                    try {
+                                        const jsonPart = uri.split(',')[1] || '';
+                                        const jsonStr = decodeURIComponent(escape(atob(jsonPart)));
+                                        const m = JSON.parse(jsonStr);
+                                        if (m && m.attributes) {
+                                            const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
+                                            if (ta) style = ta.value;
+                                            const na = m.attributes.find(a => a.trait_type === 'Sender Name');
+                                            if (na && na.value) senderName = na.value;
+                                        }
+                                    } catch (e) {}
+                                } else if (uri && uri.startsWith('data:image/svg+xml')) {
+                                    const svgPart = uri.split(',')[1] || '';
+                                    const svgStr = svgPart.includes('%') ? decodeURIComponent(svgPart) : (svgPart.length > 100 && !svgPart.includes(' ') ? atob(svgPart) : svgPart);
+                                    const match = svgStr.match(/CRYPTO BRO|LOVE LETTER|HAPPY BIRTHDAY|YOUR HEART|MYSTERY BOX|GOLDEN TICKET|TREASURE CHEST|CHRISTMAS|DIAMOND HANDS/);
+                                    if (match) {
+                                        const nm = { 'CRYPTO BRO':'cryptoBro','LOVE LETTER':'loveletter','HAPPY BIRTHDAY':'birthday','YOUR HEART':'heart','MYSTERY BOX':'mystery','GOLDEN TICKET':'goldenticket','TREASURE CHEST':'treasure','CHRISTMAS':'christmas','DIAMOND HANDS':'diamond' };
+                                        style = nm[match[0]] || 'gift';
+                                    }
+                                } else if (uri && uri.startsWith('http')) {
+                                    try {
+                                        const r = await fetch(uri).catch(() => null);
+                                        if (r && r.ok) { const m = await r.json().catch(() => null); if (m && m.attributes) {
+                                            const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
+                                            if (ta) style = ta.value;
+                                            const na = m.attributes.find(a => a.trait_type === 'Sender Name');
+                                            if (na && na.value) senderName = na.value;
+                                        } }
+                                    } catch (e) {}
+                                }
+                            } catch (e) {}
+                            onChainReceivedGifts.push({ id:'ocr_'+tokenId, sender, recipient:realWalletAddress, senderName, amount, style, message, tokenId, txHash:ev.transactionHash, timestamp, claimed:isClaimed, source:'onchain' });
+                        } catch (e) {}
+                    }
+                    for (const ev of sentEvts) {
+                        try {
+                            const tokenId = ev.args.tokenId.toString();
+                            if (onChainTokenIds.has(tokenId)) continue;
+                            onChainTokenIds.add(tokenId);
+                            const recipient = ev.args.recipient;
+                            const amount = ethers.formatEther(ev.args.amount);
+                            let isClaimed = false;
+                            try { await sbtRead.ownerOf(tokenId); } catch (e) { isClaimed = true; }
+                            let message = '', style = 'gift', timestamp = Date.now();
+                            try {
+                                const gd = await sbtRead.getGiftData(tokenId);
+                                if (gd[2]) message = gd[2];
+                                if (gd[4]) timestamp = Number(gd[4]) * 1000;
+                            } catch (e) {}
+                            try {
+                                const uri = await sbtRead.tokenURI(tokenId);
+                                if (uri && uri.startsWith('data:application/json')) {
+                                    try {
+                                        const jsonPart = uri.split(',')[1] || '';
+                                        const jsonStr = decodeURIComponent(escape(atob(jsonPart)));
+                                        const m = JSON.parse(jsonStr);
+                                        if (m && m.attributes) {
+                                            const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
+                                            if (ta) style = ta.value;
+                                        }
+                                    } catch (e) {}
+                                } else if (uri && uri.startsWith('data:image/svg+xml')) {
+                                    const svgPart = uri.split(',')[1] || '';
+                                    const svgStr = svgPart.includes('%') ? decodeURIComponent(svgPart) : (svgPart.length > 100 && !svgPart.includes(' ') ? atob(svgPart) : svgPart);
+                                    const match = svgStr.match(/CRYPTO BRO|LOVE LETTER|HAPPY BIRTHDAY|YOUR HEART|MYSTERY BOX|GOLDEN TICKET|TREASURE CHEST|CHRISTMAS|DIAMOND HANDS/);
+                                    if (match) {
+                                        const nm = { 'CRYPTO BRO':'cryptoBro','LOVE LETTER':'loveletter','HAPPY BIRTHDAY':'birthday','YOUR HEART':'heart','MYSTERY BOX':'mystery','GOLDEN TICKET':'goldenticket','TREASURE CHEST':'treasure','CHRISTMAS':'christmas','DIAMOND HANDS':'diamond' };
+                                        style = nm[match[0]] || 'gift';
+                                    }
+                                } else if (uri && uri.startsWith('http')) {
+                                    try {
+                                        const r = await fetch(uri).catch(() => null);
+                                        if (r && r.ok) { const m = await r.json().catch(() => null); if (m && m.attributes) {
+                                            const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
+                                            if (ta) style = ta.value;
+                                        } }
+                                    } catch (e) {}
+                                }
+                            } catch (e) {}
+                            onChainSentGifts.push({ id:'ocs_'+tokenId, sender:realWalletAddress, recipient, senderName:shortAddr(realWalletAddress), amount, style, message, tokenId, txHash:ev.transactionHash, timestamp, claimed:isClaimed, source:'onchain' });
+                        } catch (e) {}
                     }
                 }
             } catch (e) { console.error('[History] SBT event query failed:', e); }
@@ -6344,7 +6061,6 @@ window.convertSbtToBot = convertSbtToBot;
                     const ep = localPending.find(p => p.tokenId === c.tokenId);
                     if (ep && c.claimed) ep.claimed = true;
                     if (ep && c.senderName) ep.senderName = c.senderName;
-                    if (ep && c.unlockTime && !ep.unlockTime) ep.unlockTime = c.unlockTime;
                     const es = localSent.find(p => p.tokenId === c.tokenId);
                     if (es && c.claimed) es.claimed = true;
                 } else {
@@ -6359,25 +6075,27 @@ window.convertSbtToBot = convertSbtToBot;
             if (localPending.length > 0) {
                 pendingCount = localPending.length;
                 localPending.forEach(gift => {
-                    const lockEntry = lockData.find(l => String(l.tokenId) === String(gift.tokenId) || l.txHash === gift.txHash);
-                    const effectiveUnlockTime = (lockEntry && lockEntry.unlockTime) || gift.unlockTime || null;
-                    const isTimelocked = effectiveUnlockTime && Date.now() < effectiveUnlockTime;
+                    const lockEntry = lockData.find(l => l.tokenId === gift.tokenId || l.txHash === gift.txHash);
+                    const giftUnlockTime = gift.unlockTime || (lockEntry && lockEntry.unlockTime);
+                    const isTimelocked = giftUnlockTime && Date.now() < giftUnlockTime;
                     let actionHtml = '';
                     let statusTag = '';
                     let extraInfo = '';
 
                     if (isTimelocked) {
-                        const rem = effectiveUnlockTime - Date.now();
+                        const rem = giftUnlockTime - Date.now();
                         const d = Math.floor(rem / 86400000);
                         const h = Math.floor((rem % 86400000) / 3600000);
                         const m = Math.floor((rem % 3600000) / 60000);
+                        const s = Math.floor((rem % 60000) / 1000);
                         let cd = '';
                         if (d > 0) cd += d + 'd ';
                         if (h > 0) cd += h + 'h ';
-                        cd += m + 'm';
+                        if (m > 0) cd += m + 'm ';
+                        cd += s + 's';
                         actionHtml = '<div class="tl-locked-badge">🔒 Locked</div>';
                         statusTag = '<span class="tl-locked-badge">TIME-LOCKED</span>';
-                        extraInfo = '<div id="tl-cd-' + gift.tokenId + '" class="tl-countdown-container"></div>';
+                        extraInfo = '<div data-unlock-time="' + giftUnlockTime + '" data-token-id="' + (gift.tokenId || '') + '" data-card-type="pending" style="font-size:10px;color:#fca5a5;margin-top:4px;">⏱ ' + cd.trim() + '</div><div style="font-size:10px;color:#71717a;margin-top:2px;">📅 ' + new Date(giftUnlockTime).toLocaleString() + '</div>';
                     } else {
                         if (gift.tokenId && gift.tokenId !== '---') {
                             actionHtml = '<button onclick="claimGiftByTokenId(' + gift.tokenId + ')" class="hist-claim-btn">Claim Now 🎉</button>';
@@ -6388,7 +6106,6 @@ window.convertSbtToBot = convertSbtToBot;
                     }
 
                     const senderDisplayName = gift.senderName || shortAddr(gift.sender);
-                    const cardIdStr = isTimelocked && gift.tokenId && gift.tokenId !== '---' ? 'pending-card-' + gift.tokenId : '';
                     createCard('pending', `
                         <div style="position:relative;z-index:2;display:flex;align-items:flex-start;justify-content:space-between;gap:14px;">
                             <div style="display:flex;align-items:center;gap:14px;min-width:0;flex:1;">
@@ -6407,17 +6124,15 @@ window.convertSbtToBot = convertSbtToBot;
                                     ${makeClaimLink(gift.tokenId, true)}
                                 </div>
                             </div>
-                            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0;">
+                            <div data-action-wrap style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0;">
                                 <div class="hist-amount">${parseFloat(gift.amount).toFixed(4)}</div>
                                 <div style="font-size:10px;color:#71717a;">$BOT</div>
                                 ${actionHtml}
                             </div>
                         </div>
-                    `, cardIdStr);
-                    if (isTimelocked && gift.tokenId && gift.tokenId !== '---') {
-                        _tlStartTimer(gift.tokenId, effectiveUnlockTime, 'tl-cd-' + gift.tokenId, 'pending-card-' + gift.tokenId);
-                    }
+                    `);
                 });
+            }
 
             // ===== GIFTS YOU SENT =====
             try {
@@ -6427,10 +6142,11 @@ window.convertSbtToBot = convertSbtToBot;
                     const statusTag = isClaimed ? 'CLAIMED' : 'SENT';
                     const isSentTimelock = gift.style === 'timelock';
                     const sentLockEntry = lockData.find(l => l.tokenId === gift.tokenId || l.txHash === gift.txHash);
+                    const sentUnlockTime = gift.unlockTime || (sentLockEntry && sentLockEntry.unlockTime);
                     let sentExtra = '';
-                    if (isSentTimelock && sentLockEntry && sentLockEntry.unlockTime) {
-                        if (Date.now() < sentLockEntry.unlockTime) {
-                            sentExtra = '<div id="tl-sent-cd-' + gift.tokenId + '" class="tl-countdown-container"></div>';
+                    if (isSentTimelock && sentUnlockTime) {
+                        if (Date.now() < sentUnlockTime) {
+                            sentExtra = '<div data-unlock-time="' + sentUnlockTime + '" data-token-id="' + (gift.tokenId || '') + '" data-card-type="sent" style="font-size:10px;color:#fca5a5;margin-top:4px;">🔒 Locked — unlocks ' + new Date(sentUnlockTime).toLocaleString() + '</div>';
                         } else {
                             sentExtra = '<div style="font-size:10px;color:#6ee7b7;margin-top:4px;">🔓 Unlocked — recipient can claim</div>';
                         }
@@ -6458,14 +6174,38 @@ window.convertSbtToBot = convertSbtToBot;
                                 <div style="font-size:10px;color:#71717a;">$BOT</div>
                             </div>
                         </div>
-                    `, 'sent-card-' + gift.tokenId);
-                    if (isSentTimelock && sentLockEntry && sentLockEntry.unlockTime && Date.now() < sentLockEntry.unlockTime && gift.tokenId) {
-                        _tlStartTimer(gift.tokenId, sentLockEntry.unlockTime, 'tl-sent-cd-' + gift.tokenId, 'sent-card-' + gift.tokenId);
-                    }
+                    `);
                 });
+            } catch (e) { console.error("Sent gifts error:", e); }
 
-            // ===== CLAIMED VAULT GIFTS (skipped for performance) =====
-            claimedCount = localClaimed.length;
+            // ===== CLAIMED VAULT GIFTS =====
+            try {
+                if (localClaimed.length > 0) claimedCount += localClaimed.length;
+                localClaimed.forEach(gift => {
+                    const senderDisplayName = gift.senderName || shortAddr(gift.sender);
+                    createCard('claimed', `
+                        <div style="position:relative;z-index:2;display:flex;align-items:flex-start;justify-content:space-between;gap:14px;">
+                            <div style="display:flex;align-items:center;gap:14px;min-width:0;flex:1;">
+                                <div class="hist-card-icon">${giftIconFor(gift.style)}</div>
+                                <div style="min-width:0;">
+                                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                                        <span style="font-size:14px;font-weight:700;color:#d4d4d8;">From ${senderDisplayName}</span>
+                                        <span class="hist-tag">CLAIMED</span>
+                                    </div>
+                                    <div style="font-size:12px;color:#a1a1aa;margin-bottom:2px;font-weight:500;text-transform:capitalize;">${gift.style || 'Gift'} • ${timeAgo(gift.timestamp * (gift.timestamp < 1e12 ? 1000 : 1))}</div>
+                                    ${gift.message ? '<div style="font-size:11px;color:#a1a1aa;font-style:italic;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:4px;padding:6px 10px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid rgba(255,255,255,0.05);">"' + gift.message.slice(0,60) + (gift.message.length>60?'...':'') + '"</div>' : ''}
+                                    ${gift.txHash ? '<a href="https://scan.bohr.life/tx/' + gift.txHash + '" target="_blank" style="font-size:10px;color:#10b981;text-decoration:none;margin-top:3px;display:inline-block;">View Tx →</a>' : ''}
+                                    ${makeClaimLink(gift.tokenId, false)}
+                                </div>
+                            </div>
+                            <div style="text-align:right;flex-shrink:0;">
+                                <div class="hist-amount">+${parseFloat(gift.amount).toFixed(4)}</div>
+                                <div style="font-size:10px;color:#71717a;">$BOT claimed</div>
+                            </div>
+                        </div>
+                    `);
+                });
+            } catch (e) {}
 
             loadingEl.remove();
 
@@ -6494,6 +6234,52 @@ window.convertSbtToBot = convertSbtToBot;
                 });
             });
         }
+
+        // Live countdown timer for time-locked gifts in history
+        if (window._countdownInterval) clearInterval(window._countdownInterval);
+        window._countdownInterval = setInterval(() => {
+            document.querySelectorAll('[data-unlock-time]').forEach(el => {
+                const unlockTime = parseInt(el.dataset.unlockTime);
+                if (!unlockTime) return;
+                if (Date.now() >= unlockTime) {
+                    // Unlocked! Update badge and enable claim button
+                    const card = el.closest('.history-gift-card');
+                    if (card) {
+                        const badges = card.querySelectorAll('.tl-locked-badge');
+                        badges.forEach(badge => {
+                            badge.className = 'tl-unlocked-badge';
+                            badge.innerHTML = '🔓 UNLOCKED';
+                        });
+                        const actionWrap = card.querySelector('[data-action-wrap]');
+                        if (actionWrap) {
+                            const tokenId = el.dataset.tokenId;
+                            if (tokenId) {
+                                actionWrap.innerHTML = '<div class="hist-amount">' + (card.querySelector('.hist-amount') ? card.querySelector('.hist-amount').textContent : '') + '</div><div style="font-size:10px;color:#71717a;">$BOT</div><button onclick="claimGiftByTokenId(' + tokenId + ')" class="hist-claim-btn">Claim Now 🎉</button>';
+                            }
+                        }
+                        el.textContent = '🔓 Unlocked!';
+                        el.style.color = '#6ee7b7';
+                    }
+                } else {
+                    const remaining = unlockTime - Date.now();
+                    const d = Math.floor(remaining / 86400000);
+                    const h = Math.floor((remaining % 86400000) / 3600000);
+                    const m = Math.floor((remaining % 3600000) / 60000);
+                    const s = Math.floor((remaining % 60000) / 1000);
+                    let cd = '';
+                    if (d > 0) cd += d + 'd ';
+                    if (h > 0) cd += h + 'h ';
+                    if (m > 0) cd += m + 'm ';
+                    cd += s + 's';
+                    const cardType = el.dataset.cardType;
+                    if (cardType === 'sent') {
+                        el.textContent = '🔒 Locked — ' + cd.trim() + ' remaining';
+                    } else {
+                        el.textContent = '⏱ ' + cd.trim();
+                    }
+                }
+            });
+        }, 1000);
 
         // Refresh history button
         document.addEventListener('DOMContentLoaded', () => {
@@ -7695,22 +7481,8 @@ window.convertSbtToBot = convertSbtToBot;
                         const amount = data[3] || data.amount || 0n;
                         const amountEth = ethers.formatEther(amount);
                         let style = 'gift';
-                        let chainUnlockTime = null;
                         try {
                             const uri = await contract.tokenURI(tokenId);
-                            if (uri && uri.startsWith('data:application/json')) {
-                                try {
-                                    const jsonPart = uri.split(',')[1] || '';
-                                    const jsonStr = decodeURIComponent(escape(atob(jsonPart)));
-                                    const m = JSON.parse(jsonStr);
-                                    if (m && m.attributes) {
-                                        const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
-                                        if (ta) style = ta.value;
-                                        const ut = m.attributes.find(a => a.trait_type === 'Unlock Time');
-                                        if (ut && ut.value) chainUnlockTime = Number(ut.value) * 1000;
-                                    }
-                                } catch (e) {}
-                            }
                             if (uri && uri.startsWith('data:image/svg+xml')) {
                                 const svgPart = uri.split(',')[1] || '';
                                 const svgStr = svgPart.includes('%') ? decodeURIComponent(svgPart) : (svgPart.length > 100 ? atob(svgPart) : svgPart);
@@ -7722,8 +7494,8 @@ window.convertSbtToBot = convertSbtToBot;
                             }
                             if (uri && uri.startsWith('http')) {
                                 try {
-                                    const m = await fetchJsonFromUri(uri);
-                                    if (m && m.attributes) { const ta = m.attributes.find(a => a.trait_type === 'Gift Type'); if (ta) style = ta.value; const ut = m.attributes.find(a => a.trait_type === 'Unlock Time'); if (ut && ut.value) chainUnlockTime = Number(ut.value) * 1000; }
+                                    const r = await fetch(uri);
+                                    if (r.ok) { const m = await r.json(); if (m && m.attributes) { const ta = m.attributes.find(a => a.trait_type === 'Gift Type'); if (ta) style = ta.value; } }
                                 } catch(e) {}
                             }
                         } catch(e) {}
@@ -7741,8 +7513,7 @@ window.convertSbtToBot = convertSbtToBot;
                             txHash: '',
                             timestamp: Number(data[4] || data.timestamp || 0) * 1000 || Date.now(),
                             claimed: isClaimed,
-                            source: 'onchain',
-                            unlockTime: chainUnlockTime || undefined
+                            source: 'onchain'
                         };
                         addGift(gift);
                         // Re-render with loaded data
@@ -7770,29 +7541,6 @@ window.convertSbtToBot = convertSbtToBot;
             } else {
                 document.getElementById('claimMessageRow').style.display = 'none';
             }
-
-            try {
-                let effectiveUnlockTime = null;
-                const lockData = JSON.parse(localStorage.getItem('web3gift_timelocks') || '[]');
-                const lockEntry = lockData.find(l => String(l.tokenId) === String(gift.tokenId));
-                if (lockEntry && lockEntry.unlockTime) effectiveUnlockTime = lockEntry.unlockTime;
-                if (!effectiveUnlockTime && gift.unlockTime) effectiveUnlockTime = gift.unlockTime;
-                if (effectiveUnlockTime && Date.now() < effectiveUnlockTime) {
-                    document.getElementById('claimGiftBoxWrap').style.display = 'none';
-                    document.getElementById('claimOpenBtn').classList.add('hidden');
-                    document.getElementById('claimSenderText').textContent = '🔒 Gift Time-Locked';
-                    document.getElementById('claimGiftTypeText').innerHTML = '<div id="tl-page-cd-' + gift.tokenId + '" class="tl-countdown-container" style="margin-top:8px;"></div>';
-                    setTimeout(function() { _tlStartTimer(gift.tokenId, effectiveUnlockTime, 'tl-page-cd-' + gift.tokenId, null); }, 100);
-                    return;
-                }
-                if (gift.style === 'timelock' && !effectiveUnlockTime) {
-                    document.getElementById('claimGiftBoxWrap').style.display = 'none';
-                    document.getElementById('claimOpenBtn').classList.add('hidden');
-                    document.getElementById('claimSenderText').textContent = '⏳ Time-Locked';
-                    document.getElementById('claimGiftTypeText').textContent = 'Could not verify unlock time. Please try again later.';
-                    return;
-                }
-            } catch (e) {}
 
             if (gift.claimed) {
                 document.getElementById('claimGiftBoxWrap').style.display = 'none';
@@ -8049,6 +7797,33 @@ window.convertSbtToBot = convertSbtToBot;
             p2.querySelector('span').textContent = 'Gift verified ✓';
             p2.querySelector('span').style.color = '#10b981';
 
+            // HARD TIME-LOCK CHECK on claim page
+            try {
+                const allGifts = getAllGifts();
+                const localGift = allGifts.find(g => String(g.tokenId) === String(gift.tokenId));
+                const lockData = JSON.parse(localStorage.getItem('web3gift_timelocks') || '[]');
+                const lockEntry = lockData.find(l => String(l.tokenId) === String(gift.tokenId));
+                const unlockTime = gift.unlockTime || (localGift && localGift.unlockTime) || (lockEntry && lockEntry.unlockTime);
+                if (unlockTime && Date.now() < unlockTime) {
+                    const remaining = unlockTime - Date.now();
+                    const days = Math.floor(remaining / 86400000);
+                    const hours = Math.floor((remaining % 86400000) / 3600000);
+                    const mins = Math.floor((remaining % 3600000) / 60000);
+                    const secs = Math.floor((remaining % 60000) / 1000);
+                    let timeStr = '';
+                    if (days > 0) timeStr += days + 'd ';
+                    if (hours > 0) timeStr += hours + 'h ';
+                    if (mins > 0) timeStr += mins + 'm ';
+                    timeStr += secs + 's';
+                    document.getElementById('claimStep2Title').textContent = '🔒 Time-Locked Gift';
+                    document.getElementById('claimStep2Desc').textContent = 'This gift unlocks in ' + timeStr.trim() + '. Unlock date: ' + new Date(unlockTime).toLocaleString();
+                    dot2.classList.remove('done');
+                    dot2.classList.add('active');
+                    dot2.style.background = '#ef4444';
+                    return;
+                }
+            } catch (e) {}
+
             // Step 3: Claim
             dot3.classList.add('active');
             document.getElementById('claimStep2Title').textContent = 'Claiming your gift...';
@@ -8112,8 +7887,8 @@ window.convertSbtToBot = convertSbtToBot;
                             }
                         }
 
-                        if (typeof updateRealBalance === 'function') updateRealBalance();
-                        if (typeof loadOnChainHistory === 'function') loadOnChainHistory();
+                        if (typeof updateRealBalance === 'function') await updateRealBalance();
+                        if (typeof loadOnChainHistory === 'function') await loadOnChainHistory();
                     }, 600);
             } catch (err) {
                 console.error('Claim page error:', err);
@@ -8131,260 +7906,6 @@ window.convertSbtToBot = convertSbtToBot;
             });
         }
     })();
-
-    // ===== NOTIFICATION SYSTEM =====
-    let notifGifts = [];
-    let notifPollTimer = null;
-    let notifLastCount = 0;
-    function _notifShortAddr(a) { return a ? a.slice(0,6) + '...' + a.slice(-4) : '0x...'; }
-    function _notifTimeAgo(ts) { const d = Date.now() - ts; if (d < 60000) return 'just now'; if (d < 3600000) return Math.floor(d/60000) + 'm ago'; if (d < 86400000) return Math.floor(d/3600000) + 'h ago'; return Math.floor(d/86400000) + 'd ago'; }
-
-    function toggleNotifDropdown(e) {
-        e.stopPropagation();
-        const dd = document.getElementById('notifDropdown');
-        if (dd) dd.classList.toggle('open');
-    }
-    function clearNotifDropdown() {
-        notifGifts = [];
-        notifLastCount = 0;
-        renderNotifDropdown();
-        const badge = document.getElementById('notifBadge');
-        if (badge) { badge.textContent = ''; badge.dataset.count = '0'; }
-        const btn = document.getElementById('notifBellBtn');
-        if (btn) btn.classList.remove('has-gifts');
-    }
-    document.addEventListener('click', (e) => {
-        const dd = document.getElementById('notifDropdown');
-        const bell = document.getElementById('notifBellBtn');
-        if (dd && !dd.contains(e.target) && bell && !bell.contains(e.target)) {
-            dd.classList.remove('open');
-        }
-    });
-
-    function renderNotifDropdown() {
-        const list = document.getElementById('notifList');
-        if (!list) return;
-        if (notifGifts.length === 0) {
-            list.innerHTML = '<div class="notif-empty"><div class="notif-empty-icon">&#x1F514;</div><p>No new gifts yet</p></div>';
-            return;
-        }
-        list.innerHTML = notifGifts.map((g, i) => {
-            const iconHtml = getNotifIcon(g.style);
-            const timeStr = _notifTimeAgo(g.timestamp);
-            const claimDisabled = g.claimed ? 'disabled' : '';
-            const claimText = g.claimed ? 'Claimed ✓' : (g.timelocked ? '🔒 Locked' : 'Claim');
-            const claimClass = g.claimed ? 'notif-claim-btn" style="opacity:0.4;cursor:default;' : (g.timelocked ? 'notif-claim-btn" style="opacity:0.6;cursor:default;' : 'notif-claim-btn');
-            return '<div class="notif-item" onclick="event.stopPropagation();">' +
-                '<div class="notif-item-icon">' + iconHtml + '</div>' +
-                '<div class="notif-item-body">' +
-                    '<div class="notif-item-title">' + (g.senderName || _notifShortAddr(g.sender)) + ' sent you a gift</div>' +
-                    '<div class="notif-item-meta">' +
-                        '<span>' + (g.style || 'Gift') + '</span>' +
-                        '<span>·</span>' +
-                        '<span>' + timeStr + '</span>' +
-                    '</div>' +
-                    (g.message ? '<div class="notif-item-meta" style="margin-top:2px;font-style:italic;color:#a1a1aa;">"' + g.message.slice(0,40) + (g.message.length > 40 ? '...' : '') + '"</div>' : '') +
-                    '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px;">' +
-                        '<div class="notif-item-amount">+' + parseFloat(g.amount).toFixed(4) + ' BOT</div>' +
-                        (g.tokenId && g.tokenId !== '---' ? '<button class="' + claimClass + '" ' + claimDisabled + ' onclick="event.stopPropagation();claimFromNotif(' + g.tokenId + ', this)">' + claimText + '</button>' : '') +
-                    '</div>' +
-                '</div>' +
-            '</div>';
-        }).join('');
-    }
-
-    function getNotifIcon(style) {
-        var icons = {
-            cryptoBro: '<img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783088302/Gemini_Generated_Image_4z7vg14z7vg14z7v-removebg-preview_wqdjup.png" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">',
-            loveletter: '💌', birthday: '🎈', heart: '💖', mystery: '🎲',
-            goldenticket: '🎫', treasure: '🏴\u200D☠️', christmas: '🎄', diamond: '💎',
-            dao: '<img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783197571/photo_5931304236568218967_y_j2irwa.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">',
-            timelock: '<img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783197672/photo_5931304236568218965_y_fugghd.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">',
-            designer: '<img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783197536/photo_5931304236568218968_y_djl9s6.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">'
-        };
-        return icons[style] || '🎁';
-    }
-
-    async function claimFromNotif(tokenId, btn) {
-        if (!window.sbtContractInstance || !window.ethereum) { alert('Please connect wallet first.'); return; }
-        try {
-            let effectiveUnlockTime = null;
-            let isTimelockStyle = false;
-            const lockData = JSON.parse(localStorage.getItem('web3gift_timelocks') || '[]');
-            const lockEntry = lockData.find(l => String(l.tokenId) === String(tokenId));
-            if (lockEntry && lockEntry.unlockTime) effectiveUnlockTime = lockEntry.unlockTime;
-            const g = notifGifts.find(x => String(x.tokenId) === String(tokenId));
-            if (!effectiveUnlockTime && g && g.unlockTime) effectiveUnlockTime = g.unlockTime;
-            if (!effectiveUnlockTime) {
-                try {
-                    const uri = await sbtContractInstance.tokenURI(tokenId);
-                    const m = await fetchJsonFromUri(uri);
-                    if (m && m.attributes) {
-                        const ut = m.attributes.find(a => a.trait_type === 'Unlock Time'); if (ut && ut.value) effectiveUnlockTime = Number(ut.value) * 1000;
-                        const gt = m.attributes.find(a => a.trait_type === 'Gift Type'); if (gt && gt.value === 'timelock') isTimelockStyle = true;
-                    }
-                } catch (e) {}
-            }
-            if (effectiveUnlockTime && Date.now() < effectiveUnlockTime) {
-                const modal = document.getElementById('giftClaimModal');
-                const icon = document.getElementById('giftClaimIcon');
-                const iconWrap = document.getElementById('giftClaimIconWrap');
-                const btnWrap = document.getElementById('giftClaimBtnWrap');
-                const closeBtn = document.getElementById('giftClaimCloseBtn');
-                modal.classList.remove('hidden');
-                icon.textContent = '🔒';
-                iconWrap.style.borderColor = 'rgba(239,68,68,0.4)';
-                iconWrap.style.background = 'rgba(239,68,68,0.15)';
-                document.getElementById('giftClaimTitle').textContent = '🔒 Gift Time-Locked';
-                document.getElementById('giftClaimSubtext').innerHTML = '<div id="tl-notif-cd-' + tokenId + '" class="tl-countdown-container" style="margin-top:8px;"></div>';
-                document.getElementById('giftClaimDetails').classList.add('hidden');
-                btnWrap.classList.add('hidden');
-                closeBtn.onclick = () => { modal.classList.add('hidden'); _tlStopAllTimers(); };
-                setTimeout(function() { _tlStartTimer(tokenId, effectiveUnlockTime, 'tl-notif-cd-' + tokenId, null); }, 100);
-                return;
-            }
-            if (isTimelockStyle && !effectiveUnlockTime) {
-                alert('This is a time-locked gift. Could not verify unlock time. Please try again later.');
-                return;
-            }
-        } catch (e) {}
-        btn.disabled = true;
-        btn.textContent = 'Claiming...';
-        try {
-            const tx = await window.sbtContractInstance.convertToBot(tokenId);
-            btn.textContent = 'Confirming...';
-            const receipt = await tx.wait();
-            if (receipt.status !== 1) throw new Error('Tx failed');
-            btn.textContent = 'Claimed ✓';
-            btn.style.opacity = '0.4';
-            const g = notifGifts.find(x => x.tokenId == tokenId);
-            if (g) g.claimed = true;
-            renderNotifDropdown();
-            showNotifToast('Gift claimed! BOT tokens sent to your wallet.');
-            if (typeof loadOnChainHistory === 'function') loadOnChainHistory();
-        } catch (err) {
-            btn.textContent = 'Claim';
-            btn.disabled = false;
-            alert('Claim failed: ' + (err.reason || err.message));
-        }
-    }
-
-    function showNotifToast(text) {
-        const existing = document.querySelector('.notif-toast');
-        if (existing) existing.remove();
-        const toast = document.createElement('div');
-        toast.className = 'notif-toast';
-        toast.innerHTML = '<span class="notif-toast-icon">🎁</span><span class="notif-toast-text">' + text + '</span>';
-        document.body.appendChild(toast);
-        setTimeout(() => { toast.classList.add('hide'); setTimeout(() => toast.remove(), 300); }, 4000);
-    }
-
-    async function initNotifications() {
-        if (!window.isWalletConnected || !window.realWalletAddress) return;
-        await checkNewGifts();
-        if (notifPollTimer) clearInterval(notifPollTimer);
-        notifPollTimer = setInterval(checkNewGifts, 30000);
-    }
-
-    async function checkNewGifts() {
-        if (!window.isWalletConnected || !window.realWalletAddress || !systemProvider) return;
-        try {
-            const sbtAddr = window.SBT_CONTRACT_ADDRESS || '0x740e1ce98364EfF4d5e3d89b2b1fa513e0F75b16';
-            const sbtAbi = window.SBT_CONTRACT_ABI;
-            if (!sbtAddr || !sbtAbi) return;
-            const sbtRead = new ethers.Contract(sbtAddr, sbtAbi, systemProvider);
-            const filter = sbtRead.filters.SoulboundGiftMinted(null, null, window.realWalletAddress);
-            const events = await sbtRead.queryFilter(filter, 0, 'latest').catch(() => []);
-            const tokenIds = events.map(e => e.args.tokenId.toString());
-            if (tokenIds.length === 0) return;
-
-            const batchSize = 20;
-            const batches = [];
-            for (let i = 0; i < tokenIds.length; i += batchSize) batches.push(tokenIds.slice(i, i + batchSize));
-            const allData = {};
-            for (const batch of batches) {
-                const results = await Promise.allSettled(batch.map(async (tid) => {
-                    const [giftData, uri, owner] = await Promise.allSettled([
-                        sbtRead.getGiftData(tid),
-                        sbtRead.tokenURI(tid),
-                        sbtRead.ownerOf(tid)
-                    ]);
-                    return { tid, giftData, uri, owner };
-                }));
-                for (const r of results) { if (r.status === 'fulfilled') allData[r.value.tid] = r.value; }
-            }
-
-            const claimedKey = 'web3gift_claimed_' + window.realWalletAddress;
-            const claimedIds = JSON.parse(localStorage.getItem(claimedKey) || '[]');
-
-            notifGifts = [];
-            for (const ev of events) {
-                const tid = ev.args.tokenId.toString();
-                const td = allData[tid];
-                const isClaimed = td ? td.owner.status === 'rejected' : false;
-                const isLocalClaimed = claimedIds.includes(tid);
-                if (isClaimed || isLocalClaimed) continue;
-
-                let message = '', style = 'gift', senderName = _notifShortAddr(ev.args.sender), timestamp = Date.now();
-                if (td && td.giftData.status === 'fulfilled') {
-                    const gd = td.giftData.value;
-                    if (gd[2]) message = gd[2];
-                    if (gd[4]) timestamp = Number(gd[4]) * 1000;
-                }
-                if (td && td.uri.status === 'fulfilled') {
-                    const uri = td.uri.value;
-                    if (typeof uri === 'string' && uri.startsWith('data:application/json')) {
-                        try {
-                            const jp = uri.split(',')[1] || '';
-                            const m = JSON.parse(decodeURIComponent(escape(atob(jp))));
-                            if (m && m.attributes) {
-                                const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
-                                if (ta) style = ta.value;
-                                const na = m.attributes.find(a => a.trait_type === 'Sender Name');
-                                if (na && na.value) senderName = na.value;
-                            }
-                        } catch (e) {}
-                    } else if (typeof uri === 'string' && uri.startsWith('http')) {
-                        try {
-                            const m = await fetchJsonFromUri(uri);
-                            if (m && m.attributes) {
-                                    const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
-                                    if (ta) style = ta.value;
-                                    const na = m.attributes.find(a => a.trait_type === 'Sender Name');
-                                    if (na && na.value) senderName = na.value;
-                                }
-                            }
-                        } catch (e) {}
-                    }
-                }
-
-                const lockData = JSON.parse(localStorage.getItem('web3gift_timelocks') || '[]');
-                const lockEntry = lockData.find(l => l.tokenId === tid);
-                const timelocked = lockEntry && lockEntry.unlockTime && Date.now() < lockEntry.unlockTime;
-
-                notifGifts.push({
-                    tokenId: tid, sender: ev.args.sender, amount: ethers.formatEther(ev.args.amount),
-                    style, message, senderName, timestamp, claimed: false, timelocked,
-                    txHash: ev.transactionHash
-                });
-            }
-
-            notifGifts.sort((a, b) => b.timestamp - a.timestamp);
-            renderNotifDropdown();
-
-            const badge = document.getElementById('notifBadge');
-            const btn = document.getElementById('notifBellBtn');
-            const count = notifGifts.length;
-            if (badge) { badge.textContent = count > 0 ? (count > 99 ? '99+' : count) : ''; badge.dataset.count = count; }
-            if (btn) { if (count > 0) btn.classList.add('has-gifts'); else btn.classList.remove('has-gifts'); }
-
-            if (count > notifLastCount && notifLastCount > 0) {
-                const newest = notifGifts[0];
-                showNotifToast('<strong>' + (newest.senderName || 'Someone') + '</strong> sent you ' + parseFloat(newest.amount).toFixed(4) + ' BOT!');
-            }
-            notifLastCount = count;
-        } catch (e) { console.error('[Notif] Check failed:', e); }
-    }
     </script>
 
     <!-- PROFILE SETTINGS MODAL -->
