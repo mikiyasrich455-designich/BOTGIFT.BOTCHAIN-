@@ -3107,6 +3107,7 @@
             }
         }
         function handleWalletConnect(address) {
+            if (window.handleWalletConnect) { window.handleWalletConnect(address); return; }
             isWalletConnected = true;
             window.isWalletConnected = true;
             walletAddress = address;
