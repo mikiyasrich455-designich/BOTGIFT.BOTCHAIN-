@@ -521,6 +521,15 @@
             transform: translateY(-4px) scale(1.02);
         }
         .special-gift-card:active { transform: translateY(-2px) scale(1.01); }
+        .special-gift-card.opacity-60:hover {
+            box-shadow: none;
+            transform: none;
+        }
+        @keyframes comingSoonPulse {
+            0%, 100% { opacity: 0.7; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
+        .coming-soon-badge { animation: comingSoonPulse 2.5s ease-in-out infinite; }
         .special-sticker {
             font-size: 48px; line-height: 1;
             filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
@@ -1625,28 +1634,38 @@
                     <div class="absolute -inset-0.5 rounded-2xl bg-indigo-500/20 blur-lg opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
                 </div>
 
-            <!-- 3. Mystery Gift -->
-            <div class="special-gift-card stagger-card rounded-2xl overflow-hidden flex flex-col relative"
-                 style="animation-delay: 120ms;"
-                 data-special="mysteryBox">
+            <!-- 3. Mystery Gift (Coming Soon) -->
+            <div class="special-gift-card stagger-card rounded-2xl overflow-hidden flex flex-col relative opacity-60 cursor-not-allowed select-none"
+                 style="animation-delay: 120ms; filter: grayscale(0.3);">
                 <div class="relative h-48 overflow-hidden">
                     <img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783197614/photo_5931304236568218966_y_ooycxv.jpg"
-                         class="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+                         class="w-full h-full object-cover transition-transform duration-500"
                          alt="Mystery Gift"
                          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-                    <div class="absolute inset-0 bg-gradient-to-t from-[#4c1d95] via-[#4c1d95]/60 to-transparent"></div>
-                    <div class="absolute inset-0 bg-[#4c1d95]/40 backdrop-blur-[2px] hidden items-center justify-center text-4xl">🎰</div>
-                </div>
-                <div class="relative z-10 p-5 -mt-8 flex flex-col flex-1" style="background: linear-gradient(180deg, transparent 0%, #4c1d95 20%);">
-                    <div class="flex items-center gap-2 mb-2">
-                        <div class="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></div>
-                        <h3 class="text-lg font-bold text-white">Mystery Gift</h3>
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#1a1025] via-[#1a1025]/70 to-[#1a1025]/30"></div>
+                    <div class="absolute inset-0 bg-[#4c1d95]/30 backdrop-blur-[3px] hidden items-center justify-center text-4xl">🎰</div>
+                    <!-- Coming Soon Badge -->
+                    <div class="absolute inset-0 flex items-center justify-center z-20">
+                        <div class="relative coming-soon-badge">
+                            <div class="px-5 py-2.5 rounded-full border border-purple-400/40 bg-black/50 backdrop-blur-md">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></div>
+                                    <span class="text-[13px] font-bold text-purple-300 tracking-wide">COMING SOON</span>
+                                </div>
+                            </div>
+                            <div class="absolute -inset-1 rounded-full bg-purple-500/10 blur-lg animate-pulse"></div>
+                        </div>
                     </div>
-                    <p class="text-xs text-white/70 leading-relaxed flex-1">Send a hidden amount. Recipient spins to claim with odds!</p>
-                    <div class="mt-3 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-[10px] text-white/80 font-medium inline-block self-start">🎲 Random Odds</div>
                 </div>
-                <div class="absolute inset-0 rounded-2xl border border-purple-500/20 pointer-events-none"></div>
-                <div class="absolute -inset-0.5 rounded-2xl bg-purple-500/20 blur-lg opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                <div class="relative z-10 p-5 -mt-8 flex flex-col flex-1" style="background: linear-gradient(180deg, transparent 0%, #1a1025 20%);">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-2 h-2 rounded-full bg-purple-400/50"></div>
+                        <h3 class="text-lg font-bold text-white/70">Mystery Gift</h3>
+                    </div>
+                    <p class="text-xs text-white/40 leading-relaxed flex-1">Spin-to-claim mechanics with random odds and rewards.</p>
+                    <div class="mt-3 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] text-white/40 font-medium inline-block self-start">🎰 In Development</div>
+                </div>
+                <div class="absolute inset-0 rounded-2xl border border-purple-500/10 pointer-events-none"></div>
             </div>
 
                 <!-- 4. DAO Treasury -->
@@ -2142,76 +2161,55 @@
         </div>
 
         <!-- ========================================== -->
-        <!-- SPECIAL GIFT: MYSTERY BOX -->
+        <!-- SPECIAL GIFT: MYSTERY BOX (COMING SOON) -->
         <!-- ========================================== -->
         <div id="mysteryBoxView" class="w-full max-w-2xl mx-auto view-panel-transition hidden pb-8 relative z-10 overflow-y-auto max-h-[calc(100vh-100px)] custom-scrollbar">
             <div class="flex items-center gap-2 mb-6 animate-slide-in">
-                <button id="backFromMystery" class="text-zinc-400 hover:text-zinc-200 transition text-sm flex items-center gap-1 cursor-pointer glass-panel px-3 py-1.5 rounded-full">← Special Gifts</button>
+                <button onclick="backToSpecialGrid()" class="text-zinc-400 hover:text-zinc-200 transition text-sm flex items-center gap-1 cursor-pointer glass-panel px-3 py-1.5 rounded-full">← Special Gifts</button>
             </div>
             <div class="text-center mb-6 animate-slide-in">
-                <div class="text-5xl mb-3 float-anim">🎰</div>
+                <div class="text-5xl mb-3 opacity-50">🎰</div>
                 <h2 class="text-2xl font-bold text-zinc-100 mb-1">Mystery Gift</h2>
-                <p class="text-sm text-zinc-400">Send a hidden amount. Recipient spins to claim!</p>
+                <p class="text-sm text-zinc-400">Spin-to-claim mechanics with random odds</p>
             </div>
 
-            <div class="glass-panel rounded-3xl p-8 animate-slide-in">
-                <!-- Recipient Input -->
-                <div class="space-y-2 mb-6">
-                    <label class="text-[11px] tracking-wide text-zinc-400 font-medium block uppercase">Recipient Address</label>
-                    <div class="relative">
-                        <input type="text" id="mysteryRecipientInput" placeholder="0x..." class="w-full bg-zinc-950/80 border border-zinc-700/50 rounded-xl p-3.5 pl-10 text-xs text-zinc-100 focus:outline-none focus:border-purple-500/50 input-glow transition font-mono">
-                        <div class="absolute left-3.5 top-1/2 -translate-y-1/2">
-                            <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                        </div>
+            <div class="glass-panel rounded-3xl p-8 text-center">
+                <div class="relative inline-block mb-6">
+                    <div class="w-24 h-24 rounded-full bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
+                        <div class="text-4xl opacity-50">🎰</div>
+                    </div>
+                    <div class="absolute -inset-2 rounded-full bg-purple-500/5 blur-xl animate-pulse"></div>
+                </div>
+
+                <div class="mb-6">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-purple-400/30 bg-purple-500/5">
+                        <div class="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></div>
+                        <span class="text-sm font-semibold text-purple-300">UNDER DEVELOPMENT</span>
                     </div>
                 </div>
 
-                <!-- Tier Selector -->
-                <div class="grid grid-cols-3 gap-3 mb-6">
-                    <button class="mystery-tier-btn glass-panel rounded-xl p-4 text-center transition-all hover:border-purple-500/30 border-2 border-transparent cursor-pointer" data-tier="common">
-                        <div class="text-2xl mb-2">🌱</div>
-                        <div class="text-xs font-bold text-zinc-200">Common</div>
-                        <div class="text-[10px] text-zinc-500 mt-1">0.05 $BOT</div>
-                        <div class="text-[9px] text-purple-400 mt-1">🎲 70% claim chance</div>
-                    </button>
-                    <button class="mystery-tier-btn glass-panel rounded-xl p-4 text-center transition-all hover:border-amber-500/30 border-2 border-transparent cursor-pointer" data-tier="rare">
-                        <div class="text-2xl mb-2">💎</div>
-                        <div class="text-xs font-bold text-zinc-200">Rare</div>
-                        <div class="text-[10px] text-zinc-500 mt-1">0.1 $BOT</div>
-                        <div class="text-[9px] text-amber-400 mt-1">⚡ 50% claim chance</div>
-                    </button>
-                    <button class="mystery-tier-btn glass-panel rounded-xl p-4 text-center transition-all hover:border-red-500/30 border-2 border-transparent cursor-pointer" data-tier="legendary">
-                        <div class="text-2xl mb-2">👑</div>
-                        <div class="text-xs font-bold text-zinc-200">Legendary</div>
-                        <div class="text-[10px] text-zinc-500 mt-1">0.5 $BOT</div>
-                        <div class="text-[9px] text-red-400 mt-1">🔥 30% claim chance</div>
-                    </button>
-                </div>
+                <h3 class="text-lg font-bold text-zinc-200 mb-2">Coming Soon</h3>
+                <p class="text-sm text-zinc-500 max-w-sm mx-auto leading-relaxed">
+                    Mystery Gift is being built with spin-to-claim mechanics, random odds, and tiered rewards. Stay tuned!
+                </p>
 
-                <!-- Message Input -->
-                <div class="space-y-2 mb-6">
-                    <label class="text-[11px] tracking-wide text-zinc-400 font-medium block uppercase">Message (optional)</label>
-                    <input type="text" id="mysteryMessageInput" placeholder="Good luck..." maxlength="140" class="w-full bg-zinc-950/80 border border-zinc-700/50 rounded-xl p-3.5 text-xs text-zinc-100 focus:outline-none focus:border-purple-500/50 input-glow transition">
+                <div class="mt-8 grid grid-cols-3 gap-4 max-w-xs mx-auto">
+                    <div class="text-center">
+                        <div class="text-lg mb-1 opacity-50">🌱</div>
+                        <div class="text-[10px] text-zinc-500">Common</div>
+                        <div class="text-[9px] text-purple-400/60">70%</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-lg mb-1 opacity-50">💎</div>
+                        <div class="text-[10px] text-zinc-500">Rare</div>
+                        <div class="text-[9px] text-amber-400/60">50%</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-lg mb-1 opacity-50">👑</div>
+                        <div class="text-[10px] text-zinc-500">Legendary</div>
+                        <div class="text-[9px] text-red-400/60">30%</div>
+                    </div>
                 </div>
-
-                <!-- Box Visual -->
-                <div class="text-center mb-6">
-                    <div id="mysteryBoxVisual" class="inline-block text-8xl transition-all duration-300 cursor-pointer select-none">📦</div>
-                    <div id="mysteryBoxStatus" class="text-xs text-zinc-500 mt-3">Select a tier & enter recipient</div>
-                </div>
-
-                <!-- VRF Reveal Panel -->
-                <div id="mysteryRevealPanel" class="hidden bg-zinc-950/50 rounded-2xl p-6 border border-zinc-700/30 text-center mb-6">
-                    <div class="text-[10px] text-purple-400/60 uppercase tracking-widest mb-2">Mystery Gift Sent!</div>
-                    <div id="mysteryResultAmount" class="text-4xl font-bold text-purple-400 font-mono mb-1">0.00</div>
-                    <div class="text-xs text-zinc-400 mb-3">$BOT sent to recipient</div>
-                    <div class="text-[10px] text-zinc-600 font-mono break-all" id="mysteryVrfProof">0x...</div>
-                    <div id="mysteryOddsDisplay" class="mt-3 text-[11px] text-amber-400"></div>
-                </div>
-
-                <button id="openMysteryBoxBtn" class="w-full bg-purple-600 hover:bg-purple-500 text-white py-4 rounded-xl font-semibold text-sm tracking-wide transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 shadow-[0_0_30px_rgba(139,92,246,0.2)] hover:shadow-[0_0_40px_rgba(139,92,246,0.35)] hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                    Send Mystery Gift <span class="text-lg">🎰</span>
-                </button>
             </div>
         </div>
 
@@ -3651,157 +3649,6 @@
 
 
 
-
-        // ==========================================
-        // 3. MYSTERY BOX
-        // ==========================================
-        let selectedMysteryTier = null;
-        const mysteryTiers = {
-            common: { amount: 0.05, odds: 70, color: '#10b981', label: 'Common' },
-            rare: { amount: 0.1, odds: 50, color: '#a855f7', label: 'Rare' },
-            legendary: { amount: 0.5, odds: 30, color: '#f59e0b', label: 'Legendary' }
-        };
-
-        document.querySelectorAll('.mystery-tier-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.mystery-tier-btn').forEach(b => {
-                    b.classList.remove('border-purple-500/50', 'border-amber-500/50', 'border-red-500/50', 'bg-purple-500/5', 'bg-amber-500/5', 'bg-red-500/5');
-                    b.classList.add('border-transparent');
-                });
-                selectedMysteryTier = btn.dataset.tier;
-                const colors = { common: 'purple', rare: 'amber', legendary: 'red' };
-                const c = colors[selectedMysteryTier];
-                btn.classList.remove('border-transparent');
-                btn.classList.add(`border-${c}-500/50`, `bg-${c}-500/5`);
-                const tier = mysteryTiers[selectedMysteryTier];
-                document.getElementById('mysteryBoxStatus').textContent = tier.amount + ' $BOT • ' + tier.odds + '% claim chance';
-                const recipientInput = document.getElementById('mysteryRecipientInput');
-                const hasRecipient = recipientInput && recipientInput.value.trim().startsWith('0x') && recipientInput.value.trim().length === 42;
-                document.getElementById('openMysteryBoxBtn').disabled = !hasRecipient;
-            });
-        });
-        const mysteryRecInput = document.getElementById('mysteryRecipientInput');
-        if (mysteryRecInput) {
-            mysteryRecInput.addEventListener('input', () => {
-                const valid = selectedMysteryTier && mysteryRecInput.value.trim().startsWith('0x') && mysteryRecInput.value.trim().length === 42;
-                document.getElementById('openMysteryBoxBtn').disabled = !valid;
-            });
-        }
-
-        document.getElementById('openMysteryBoxBtn').addEventListener('click', async () => {
-            if (!selectedMysteryTier) return;
-            if (!isWalletConnected) { openWalletModal(); return; }
-            if (!sbtContractInstance || !systemSigner) { alert("Connect wallet to BOT Chain Testnet first."); return; }
-
-            const recipientInput = document.getElementById('mysteryRecipientInput');
-            const recipient = recipientInput.value.trim();
-            if (!recipient.startsWith('0x') || recipient.length !== 42) {
-                recipientInput.style.borderColor = 'rgba(239,68,68,0.5)';
-                recipientInput.focus();
-                setTimeout(() => { recipientInput.style.borderColor = ''; }, 1500);
-                return;
-            }
-            const senderAddr = await systemSigner.getAddress();
-            if (recipient.toLowerCase() === senderAddr.toLowerCase()) {
-                alert("Can't send a mystery gift to yourself!");
-                return;
-            }
-
-            const box = document.getElementById('mysteryBoxVisual');
-            const btn = document.getElementById('openMysteryBoxBtn');
-            const reveal = document.getElementById('mysteryRevealPanel');
-            const status = document.getElementById('mysteryBoxStatus');
-            const tier = mysteryTiers[selectedMysteryTier];
-            const message = (document.getElementById('mysteryMessageInput').value || '').trim();
-
-            if (!confirm('Send Mystery Gift (' + tier.label + ') for ' + tier.amount + ' $BOT to ' + recipient.slice(0,6) + '...?')) return;
-
-            btn.disabled = true;
-            reveal.classList.add('hidden');
-            box.classList.add('box-shake');
-            status.textContent = 'Creating NFT metadata...';
-
-            try {
-                const mysteryTheme = getGiftTheme('mystery');
-                const mysteryImage = await ensureImageOnIpfs('data:image/svg+xml,' + encodeURIComponent(mysteryTheme.nftImageSvg));
-                const metadata = {
-                    name: mysteryTheme.successIcon + ' Mystery Gift - ' + tier.label,
-                    description: 'A mystery gift with ' + tier.odds + '% claim chance. Can you unlock it?',
-                    image: mysteryImage,
-                    external_url: window.location.origin,
-                    attributes: [
-                        { trait_type: 'Gift Type', value: 'mystery' },
-                        { trait_type: 'Tier', value: selectedMysteryTier },
-                        { trait_type: 'Odds', value: tier.odds },
-                        { trait_type: 'Amount', value: tier.amount, display_type: 'number' },
-                        { trait_type: 'Sender', value: senderAddr },
-                        { trait_type: mysteryTheme.traitName, value: mysteryTheme.traitValue() },
-                        { trait_type: 'Chain', value: 'BOT Chain Testnet' }
-                    ]
-                };
-
-                status.textContent = 'Uploading to IPFS...';
-                const metaHash = await uploadMetadataToPinata(metadata);
-                const tokenURI = 'ipfs://' + metaHash;
-
-                status.textContent = 'Minting on-chain...';
-                const amountWei = ethers.parseEther(tier.amount.toString());
-                const tx = await sbtContractInstance.mintSoulboundGift(recipient, tokenURI, message || 'Mystery Gift', { value: amountWei });
-                status.textContent = 'Confirming...';
-                const receipt = await tx.wait();
-
-                if (receipt.status === 1) {
-                    let mintedTokenId = '---';
-                    const event = receipt.logs.find(log => {
-                        try { const parsed = sbtContractInstance.interface.parseLog(log); return parsed && parsed.name === "SoulboundGiftMinted"; } catch (e) { return false; }
-                    });
-                    if (event) {
-                        const parsed = sbtContractInstance.interface.parseLog(event);
-                        mintedTokenId = parsed.args.tokenId.toString();
-                    }
-
-                    box.classList.remove('box-shake');
-                    box.classList.add('glow-burst');
-
-                    document.getElementById('mysteryResultAmount').textContent = tier.amount + ' $BOT';
-                    document.getElementById('mysteryResultAmount').style.color = tier.color;
-                    document.getElementById('mysteryVrfProof').textContent = tx.hash;
-                    document.getElementById('mysteryOddsDisplay').innerHTML = 'Recipient has <strong>' + tier.odds + '%</strong> chance to claim this gift';
-
-                    reveal.classList.remove('hidden');
-                    status.textContent = 'Sent! Share the claim link with your recipient.';
-                    btn.disabled = false;
-                    box.classList.remove('glow-burst');
-
-                    const claimUrl = window.location.origin + window.location.pathname + '?gift=' + mintedTokenId;
-                    await navigator.clipboard.writeText(claimUrl).catch(() => {});
-
-                    addGift({
-                        id: 'mystery_' + Date.now(),
-                        sender: senderAddr,
-                        recipient: recipient,
-                        amount: tier.amount.toString(),
-                        style: 'mystery',
-                        message: message || 'Mystery Gift (' + tier.odds + '% odds)',
-                        tokenId: mintedTokenId,
-                        txHash: tx.hash,
-                        timestamp: Date.now(),
-                        claimed: false,
-                        odds: tier.odds
-                    });
-
-                    await updateRealBalance();
-                    grantGasToRecipient(recipient);
-                    if (typeof loadOnChainHistory === 'function') await loadOnChainHistory();
-                    setTimeout(() => showSpecialSuccess('Mystery Gift Sent!', 'Claim link copied! Recipient has ' + tier.odds + '% chance to unlock ' + tier.amount + ' $BOT.', tx.hash), 500);
-                }
-            } catch (err) {
-                console.error('Mystery gift tx failed:', err);
-                status.textContent = 'Transaction failed: ' + (err.reason || err.message || 'Unknown error');
-                btn.disabled = false;
-                box.classList.remove('box-shake');
-            }
-        });
 
         // ==========================================
         // 4. DAO TREASURY
