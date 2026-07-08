@@ -6011,48 +6011,65 @@ window.convertSbtToBot = convertSbtToBot;
             }
 
             // ===== QUERY SBT CONTRACT EVENTS (on-chain, cross-browser) =====
-            // NOTE: ABI defines event as (uint256,address,address,string,uint256) but on-chain
-            // it's actually (uint256 indexed tokenId, address indexed sender, uint256 amount).
-            // We use raw eth_getLogs + manual decoding to avoid ABI mismatch issues.
             let onChainReceivedGifts = [];
             let onChainSentGifts = [];
             let onChainTokenIds = new Set();
             try {
                 const sbtAddr = window.SBT_CONTRACT_ADDRESS || '0x740e1ce98364EfF4d5e3d89b2b1fa513e0F75b16';
                 const sbtAbi = window.SBT_CONTRACT_ABI;
-                if (sbtAddr && sbtAbi && systemProvider) {
-                    const sbtRead = new ethers.Contract(sbtAddr, sbtAbi, systemProvider);
-                    console.log('[History] Querying SBT SoulboundGiftMinted events for:', realWalletAddress);
+                if (sbtAddr && sbtAbi) {
+                    // STANDALONE RPC: Avoid MetaMask throttling (MetaMask drops sequential calls after ~5-10)
+                    const readOnlyProvider = new ethers.JsonRpcProvider('https://rpc.bohr.life');
+                    const sbtRead = new ethers.Contract(sbtAddr, sbtAbi, readOnlyProvider);
+                    console.log('[History] Using standalone RPC for read-only calls (avoids MetaMask throttling)');
+
+                    // Retry helper: attempts up to maxRetries times with exponential backoff
+                    async function retryRpc(fn, label, maxRetries) {
+                        maxRetries = maxRetries || 3;
+                        for (var ri = 0; ri < maxRetries; ri++) {
+                            try { return await fn(); } catch (e) {
+                                if (ri < maxRetries - 1) {
+                                    await new Promise(function(r) { setTimeout(r, 300 * (ri + 1)); });
+                                } else {
+                                    console.warn('[History] ' + label + ' failed after ' + maxRetries + ' attempts:', e.message || e);
+                                    return null;
+                                }
+                            }
+                        }
+                    }
+
+                    console.log('[History] Querying SBT events for:', realWalletAddress);
+
                     // Event signature: SoulboundGiftMinted(uint256,address,uint256)
                     const EVENT_TOPIC = '0xa0ebaf2a4b1dfb60c926826384f931391e4881e2250e4be34b621dca5ee35d2b';
                     let allLogs = [];
                     try {
-                        const rawLogs = await systemProvider.send('eth_getLogs', [{
+                        const rawLogs = await readOnlyProvider.send('eth_getLogs', [{
                             address: sbtAddr,
                             topics: [EVENT_TOPIC],
                             fromBlock: '0x0',
                             toBlock: 'latest'
                         }]);
                         allLogs = rawLogs || [];
-                    } catch (e) { console.warn('[History] eth_getLogs failed:', e); }
-                    console.log('[History] Raw SoulboundGiftMinted logs found:', allLogs.length);
+                    } catch (e) { console.warn('[History] SoulboundGiftMinted eth_getLogs failed:', e.message || e); }
+                    console.log('[History] SoulboundGiftMinted logs found:', allLogs.length);
 
-                    // ===== TRANSFER EVENTS: Identify recipients + burn status WITHOUT contract calls =====
+                    // TRANSFER EVENTS: Identify recipients + burn status via ERC721 standard events
                     const TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
                     const ZERO_ADDR_PADDED = '0x0000000000000000000000000000000000000000000000000000000000000000';
                     let transferLogs = [];
                     try {
-                        const rawTLogs = await systemProvider.send('eth_getLogs', [{
+                        const rawTLogs = await readOnlyProvider.send('eth_getLogs', [{
                             address: sbtAddr,
                             topics: [TRANSFER_TOPIC],
                             fromBlock: '0x0',
                             toBlock: 'latest'
                         }]);
                         transferLogs = rawTLogs || [];
-                    } catch (e) { console.warn('[History] Transfer eth_getLogs failed:', e); }
-                    console.log('[History] Raw Transfer logs found:', transferLogs.length);
+                    } catch (e) { console.warn('[History] Transfer eth_getLogs failed:', e.message || e); }
+                    console.log('[History] Transfer logs found:', transferLogs.length);
 
-                    // Build maps: tokenId → recipient (from mint) and burned tokenIds (from burn)
+                    // Build maps: tokenId → recipient (from mint transfers) and burned tokenIds (from burn transfers)
                     const mintRecipientMap = {};
                     const burnedTokenSet = new Set();
                     for (const tLog of transferLogs) {
@@ -6069,7 +6086,12 @@ window.convertSbtToBot = convertSbtToBot;
                     }
                     console.log('[History] Mint recipients mapped:', Object.keys(mintRecipientMap).length, '| Burned tokens:', burnedTokenSet.size);
 
+                    // Process each SoulboundGiftMinted event
                     const walletAddrPadded = '0x000000000000000000000000' + realWalletAddress.slice(2).toLowerCase();
+                    var processedCount = 0;
+                    var senderCount = 0;
+                    var recipientCount = 0;
+                    var skippedCount = 0;
                     for (const log of allLogs) {
                         try {
                             const tokenId = parseInt(log.topics[1], 16).toString();
@@ -6080,77 +6102,109 @@ window.convertSbtToBot = convertSbtToBot;
                             const isSender = senderPadded.toLowerCase() === walletAddrPadded;
                             onChainTokenIds.add(tokenId);
 
+                            // Step 1: Determine burn status from Transfer events (FREE - no RPC call)
                             let isClaimed = burnedTokenSet.has(tokenId);
+
+                            // Step 2: Identify recipient - layered fallback strategy
                             let recipient = mintRecipientMap[tokenId] || '';
-                            let message = '', style = 'gift', timestamp = Date.now(), unlockTime = null, image = '';
 
-                            // getGiftData: metadata + fallback recipient
-                            try {
-                                const gd = await sbtRead.getGiftData(tokenId);
-                                if (!recipient && gd[1] && gd[1] !== ethers.ZeroAddress) recipient = gd[1];
-                                if (gd[2]) message = gd[2];
-                                if (gd[4]) timestamp = Number(gd[4]) * 1000;
-                            } catch (e) {}
-
-                            // ownerOf: final fallback for recipient identification
-                            if (!recipient && !isClaimed) {
-                                try {
-                                    const ownerAddr = await sbtRead.ownerOf(tokenId);
-                                    if (ownerAddr && ownerAddr !== ethers.ZeroAddress) recipient = ownerAddr;
-                                } catch (e) { isClaimed = true; }
+                            if (!recipient) {
+                                // Fallback A: getGiftData with retry (reads giftData mapping from contract)
+                                const gd = await retryRpc(function() { return sbtRead.getGiftData(tokenId); }, 'getGiftData(' + tokenId + ')');
+                                if (gd) {
+                                    if (gd[1] && gd[1] !== ethers.ZeroAddress) recipient = gd[1];
+                                    // Also grab message + timestamp while we're here
+                                    var message = gd[2] || '';
+                                    var timestamp = gd[4] ? Number(gd[4]) * 1000 : Date.now();
+                                } else {
+                                    console.warn('[History] getGiftData returned null for token', tokenId, '- trying ownerOf');
+                                }
                             }
 
-                            const isRecipient = (recipient && recipient.toLowerCase() === realWalletAddress.toLowerCase());
-                            if (!isSender && !isRecipient) continue;
+                            if (!recipient && !isClaimed) {
+                                // Fallback B: ownerOf with retry (check current token owner)
+                                const ownerAddr = await retryRpc(function() { return sbtRead.ownerOf(tokenId); }, 'ownerOf(' + tokenId + ')');
+                                if (ownerAddr && ownerAddr !== ethers.ZeroAddress) {
+                                    recipient = ownerAddr;
+                                } else {
+                                    // ownerOf failed - token is likely burned but wasn't in Transfer events
+                                    isClaimed = true;
+                                    console.warn('[History] ownerOf failed for token', tokenId, '- marking as claimed');
+                                }
+                            }
 
-                            // tokenURI: image + style metadata
+                            // Step 3: Determine if this gift belongs to the current wallet
+                            var isRecipient = !!(recipient && recipient.toLowerCase() === realWalletAddress.toLowerCase());
+                            if (!isSender && !isRecipient) {
+                                skippedCount++;
+                                continue;
+                            }
+
+                            if (isSender) senderCount++;
+                            if (isRecipient) recipientCount++;
+
+                            // Step 4: Fetch metadata ONLY for gifts relevant to this wallet (saves RPC calls)
+                            var message = message || '';
+                            var style = 'gift';
+                            var timestamp = timestamp || Date.now();
+                            var unlockTime = null;
+                            var image = '';
+
                             try {
-                                const uri = await sbtRead.tokenURI(tokenId);
-                                const fetchUri = uri && uri.startsWith('ipfs://') ? PINATA_GATEWAY + uri.slice(7) : uri;
-                                if (fetchUri && fetchUri.startsWith('http')) {
-                                    try {
-                                        const r = await fetch(fetchUri).catch(() => null);
-                                        if (r && r.ok) { const m = await r.json().catch(() => null); if (m && m.attributes) {
-                                            const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
-                                            if (ta) style = ta.value;
-                                            const ut = m.attributes.find(a => a.trait_type === 'Unlock Time');
-                                            if (ut && ut.value) unlockTime = Number(ut.value) * 1000;
-                                        } if (m && m.image) { image = m.image.startsWith('ipfs://') ? PINATA_GATEWAY + m.image.slice(7) : m.image; } }
-                                    } catch (e) {}
-                                } else if (uri && uri.startsWith('data:application/json')) {
-                                    try {
-                                        const jsonPart = uri.split(',')[1] || '';
-                                        const jsonStr = decodeURIComponent(escape(atob(jsonPart)));
-                                        const m = JSON.parse(jsonStr);
-                                        if (m && m.image) image = m.image.startsWith('ipfs://') ? PINATA_GATEWAY + m.image.slice(7) : m.image;
-                                        if (m && m.attributes) {
-                                            const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
-                                            if (ta) style = ta.value;
-                                            const ut = m.attributes.find(a => a.trait_type === 'Unlock Time');
-                                            if (ut && ut.value) unlockTime = Number(ut.value) * 1000;
+                                const uri = await retryRpc(function() { return sbtRead.tokenURI(tokenId); }, 'tokenURI(' + tokenId + ')');
+                                if (uri) {
+                                    const fetchUri = uri.startsWith('ipfs://') ? PINATA_GATEWAY + uri.slice(7) : uri;
+                                    if (fetchUri.startsWith('http')) {
+                                        try {
+                                            const r = await fetch(fetchUri).catch(function() { return null; });
+                                            if (r && r.ok) {
+                                                const m = await r.json().catch(function() { return null; });
+                                                if (m && m.attributes) {
+                                                    const ta = m.attributes.find(function(a) { return a.trait_type === 'Gift Type'; });
+                                                    if (ta) style = ta.value;
+                                                    const ut = m.attributes.find(function(a) { return a.trait_type === 'Unlock Time'; });
+                                                    if (ut && ut.value) unlockTime = Number(ut.value) * 1000;
+                                                }
+                                                if (m && m.image) { image = m.image.startsWith('ipfs://') ? PINATA_GATEWAY + m.image.slice(7) : m.image; }
+                                            }
+                                        } catch (e) {}
+                                    } else if (uri.startsWith('data:application/json')) {
+                                        try {
+                                            const jsonPart = uri.split(',')[1] || '';
+                                            const jsonStr = decodeURIComponent(escape(atob(jsonPart)));
+                                            const m = JSON.parse(jsonStr);
+                                            if (m && m.image) image = m.image.startsWith('ipfs://') ? PINATA_GATEWAY + m.image.slice(7) : m.image;
+                                            if (m && m.attributes) {
+                                                const ta = m.attributes.find(function(a) { return a.trait_type === 'Gift Type'; });
+                                                if (ta) style = ta.value;
+                                                const ut = m.attributes.find(function(a) { return a.trait_type === 'Unlock Time'; });
+                                                if (ut && ut.value) unlockTime = Number(ut.value) * 1000;
+                                            }
+                                        } catch (e) {}
+                                    } else if (uri.startsWith('data:image/svg+xml')) {
+                                        const svgPart = uri.split(',')[1] || '';
+                                        const svgStr = svgPart.includes('%') ? decodeURIComponent(svgPart) : (svgPart.length > 100 && !svgPart.includes(' ') ? atob(svgPart) : svgPart);
+                                        const match = svgStr.match(/CRYPTO BRO|LOVE LETTER|HAPPY BIRTHDAY|YOUR HEART|MYSTERY BOX|GOLDEN TICKET|TREASURE CHEST|CHRISTMAS|DIAMOND HANDS/);
+                                        if (match) {
+                                            const nm = { 'CRYPTO BRO':'cryptoBro','LOVE LETTER':'loveletter','HAPPY BIRTHDAY':'birthday','YOUR HEART':'heart','MYSTERY BOX':'mystery','GOLDEN TICKET':'goldenticket','TREASURE CHEST':'treasure','CHRISTMAS':'christmas','DIAMOND HANDS':'diamond' };
+                                            style = nm[match[0]] || 'gift';
                                         }
-                                    } catch (e) {}
-                                } else if (uri && uri.startsWith('data:image/svg+xml')) {
-                                    const svgPart = uri.split(',')[1] || '';
-                                    const svgStr = svgPart.includes('%') ? decodeURIComponent(svgPart) : (svgPart.length > 100 && !svgPart.includes(' ') ? atob(svgPart) : svgPart);
-                                    const match = svgStr.match(/CRYPTO BRO|LOVE LETTER|HAPPY BIRTHDAY|YOUR HEART|MYSTERY BOX|GOLDEN TICKET|TREASURE CHEST|CHRISTMAS|DIAMOND HANDS/);
-                                    if (match) {
-                                        const nm = { 'CRYPTO BRO':'cryptoBro','LOVE LETTER':'loveletter','HAPPY BIRTHDAY':'birthday','YOUR HEART':'heart','MYSTERY BOX':'mystery','GOLDEN TICKET':'goldenticket','TREASURE CHEST':'treasure','CHRISTMAS':'christmas','DIAMOND HANDS':'diamond' };
-                                        style = nm[match[0]] || 'gift';
                                     }
                                 }
-                            } catch (e) {}
+                            } catch (e) { console.warn('[History] tokenURI/metadata failed for token', tokenId, ':', e.message || e); }
 
+                            // Step 5: Add to appropriate array
+                            processedCount++;
                             if (isRecipient) {
                                 onChainReceivedGifts.push({ id:'ocr_'+tokenId, sender:senderAddr, recipient:recipient || realWalletAddress, senderName:shortAddr(senderAddr), amount, style, message, image, tokenId, txHash:log.transactionHash, timestamp, claimed:isClaimed, unlockTime:unlockTime, source:'onchain' });
                             } else {
                                 onChainSentGifts.push({ id:'ocs_'+tokenId, sender:realWalletAddress, recipient:recipient || 'unknown', senderName:shortAddr(realWalletAddress), amount, style, message, image, tokenId, txHash:log.transactionHash, timestamp, claimed:isClaimed, unlockTime:unlockTime, source:'onchain' });
                             }
-                        } catch (e) { console.warn('[History] Failed to parse event log:', e); }
+                        } catch (e) { console.warn('[History] Failed to parse event:', e.message || e); }
                     }
-                    console.log('[History] On-chain gifts: received=' + onChainReceivedGifts.length + ' sent=' + onChainSentGifts.length);
+                    console.log('[History] Done: processed=' + processedCount + ' sent=' + senderCount + ' received=' + recipientCount + ' skipped=' + skippedCount);
                 }
-            } catch (e) { console.error('[History] SBT event query failed:', e); }
+            } catch (e) { console.error('[History] SBT event query failed:', e.message || e); }
 
             // Merge localStorage with on-chain data
             const localSent = getGiftsSentBy(realWalletAddress);
