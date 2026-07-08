@@ -4846,7 +4846,7 @@ window.convertSbtToBot = convertSbtToBot;
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            model: 'llama3-8b-8192',
+                            model: 'llama-3.1-8b-instant',
                             messages: [
                                 { role: 'system', content: 'You are a joyful, uplifting, and highly enthusiastic gifting assistant. Your sole purpose is to make humans happy and help them with ideas, tips, and inspiration strictly related to gifts, presents, surprises, and celebrations. CRITICAL RULE: You must ONLY talk about gifts and happiness. If the user asks about coding, politics, math, or anything else unrelated to gifts, politely and cheerfully redirect them back to gifting.' },
                                 ...messages.filter(m => m.role !== 'system'),
@@ -4881,7 +4881,7 @@ window.convertSbtToBot = convertSbtToBot;
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            model: 'llama3-8b-8192',
+                            model: 'llama-3.1-8b-instant',
                             messages: [
                                 { role: 'system', content: 'You are a joyful, uplifting, and highly enthusiastic gifting assistant. Your sole purpose is to make humans happy and help them with ideas, tips, and inspiration strictly related to gifts, presents, surprises, and celebrations. CRITICAL RULE: You must ONLY talk about gifts and happiness. If the user asks about coding, politics, math, or anything else unrelated to gifts, politely and cheerfully redirect them back to gifting.' },
                                 ...messages.filter(m => m.role !== 'system'),
@@ -7341,7 +7341,7 @@ window.convertSbtToBot = convertSbtToBot;
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_API_KEY },
                 body: JSON.stringify({
-                    model: 'llama3-8b-8192',
+                    model: 'llama-3.1-8b-instant',
                     messages: aiChatHistory,
                     temperature: 0.8,
                     max_tokens: 200
