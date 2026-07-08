@@ -6101,7 +6101,8 @@ window.convertSbtToBot = convertSbtToBot;
                             const sender = primaryEvt.args.sender;
                             const recipient = primaryEvt.args.recipient;
                             const amount = ethers.formatEther(primaryEvt.args.amount);
-                            const isClaimed = td && td.owner.status === 'fulfilled' ? td.owner.value === ethers.ZeroAddress : false;
+                            const isClaimedByLocal = (() => { try { const ck = 'web3gift_claimed_' + realWalletAddress; const cl = JSON.parse(localStorage.getItem(ck) || '[]'); return cl.includes(tid); } catch(e) { return false; } })();
+                            const isClaimed = isClaimedByLocal || (td ? (td.owner.status === 'rejected' || (td.owner.status === 'fulfilled' && (td.owner.value === ethers.ZeroAddress || td.owner.value === '0x0000000000000000000000000000000000000000'))) : false);
                             let message = '', timestamp = Date.now();
                             let style = 'gift', unlockTime = null, image = '';
 
@@ -6203,6 +6204,13 @@ window.convertSbtToBot = convertSbtToBot;
                     seenTokenIds.add(c.tokenId);
                 }
             });
+
+            // Move gifts from localPending to localClaimed if they are now claimed on-chain
+            const newlyClaimed = localPending.filter(g => g.claimed);
+            newlyClaimed.forEach(g => localClaimed.push(g));
+            const stillPending = localPending.filter(g => !g.claimed);
+            localPending.length = 0;
+            stillPending.forEach(g => localPending.push(g));
 
             const lockData = JSON.parse(localStorage.getItem('web3gift_timelocks') || '[]');
 
