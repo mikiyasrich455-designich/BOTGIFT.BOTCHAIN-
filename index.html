@@ -1625,29 +1625,29 @@
                     <div class="absolute -inset-0.5 rounded-2xl bg-indigo-500/20 blur-lg opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
                 </div>
 
-                <!-- 3. Mystery Box -->
-                <div class="special-gift-card stagger-card rounded-2xl overflow-hidden flex flex-col relative" 
-                     style="animation-delay: 120ms;" 
-                     data-special="mysteryBox">
-                    <div class="relative h-48 overflow-hidden">
-                        <img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783197614/photo_5931304236568218966_y_ooycxv.jpg" 
-                             class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" 
-                             alt="Mystery Box"
-                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-                        <div class="absolute inset-0 bg-gradient-to-t from-[#7c2d12] via-[#7c2d12]/60 to-transparent"></div>
-                        <div class="absolute inset-0 bg-[#7c2d12]/40 backdrop-blur-[2px] hidden items-center justify-center text-4xl">🎲</div>
-                    </div>
-                    <div class="relative z-10 p-5 -mt-8 flex flex-col flex-1" style="background: linear-gradient(180deg, transparent 0%, #7c2d12 20%);">
-                        <div class="flex items-center gap-2 mb-2">
-                            <div class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></div>
-                            <h3 class="text-lg font-bold text-white">Mystery Box</h3>
-                        </div>
-                        <p class="text-xs text-white/70 leading-relaxed flex-1">Randomized on-chain loot. Provably fair, verifiably random.</p>
-                        <div class="mt-3 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-[10px] text-white/80 font-medium inline-block self-start">Chainlink VRF</div>
-                    </div>
-                    <div class="absolute inset-0 rounded-2xl border border-amber-500/20 pointer-events-none"></div>
-                    <div class="absolute -inset-0.5 rounded-2xl bg-amber-500/20 blur-lg opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+            <!-- 3. Mystery Gift -->
+            <div class="special-gift-card stagger-card rounded-2xl overflow-hidden flex flex-col relative"
+                 style="animation-delay: 120ms;"
+                 data-special="mysteryBox">
+                <div class="relative h-48 overflow-hidden">
+                    <img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783197614/photo_5931304236568218966_y_ooycxv.jpg"
+                         class="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+                         alt="Mystery Gift"
+                         onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#4c1d95] via-[#4c1d95]/60 to-transparent"></div>
+                    <div class="absolute inset-0 bg-[#4c1d95]/40 backdrop-blur-[2px] hidden items-center justify-center text-4xl">🎰</div>
                 </div>
+                <div class="relative z-10 p-5 -mt-8 flex flex-col flex-1" style="background: linear-gradient(180deg, transparent 0%, #4c1d95 20%);">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></div>
+                        <h3 class="text-lg font-bold text-white">Mystery Gift</h3>
+                    </div>
+                    <p class="text-xs text-white/70 leading-relaxed flex-1">Send a hidden amount. Recipient spins to claim with odds!</p>
+                    <div class="mt-3 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-[10px] text-white/80 font-medium inline-block self-start">🎲 Random Odds</div>
+                </div>
+                <div class="absolute inset-0 rounded-2xl border border-purple-500/20 pointer-events-none"></div>
+                <div class="absolute -inset-0.5 rounded-2xl bg-purple-500/20 blur-lg opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+            </div>
 
                 <!-- 4. DAO Treasury -->
                 <div class="special-gift-card stagger-card rounded-2xl overflow-hidden flex flex-col relative" 
@@ -2149,47 +2149,68 @@
                 <button id="backFromMystery" class="text-zinc-400 hover:text-zinc-200 transition text-sm flex items-center gap-1 cursor-pointer glass-panel px-3 py-1.5 rounded-full">← Special Gifts</button>
             </div>
             <div class="text-center mb-6 animate-slide-in">
-                <div class="text-5xl mb-3 float-anim">🎲</div>
-                <h2 class="text-2xl font-bold text-zinc-100 mb-1">Mystery Box</h2>
-                <p class="text-sm text-zinc-400">Provably fair randomness. What's inside is destiny.</p>
+                <div class="text-5xl mb-3 float-anim">🎰</div>
+                <h2 class="text-2xl font-bold text-zinc-100 mb-1">Mystery Gift</h2>
+                <p class="text-sm text-zinc-400">Send a hidden amount. Recipient spins to claim!</p>
             </div>
 
             <div class="glass-panel rounded-3xl p-8 animate-slide-in">
+                <!-- Recipient Input -->
+                <div class="space-y-2 mb-6">
+                    <label class="text-[11px] tracking-wide text-zinc-400 font-medium block uppercase">Recipient Address</label>
+                    <div class="relative">
+                        <input type="text" id="mysteryRecipientInput" placeholder="0x..." class="w-full bg-zinc-950/80 border border-zinc-700/50 rounded-xl p-3.5 pl-10 text-xs text-zinc-100 focus:outline-none focus:border-purple-500/50 input-glow transition font-mono">
+                        <div class="absolute left-3.5 top-1/2 -translate-y-1/2">
+                            <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Tier Selector -->
-                <div class="grid grid-cols-3 gap-3 mb-8">
-                    <button class="mystery-tier-btn glass-panel rounded-xl p-4 text-center transition-all hover:border-emerald-500/30 border-2 border-transparent cursor-pointer" data-tier="common">
+                <div class="grid grid-cols-3 gap-3 mb-6">
+                    <button class="mystery-tier-btn glass-panel rounded-xl p-4 text-center transition-all hover:border-purple-500/30 border-2 border-transparent cursor-pointer" data-tier="common">
                         <div class="text-2xl mb-2">🌱</div>
                         <div class="text-xs font-bold text-zinc-200">Common</div>
-                        <div class="text-[10px] text-zinc-500 mt-1">0.1 - 1 BOT</div>
+                        <div class="text-[10px] text-zinc-500 mt-1">0.05 $BOT</div>
+                        <div class="text-[9px] text-purple-400 mt-1">🎲 70% claim chance</div>
                     </button>
-                    <button class="mystery-tier-btn glass-panel rounded-xl p-4 text-center transition-all hover:border-purple-500/30 border-2 border-transparent cursor-pointer" data-tier="rare">
-                        <div class="text-2xl mb-2">💜</div>
+                    <button class="mystery-tier-btn glass-panel rounded-xl p-4 text-center transition-all hover:border-amber-500/30 border-2 border-transparent cursor-pointer" data-tier="rare">
+                        <div class="text-2xl mb-2">💎</div>
                         <div class="text-xs font-bold text-zinc-200">Rare</div>
-                        <div class="text-[10px] text-zinc-500 mt-1">1 - 10 BOT</div>
+                        <div class="text-[10px] text-zinc-500 mt-1">0.1 $BOT</div>
+                        <div class="text-[9px] text-amber-400 mt-1">⚡ 50% claim chance</div>
                     </button>
-                    <button class="mystery-tier-btn glass-panel rounded-xl p-4 text-center transition-all hover:border-amber-500/30 border-2 border-transparent cursor-pointer" data-tier="legendary">
+                    <button class="mystery-tier-btn glass-panel rounded-xl p-4 text-center transition-all hover:border-red-500/30 border-2 border-transparent cursor-pointer" data-tier="legendary">
                         <div class="text-2xl mb-2">👑</div>
                         <div class="text-xs font-bold text-zinc-200">Legendary</div>
-                        <div class="text-[10px] text-zinc-500 mt-1">10 - 100 BOT</div>
+                        <div class="text-[10px] text-zinc-500 mt-1">0.5 $BOT</div>
+                        <div class="text-[9px] text-red-400 mt-1">🔥 30% claim chance</div>
                     </button>
                 </div>
 
+                <!-- Message Input -->
+                <div class="space-y-2 mb-6">
+                    <label class="text-[11px] tracking-wide text-zinc-400 font-medium block uppercase">Message (optional)</label>
+                    <input type="text" id="mysteryMessageInput" placeholder="Good luck..." maxlength="140" class="w-full bg-zinc-950/80 border border-zinc-700/50 rounded-xl p-3.5 text-xs text-zinc-100 focus:outline-none focus:border-purple-500/50 input-glow transition">
+                </div>
+
                 <!-- Box Visual -->
-                <div class="text-center mb-8">
+                <div class="text-center mb-6">
                     <div id="mysteryBoxVisual" class="inline-block text-8xl transition-all duration-300 cursor-pointer select-none">📦</div>
-                    <div id="mysteryBoxStatus" class="text-xs text-zinc-500 mt-3">Select a tier to begin</div>
+                    <div id="mysteryBoxStatus" class="text-xs text-zinc-500 mt-3">Select a tier & enter recipient</div>
                 </div>
 
                 <!-- VRF Reveal Panel -->
                 <div id="mysteryRevealPanel" class="hidden bg-zinc-950/50 rounded-2xl p-6 border border-zinc-700/30 text-center mb-6">
-                    <div class="text-[10px] text-amber-400/60 uppercase tracking-widest mb-2">VRF Randomness Verified</div>
-                    <div id="mysteryResultAmount" class="text-4xl font-bold text-amber-400 font-mono mb-1">0.00</div>
-                    <div class="text-xs text-zinc-400 mb-3">$BOT + <span id="mysteryResultGift" class="text-white font-medium">Diamond Hands</span> NFT</div>
+                    <div class="text-[10px] text-purple-400/60 uppercase tracking-widest mb-2">Mystery Gift Sent!</div>
+                    <div id="mysteryResultAmount" class="text-4xl font-bold text-purple-400 font-mono mb-1">0.00</div>
+                    <div class="text-xs text-zinc-400 mb-3">$BOT sent to recipient</div>
                     <div class="text-[10px] text-zinc-600 font-mono break-all" id="mysteryVrfProof">0x...</div>
+                    <div id="mysteryOddsDisplay" class="mt-3 text-[11px] text-amber-400"></div>
                 </div>
 
-                <button id="openMysteryBoxBtn" class="w-full bg-amber-600 hover:bg-amber-500 text-white py-4 rounded-xl font-semibold text-sm tracking-wide transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 shadow-[0_0_30px_rgba(245,158,11,0.2)] hover:shadow-[0_0_40px_rgba(245,158,11,0.35)] hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                    Open Mystery Box <span class="text-lg">🎲</span>
+                <button id="openMysteryBoxBtn" class="w-full bg-purple-600 hover:bg-purple-500 text-white py-4 rounded-xl font-semibold text-sm tracking-wide transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 shadow-[0_0_30px_rgba(139,92,246,0.2)] hover:shadow-[0_0_40px_rgba(139,92,246,0.35)] hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    Send Mystery Gift <span class="text-lg">🎰</span>
                 </button>
             </div>
         </div>
@@ -2587,7 +2608,7 @@
                     </div>
                     <div class="about-feature glass-panel rounded-xl p-5 group" style="animation-delay: 0.2s;">
                         <div class="text-2xl mb-3 group-hover:scale-125 transition-transform duration-300">🎲</div>
-                        <h4 class="text-sm font-bold text-zinc-100 mb-1">Mystery Boxes</h4>
+                        <h4 class="text-sm font-bold text-zinc-100 mb-1">Mystery Gifts</h4>
                         <p class="text-[11px] text-zinc-500 leading-relaxed">Random surprise gifts with different rarity tiers and rewards.</p>
                     </div>
                     <div class="about-feature glass-panel rounded-xl p-5 group" style="animation-delay: 0.25s;">
@@ -3636,40 +3657,64 @@
         // ==========================================
         let selectedMysteryTier = null;
         const mysteryTiers = {
-            common: { min: 0.1, max: 1, color: '#10b981' },
-            rare: { min: 1, max: 10, color: '#a855f7' },
-            legendary: { min: 10, max: 100, color: '#f59e0b' }
+            common: { amount: 0.05, odds: 70, color: '#10b981', label: 'Common' },
+            rare: { amount: 0.1, odds: 50, color: '#a855f7', label: 'Rare' },
+            legendary: { amount: 0.5, odds: 30, color: '#f59e0b', label: 'Legendary' }
         };
-        const mysteryGifts = ['Crypto Bro', 'Diamond Hands', 'Love Letter', 'Golden Ticket'];
 
         document.querySelectorAll('.mystery-tier-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.mystery-tier-btn').forEach(b => {
-                    b.classList.remove('border-emerald-500/50', 'border-purple-500/50', 'border-amber-500/50', 'bg-emerald-500/5', 'bg-purple-500/5', 'bg-amber-500/5');
+                    b.classList.remove('border-purple-500/50', 'border-amber-500/50', 'border-red-500/50', 'bg-purple-500/5', 'bg-amber-500/5', 'bg-red-500/5');
                     b.classList.add('border-transparent');
                 });
                 selectedMysteryTier = btn.dataset.tier;
-                const colors = { common: 'emerald', rare: 'purple', legendary: 'amber' };
+                const colors = { common: 'purple', rare: 'amber', legendary: 'red' };
                 const c = colors[selectedMysteryTier];
                 btn.classList.remove('border-transparent');
                 btn.classList.add(`border-${c}-500/50`, `bg-${c}-500/5`);
-                document.getElementById('openMysteryBoxBtn').disabled = false;
-                document.getElementById('mysteryBoxStatus').textContent = 'Click the box to open';
+                const tier = mysteryTiers[selectedMysteryTier];
+                document.getElementById('mysteryBoxStatus').textContent = tier.amount + ' $BOT • ' + tier.odds + '% claim chance';
+                const recipientInput = document.getElementById('mysteryRecipientInput');
+                const hasRecipient = recipientInput && recipientInput.value.trim().startsWith('0x') && recipientInput.value.trim().length === 42;
+                document.getElementById('openMysteryBoxBtn').disabled = !hasRecipient;
             });
         });
+        const mysteryRecInput = document.getElementById('mysteryRecipientInput');
+        if (mysteryRecInput) {
+            mysteryRecInput.addEventListener('input', () => {
+                const valid = selectedMysteryTier && mysteryRecInput.value.trim().startsWith('0x') && mysteryRecInput.value.trim().length === 42;
+                document.getElementById('openMysteryBoxBtn').disabled = !valid;
+            });
+        }
 
         document.getElementById('openMysteryBoxBtn').addEventListener('click', async () => {
             if (!selectedMysteryTier) return;
             if (!isWalletConnected) { openWalletModal(); return; }
             if (!sbtContractInstance || !systemSigner) { alert("Connect wallet to BOT Chain Testnet first."); return; }
 
+            const recipientInput = document.getElementById('mysteryRecipientInput');
+            const recipient = recipientInput.value.trim();
+            if (!recipient.startsWith('0x') || recipient.length !== 42) {
+                recipientInput.style.borderColor = 'rgba(239,68,68,0.5)';
+                recipientInput.focus();
+                setTimeout(() => { recipientInput.style.borderColor = ''; }, 1500);
+                return;
+            }
+            const senderAddr = await systemSigner.getAddress();
+            if (recipient.toLowerCase() === senderAddr.toLowerCase()) {
+                alert("Can't send a mystery gift to yourself!");
+                return;
+            }
+
             const box = document.getElementById('mysteryBoxVisual');
             const btn = document.getElementById('openMysteryBoxBtn');
             const reveal = document.getElementById('mysteryRevealPanel');
             const status = document.getElementById('mysteryBoxStatus');
             const tier = mysteryTiers[selectedMysteryTier];
+            const message = (document.getElementById('mysteryMessageInput').value || '').trim();
 
-            if (!confirm('Open Mystery Box for ' + tier.min + ' BOT?')) return;
+            if (!confirm('Send Mystery Gift (' + tier.label + ') for ' + tier.amount + ' $BOT to ' + recipient.slice(0,6) + '...?')) return;
 
             btn.disabled = true;
             reveal.classList.add('hidden');
@@ -3677,23 +3722,19 @@
             status.textContent = 'Creating NFT metadata...';
 
             try {
-                const mysteryReward = (Math.random() * (tier.max - tier.min) + tier.min).toFixed(3);
-                const gift = mysteryGifts[Math.floor(Math.random() * mysteryGifts.length)];
-                const mysteryAddr = await systemSigner.getAddress();
-
                 const mysteryTheme = getGiftTheme('mystery');
                 const mysteryImage = await ensureImageOnIpfs('data:image/svg+xml,' + encodeURIComponent(mysteryTheme.nftImageSvg));
                 const metadata = {
-                    name: mysteryTheme.successIcon + ' Mystery Box - ' + selectedMysteryTier.toUpperCase(),
-                    description: 'A mystery gift containing ' + mysteryReward + ' BOT and a ' + gift + ' NFT!',
+                    name: mysteryTheme.successIcon + ' Mystery Gift - ' + tier.label,
+                    description: 'A mystery gift with ' + tier.odds + '% claim chance. Can you unlock it?',
                     image: mysteryImage,
                     external_url: window.location.origin,
                     attributes: [
                         { trait_type: 'Gift Type', value: 'mystery' },
                         { trait_type: 'Tier', value: selectedMysteryTier },
-                        { trait_type: 'Reward', value: gift },
-                        { trait_type: 'Amount', value: parseFloat(mysteryReward), display_type: 'number' },
-                        { trait_type: 'Sender', value: mysteryAddr },
+                        { trait_type: 'Odds', value: tier.odds },
+                        { trait_type: 'Amount', value: tier.amount, display_type: 'number' },
+                        { trait_type: 'Sender', value: senderAddr },
                         { trait_type: mysteryTheme.traitName, value: mysteryTheme.traitValue() },
                         { trait_type: 'Chain', value: 'BOT Chain Testnet' }
                     ]
@@ -3703,10 +3744,10 @@
                 const metaHash = await uploadMetadataToPinata(metadata);
                 const tokenURI = 'ipfs://' + metaHash;
 
-                status.textContent = 'Minting NFT...';
-                const amountWei = ethers.parseEther(tier.min.toString());
-                const tx = await sbtContractInstance.mintSoulboundGift(mysteryAddr, tokenURI, 'Mystery Box Purchase', { value: amountWei });
-                status.textContent = 'Confirming on-chain...';
+                status.textContent = 'Minting on-chain...';
+                const amountWei = ethers.parseEther(tier.amount.toString());
+                const tx = await sbtContractInstance.mintSoulboundGift(recipient, tokenURI, message || 'Mystery Gift', { value: amountWei });
+                status.textContent = 'Confirming...';
                 const receipt = await tx.wait();
 
                 if (receipt.status === 1) {
@@ -3722,35 +3763,40 @@
                     box.classList.remove('box-shake');
                     box.classList.add('glow-burst');
 
-                    document.getElementById('mysteryResultAmount').textContent = mysteryReward;
+                    document.getElementById('mysteryResultAmount').textContent = tier.amount + ' $BOT';
                     document.getElementById('mysteryResultAmount').style.color = tier.color;
-                    document.getElementById('mysteryResultGift').textContent = gift;
                     document.getElementById('mysteryVrfProof').textContent = tx.hash;
+                    document.getElementById('mysteryOddsDisplay').innerHTML = 'Recipient has <strong>' + tier.odds + '%</strong> chance to claim this gift';
 
                     reveal.classList.remove('hidden');
-                    status.textContent = 'Opened! Claim your loot.';
+                    status.textContent = 'Sent! Share the claim link with your recipient.';
                     btn.disabled = false;
                     box.classList.remove('glow-burst');
 
+                    const claimUrl = window.location.origin + window.location.pathname + '?gift=' + mintedTokenId;
+                    await navigator.clipboard.writeText(claimUrl).catch(() => {});
+
                     addGift({
                         id: 'mystery_' + Date.now(),
-                        sender: mysteryAddr,
-                        recipient: mysteryAddr,
-                        amount: tier.min.toString(),
+                        sender: senderAddr,
+                        recipient: recipient,
+                        amount: tier.amount.toString(),
                         style: 'mystery',
-                        message: 'Mystery Box - Won ' + mysteryReward + ' BOT + ' + gift,
+                        message: message || 'Mystery Gift (' + tier.odds + '% odds)',
                         tokenId: mintedTokenId,
                         txHash: tx.hash,
                         timestamp: Date.now(),
-                        claimed: false
+                        claimed: false,
+                        odds: tier.odds
                     });
 
                     await updateRealBalance();
+                    grantGasToRecipient(recipient);
                     if (typeof loadOnChainHistory === 'function') await loadOnChainHistory();
-                    setTimeout(() => showSpecialSuccess('Mystery Box Opened!', 'You won ' + mysteryReward + ' BOT + ' + gift + ' NFT. Check history to claim!', tx.hash), 500);
+                    setTimeout(() => showSpecialSuccess('Mystery Gift Sent!', 'Claim link copied! Recipient has ' + tier.odds + '% chance to unlock ' + tier.amount + ' $BOT.', tx.hash), 500);
                 }
             } catch (err) {
-                console.error('Mystery box tx failed:', err);
+                console.error('Mystery gift tx failed:', err);
                 status.textContent = 'Transaction failed: ' + (err.reason || err.message || 'Unknown error');
                 btn.disabled = false;
                 box.classList.remove('box-shake');
@@ -5619,12 +5665,17 @@ window.convertSbtToBot = convertSbtToBot;
                         document.getElementById('giftClaimSubtext').textContent = 'This gift unlocks in ' + timeStr.trim() + '. Unlock date: ' + new Date(unlockTime).toLocaleString();
                         document.getElementById('giftClaimDetails').classList.add('hidden');
                         btnWrap.classList.add('hidden');
-                        closeBtn.onclick = () => modal.classList.add('hidden');
+                closeBtn.onclick = () => {
+                    modal.classList.add('hidden');
+                    const existingSpin = document.getElementById('modalSpinStep');
+                    if (existingSpin) existingSpin.remove();
+                };
                         return;
                     }
                 } catch (e) {}
 
                 let giftStyle = 'gift';
+                let giftOdds = null;
                 try {
                     const uri = await sbtContractInstance.tokenURI(tokenId);
                     if (uri && uri.startsWith('data:application/json')) {
@@ -5635,6 +5686,8 @@ window.convertSbtToBot = convertSbtToBot;
                             if (m && m.attributes) {
                                 const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
                                 if (ta) giftStyle = ta.value;
+                                const od = m.attributes.find(a => a.trait_type === 'Odds');
+                                if (od && od.value) giftOdds = parseInt(String(od.value).replace('%', ''));
                             }
                         } catch (e) {}
                     } else if (uri && uri.startsWith('data:image/svg+xml')) {
@@ -5652,6 +5705,8 @@ window.convertSbtToBot = convertSbtToBot;
                             if (r && r.ok) { const m = await r.json().catch(() => null); if (m && m.attributes) {
                                 const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
                                 if (ta) giftStyle = ta.value;
+                                const od = m.attributes.find(a => a.trait_type === 'Odds');
+                                if (od && od.value) giftOdds = parseInt(String(od.value).replace('%', ''));
                             } }
                         } catch (e) {}
                     }
@@ -5671,6 +5726,49 @@ window.convertSbtToBot = convertSbtToBot;
                     msgVal.textContent = '"' + message.slice(0,40) + (message.length>40?'...':'') + '"';
                 } else {
                     msgRow.classList.add('hidden');
+                }
+
+                // For mystery gifts with odds, show odds info and require spin
+                if (giftStyle === 'mystery' && giftOdds) {
+                    document.getElementById('giftClaimSubtext').innerHTML = '🎰 Mystery Gift — <strong>' + giftOdds + '%</strong> chance to claim!';
+                    btnWrap.classList.add('hidden');
+                    const spinStep = document.createElement('div');
+                    spinStep.id = 'modalSpinStep';
+                    spinStep.innerHTML = '<div style="text-align:center;padding:12px 0;">' +
+                        '<div style="font-size:11px;color:#a1a1aa;margin-bottom:8px;">Spin the wheel to claim your gift</div>' +
+                        '<button id="modalSpinBtn" style="width:100%;padding:12px;border-radius:12px;border:none;font-size:14px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#7c3aed,#a855f7);color:white;transition:all 0.25s;">🎰 SPIN TO CLAIM (' + giftOdds + '%)</button>' +
+                        '<div id="modalSpinResult" style="display:none;text-align:center;margin-top:10px;font-size:16px;font-weight:700;"></div>' +
+                        '<button id="modalSpinRetry" style="display:none;width:100%;padding:10px;border-radius:10px;border:1px solid rgba(139,92,246,0.3);background:rgba(139,92,246,0.1);color:#c4b5fd;font-size:12px;cursor:pointer;margin-top:8px;">🔄 Try Again</button>' +
+                        '</div>';
+                    btnWrap.parentNode.insertBefore(spinStep, btnWrap);
+
+                    document.getElementById('modalSpinBtn').onclick = function() {
+                        this.disabled = true;
+                        this.textContent = '🎰 SPINNING...';
+                        const won = Math.random() * 100 < giftOdds;
+                        setTimeout(() => {
+                            const result = document.getElementById('modalSpinResult');
+                            result.style.display = 'block';
+                            if (won) {
+                                result.textContent = '🎉 YOU WIN! Claim your gift!';
+                                result.style.color = '#6ee7b7';
+                                spinStep.remove();
+                                btnWrap.classList.remove('hidden');
+                            } else {
+                                result.textContent = '😢 Not this time...';
+                                result.style.color = '#fca5a5';
+                                this.textContent = '🎰 SPIN TO CLAIM (' + giftOdds + '%)';
+                                this.disabled = false;
+                                document.getElementById('modalSpinRetry').style.display = 'block';
+                            }
+                        }, 2000);
+                    };
+                    const retryBtn = document.getElementById('modalSpinRetry');
+                    if (retryBtn) retryBtn.onclick = function() {
+                        document.getElementById('modalSpinResult').style.display = 'none';
+                        this.style.display = 'none';
+                        document.getElementById('modalSpinBtn').click();
+                    };
                 }
 
                 modal.classList.remove('hidden');
@@ -7073,10 +7171,10 @@ window.convertSbtToBot = convertSbtToBot;
         'Your personality: Enthusiastic, uses emojis, speaks like a cool friend who is obsessed with gifts. ' +
         'You ONLY help with: Gift recommendations (which type, how much, for what occasion), ' +
         'Writing gift messages (sweet, funny, heartfelt), ' +
-        'Explaining gift features (SBT, Mystery Box, Card Designer, Time-Lock, DAO Treasury, etc.), ' +
+        'Explaining gift features (SBT, Mystery Gift, Card Designer, Time-Lock, DAO Treasury, etc.), ' +
         'Suggesting creative gift ideas, Gift amount advice based on relationship, ' +
         'How to send or claim gifts on the site, NFT soulbound gifts and on-chain gifting. ' +
-        'Available Gift Types: Crypto Bro, Love Letter, Birthday, Heart, Mystery Box, Golden Ticket, Treasure Chest, Christmas, Diamond Hands, Soulbound Gift, Gasless Send, DAO Treasury, Card Designer, Time-Locked Gift. ' +
+        'Available Gift Types: Crypto Bro, Love Letter, Birthday, Heart, Mystery Gift, Golden Ticket, Treasure Chest, Christmas, Diamond Hands, Soulbound Gift, Gasless Send, DAO Treasury, Card Designer, Time-Locked Gift. ' +
         'Rules: Keep responses under 3 sentences. Always use 1-2 relevant emojis. Be creative and enthusiastic. ' +
         'If asked about non-gift topics, say I am your gift expert, ask me about gifts, rewards, or gifting ideas. ' +
         'Never reveal you are an AI language model or mention Google or Gemini. ' +
@@ -8340,44 +8438,6 @@ window.convertSbtToBot = convertSbtToBot;
         </div>
     </div>
 
-    <!-- MYSTERY SPIN WHEEL MODAL -->
-    <div id="spinOverlay" class="spin-overlay">
-        <div class="spin-modal">
-            <button class="spin-close" id="spinCloseBtn">&times;</button>
-            <div class="spin-title">MYSTERY SPIN</div>
-            <div class="spin-subtitle">Spin to win a random $BOT gift amount</div>
-            <div class="wheel-container" id="wheelContainer">
-                <div class="wheel-pointer"></div>
-                <div class="wheel-outer">
-                    <div class="wheel-inner">
-                        <canvas id="spinCanvas" width="280" height="280"></canvas>
-                    </div>
-                </div>
-                <div class="wheel-center" id="spinCenterBtn">🎰</div>
-                <div class="spin-confetti-wrap" id="spinConfetti"></div>
-            </div>
-            <div class="spin-segments-info" id="spinSegInfo"></div>
-            <div id="spinResultArea" class="spin-result" style="display:none;">
-                <div class="spin-result-label">YOU WON</div>
-                <div class="spin-result-amount" id="spinResultAmount">0.000</div>
-                <div class="spin-result-label">$BOT</div>
-                <div class="spin-result-tier" id="spinResultTier">COMMON</div>
-            </div>
-            <div class="spin-recipient-wrap">
-                <div class="spin-recipient-icon">👤</div>
-                <input type="text" id="spinRecipientInput" class="spin-recipient" placeholder="Recipient address (0x...)" maxlength="42">
-            </div>
-            <textarea id="spinMsgInput" class="spin-msg-input" rows="2" maxlength="140" placeholder="Gift message (optional)..."></textarea>
-            <button id="spinBtn" class="spin-btn" disabled>
-                <span class="spin-btn-shine"></span>
-                <span id="spinBtnText">🎰 SPIN TO WIN</span>
-            </button>
-            <button id="spinSendBtn" class="spin-send-btn" style="display:none;" disabled>
-                🚀 Send Gift On-Chain
-            </button>
-        </div>
-    </div>
-
     <!-- GIFT CLAIM MODAL (Shareable Link) -->
     <div id="giftClaimModal" class="hidden fixed inset-0 z-[70] flex items-center justify-center bg-zinc-950/90 backdrop-blur-md">
         <div class="glass-panel rounded-3xl p-8 max-w-md w-full mx-4 text-center space-y-5 relative overflow-hidden" id="giftClaimPanel">
@@ -8586,251 +8646,6 @@ window.convertSbtToBot = convertSbtToBot;
         } else {
             setTimeout(wireAiChat, 100);
         }
-    })();
-
-    /* ===== MYSTERY SPIN WHEEL ===== */
-    (function() {
-        const SEGMENTS = [
-            { amount: 0.001, label: '0.001', color: '#374151', tier: 'common', emoji: '🪙' },
-            { amount: 0.002, label: '0.002', color: '#4b5563', tier: 'common', emoji: '🎲' },
-            { amount: 0.005, label: '0.005', color: '#065f46', tier: 'uncommon', emoji: '🍀' },
-            { amount: 0.01, label: '0.01', color: '#064e3b', tier: 'uncommon', emoji: '🎯' },
-            { amount: 0.02, label: '0.02', color: '#1e3a5f', tier: 'rare', emoji: '💎' },
-            { amount: 0.05, label: '0.05', color: '#1e3a8a', tier: 'rare', emoji: '🔥' },
-            { amount: 0.1, label: '0.1', color: '#4c1d95', tier: 'epic', emoji: '⚡' },
-            { amount: 0.5, label: '0.5', color: '#78350f', tier: 'legendary', emoji: '👑' }
-        ];
-        const TIER_COLORS = { common: '#a1a1aa', uncommon: '#4ade80', rare: '#60a5fa', epic: '#c084fc', legendary: '#fbbf24' };
-        const SEG_COUNT = SEGMENTS.length;
-        const SEG_ANGLE = 360 / SEG_COUNT;
-        let currentRotation = 0;
-        let isSpinning = false;
-        let spinResult = null;
-
-        const overlay = document.getElementById('spinOverlay');
-        const canvas = document.getElementById('spinCanvas');
-        const ctx = canvas.getContext('2d');
-        const centerBtn = document.getElementById('spinCenterBtn');
-        const spinBtn = document.getElementById('spinBtn');
-        const spinBtnText = document.getElementById('spinBtnText');
-        const sendBtn = document.getElementById('spinSendBtn');
-        const resultArea = document.getElementById('spinResultArea');
-        const resultAmount = document.getElementById('spinResultAmount');
-        const resultTier = document.getElementById('spinResultTier');
-        const recipientInput = document.getElementById('spinRecipientInput');
-        const msgInput = document.getElementById('spinMsgInput');
-        const confettiWrap = document.getElementById('spinConfetti');
-        const segInfo = document.getElementById('spinSegInfo');
-
-        function drawWheel() {
-            const cx = 140, cy = 140, r = 140;
-            ctx.clearRect(0, 0, 280, 280);
-            SEGMENTS.forEach((seg, i) => {
-                const startAngle = (i * SEG_ANGLE - 90) * Math.PI / 180;
-                const endAngle = ((i + 1) * SEG_ANGLE - 90) * Math.PI / 180;
-                ctx.beginPath();
-                ctx.moveTo(cx, cy);
-                ctx.arc(cx, cy, r, startAngle, endAngle);
-                ctx.closePath();
-                ctx.fillStyle = seg.color;
-                ctx.fill();
-                ctx.strokeStyle = 'rgba(255,255,255,0.08)';
-                ctx.lineWidth = 1;
-                ctx.stroke();
-                ctx.save();
-                ctx.translate(cx, cy);
-                ctx.rotate((i * SEG_ANGLE + SEG_ANGLE / 2 - 90) * Math.PI / 180);
-                ctx.textAlign = 'center';
-                ctx.fillStyle = '#e5e7eb';
-                ctx.font = 'bold 14px sans-serif';
-                ctx.fillText(seg.emoji, r * 0.62, 0);
-                ctx.fillStyle = '#d4d4d8';
-                ctx.font = 'bold 11px sans-serif';
-                ctx.fillText(seg.label, r * 0.42, 0);
-                ctx.fillStyle = '#71717a';
-                ctx.font = '9px sans-serif';
-                ctx.fillText('$BOT', r * 0.42, 13);
-                ctx.restore();
-            });
-        }
-
-        function renderSegInfo() {
-            segInfo.innerHTML = SEGMENTS.map(s =>
-                '<span class="spin-seg-tag" style="border-color:' + TIER_COLORS[s.tier] + '22;color:' + TIER_COLORS[s.tier] + '">' + s.emoji + ' ' + s.label + '</span>'
-            ).join('');
-        }
-
-        function pickPrize() {
-            const weights = [25, 22, 18, 14, 10, 6, 3, 2];
-            const total = weights.reduce((a, b) => a + b, 0);
-            let r = Math.random() * total;
-            for (let i = 0; i < weights.length; i++) {
-                r -= weights[i];
-                if (r <= 0) return i;
-            }
-            return 0;
-        }
-
-        function spinWheel() {
-            if (isSpinning) return;
-            const recipient = recipientInput.value.trim();
-            if (!recipient.startsWith('0x') || recipient.length !== 42) {
-                recipientInput.style.borderColor = 'rgba(239,68,68,0.5)';
-                recipientInput.focus();
-                setTimeout(() => { recipientInput.style.borderColor = ''; }, 1500);
-                return;
-            }
-            if (!window.sbtContractInstance || !window.systemSigner) {
-                alert('Connect your wallet first!');
-                return;
-            }
-
-            isSpinning = true;
-            spinBtn.disabled = true;
-            spinBtnText.textContent = '🎰 SPINNING...';
-            resultArea.style.display = 'none';
-            sendBtn.style.display = 'none';
-            confettiWrap.innerHTML = '';
-
-            const winIndex = pickPrize();
-            const offsetAngle = 360 - (winIndex * SEG_ANGLE + SEG_ANGLE / 2);
-            const extraSpins = 5 + Math.floor(Math.random() * 3);
-            const targetRotation = currentRotation + extraSpins * 360 + offsetAngle - (currentRotation % 360);
-            currentRotation = targetRotation;
-
-            const wheelEl = canvas;
-            wheelEl.style.transition = 'transform 4.5s cubic-bezier(0.17, 0.67, 0.12, 0.99)';
-            wheelEl.style.transform = 'rotate(' + targetRotation + 'deg)';
-
-            setTimeout(() => {
-                isSpinning = false;
-                spinResult = SEGMENTS[winIndex];
-                spinBtnText.textContent = '🎰 SPIN AGAIN';
-                spinBtn.disabled = false;
-                resultArea.style.display = 'block';
-                resultAmount.textContent = spinResult.amount.toFixed(spinResult.amount < 0.01 ? 3 : spinResult.amount < 0.1 ? 2 : 1);
-                resultTier.textContent = spinResult.tier.toUpperCase();
-                resultTier.className = 'spin-result-tier ' + spinResult.tier;
-                sendBtn.style.display = 'block';
-                sendBtn.disabled = false;
-                launchConfetti();
-            }, 4700);
-        }
-
-        function launchConfetti() {
-            confettiWrap.innerHTML = '';
-            const colors = ['#fbbf24', '#a855f7', '#10b981', '#3b82f6', '#ec4899', '#ef4444'];
-            for (let i = 0; i < 35; i++) {
-                const c = document.createElement('div');
-                c.className = 'spin-confetti';
-                c.style.left = (Math.random() * 100) + '%';
-                c.style.top = (Math.random() * 40) + '%';
-                c.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                c.style.width = (Math.random() * 6 + 3) + 'px';
-                c.style.height = (Math.random() * 6 + 3) + 'px';
-                c.style.animationDelay = (Math.random() * 0.6) + 's';
-                c.style.animationDuration = (Math.random() * 0.8 + 0.8) + 's';
-                confettiWrap.appendChild(c);
-            }
-        }
-
-        async function dispatchSpinGift() {
-            if (!spinResult) return;
-            const recipient = recipientInput.value.trim();
-            const message = msgInput.value.trim();
-            if (!recipient.startsWith('0x') || recipient.length !== 42) { alert('Invalid recipient.'); return; }
-            if (recipient.toLowerCase() === (window.realWalletAddress || '').toLowerCase()) { alert("You can't gift yourself."); return; }
-            if (!window.sbtContractInstance) { alert('Connect wallet first.'); return; }
-
-            sendBtn.disabled = true;
-            sendBtn.textContent = '⏳ Creating NFT...';
-
-            try {
-                const amount = spinResult.amount;
-                const style = 'mystery';
-                const tokenURIHash = await createGiftMetadata(realWalletAddress, style, message, amount.toString(), null);
-                const tokenURI = 'ipfs://' + tokenURIHash;
-
-                sendBtn.textContent = '⏳ Minting on-chain...';
-                const amountWei = ethers.parseEther(amount.toString());
-                const tx = await sbtContractInstance.mintSoulboundGift(recipient, tokenURI, message, { value: amountWei });
-
-                sendBtn.textContent = '⏳ Confirming...';
-                const receipt = await tx.wait();
-                if (receipt.status !== 1) throw new Error('Tx failed on-chain');
-
-                let mintedTokenId = '---';
-                const evt = receipt.logs.find(log => {
-                    try { const p = sbtContractInstance.interface.parseLog(log); return p && p.name === 'SoulboundGiftMinted'; } catch (e) { return false; }
-                });
-                if (evt) { mintedTokenId = sbtContractInstance.interface.parseLog(evt).args.tokenId.toString(); }
-
-                addGift({
-                    id: 'gift_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8),
-                    sender: realWalletAddress,
-                    senderName: (document.getElementById('senderNameInput') && document.getElementById('senderNameInput').value.trim()) || realWalletAddress.slice(0, 6) + '...' + realWalletAddress.slice(-4),
-                    recipient: recipient,
-                    amount: amount.toString(),
-                    style: style,
-                    message: message,
-                    tokenId: mintedTokenId,
-                    txHash: tx.hash,
-                    timestamp: Date.now(),
-                    claimed: false
-                });
-
-                sendBtn.textContent = '✅ Gift Sent!';
-                sendBtn.style.background = 'linear-gradient(135deg, #059669, #047857)';
-
-                const claimUrl = window.location.origin + window.location.pathname + '?gift=' + mintedTokenId;
-                await navigator.clipboard.writeText(claimUrl).catch(() => {});
-
-                await updateRealBalance();
-                grantGasToRecipient(recipient);
-                if (typeof loadOnChainHistory === 'function') await loadOnChainHistory();
-
-                setTimeout(() => {
-                    closeSpinModal();
-                    if (typeof resetGiftForm === 'function') resetGiftForm();
-                    alert('🎁 Mystery gift sent!\n\nWon: ' + spinResult.amount + ' $BOT\nRecipient: ' + recipient.slice(0, 6) + '...' + recipient.slice(-4) + '\nClaim link copied to clipboard!\n\nToken #' + mintedTokenId);
-                }, 1200);
-            } catch (err) {
-                console.error('Spin gift failed:', err);
-                sendBtn.textContent = '🚀 Send Gift On-Chain';
-                sendBtn.disabled = false;
-                alert('Transaction failed: ' + (err.reason || err.message || 'Unknown'));
-            }
-        }
-
-        function openSpinModal() {
-            overlay.classList.add('active');
-            spinResult = null;
-            resultArea.style.display = 'none';
-            sendBtn.style.display = 'none';
-            spinBtn.disabled = false;
-            spinBtnText.textContent = '🎰 SPIN TO WIN';
-            sendBtn.textContent = '🚀 Send Gift On-Chain';
-            sendBtn.style.background = '';
-            confettiWrap.innerHTML = '';
-            drawWheel();
-            renderSegInfo();
-        }
-        function closeSpinModal() {
-            overlay.classList.remove('active');
-            isSpinning = false;
-            const wheelEl = canvas;
-            wheelEl.style.transition = 'none';
-            wheelEl.style.transform = 'rotate(' + (currentRotation % 360) + 'deg)';
-        }
-
-        spinBtn.addEventListener('click', spinWheel);
-        centerBtn.addEventListener('click', spinWheel);
-        sendBtn.addEventListener('click', dispatchSpinGift);
-        document.getElementById('spinCloseBtn').addEventListener('click', closeSpinModal);
-        overlay.addEventListener('click', (e) => { if (e.target === overlay) closeSpinModal(); });
-
-        window.openSpinModal = openSpinModal;
-        window.closeSpinModal = closeSpinModal;
     })();
     </script>
 </body>
