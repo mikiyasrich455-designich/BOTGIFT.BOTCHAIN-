@@ -3429,7 +3429,7 @@
             const aiView = document.getElementById('aiChatView');
             if (aiView && aiView !== viewToShow) { aiView.classList.add('hidden'); aiView.style.opacity = '0'; }
             // Hide all special gift views when switching main tabs
-            Object.values(specialViews).forEach(v => v.classList.add('hidden'));
+            Object.values(specialViews).forEach(v => { v.classList.add('hidden'); v.style.opacity = '0'; });
 
             if (bgMode === 'home') {
                 els.globalBody.style.backgroundImage = homeBgString;
@@ -3514,20 +3514,36 @@
         });
 
         function showSpecialGift(type) {
+            console.log('[SpecialGift] showSpecialGift called with type:', type);
             // Hide grid and all special views
             els.specialGiftsView.classList.add('hidden');
-            Object.values(specialViews).forEach(v => v.classList.add('hidden'));
+            els.specialGiftsView.style.opacity = '0';
+            Object.values(specialViews).forEach(v => {
+                v.classList.add('hidden');
+                v.style.opacity = '0';
+            });
             
             // Show selected
-            if (specialViews[type]) {
-                specialViews[type].classList.remove('hidden');
-                specialViews[type].scrollTop = 0;
+            var target = specialViews[type] || document.getElementById(type + 'View');
+            if (target) {
+                target.classList.remove('hidden');
+                target.style.opacity = '1';
+                target.style.display = '';
+                target.scrollTop = 0;
+                console.log('[SpecialGift] Showing view for:', type, target.id);
+            } else {
+                console.error('[SpecialGift] No view found for type:', type);
             }
         }
 
         function backToSpecialGrid() {
-            Object.values(specialViews).forEach(v => v.classList.add('hidden'));
+            Object.values(specialViews).forEach(v => {
+                v.classList.add('hidden');
+                v.style.opacity = '0';
+            });
             els.specialGiftsView.classList.remove('hidden');
+            els.specialGiftsView.style.opacity = '1';
+            els.specialGiftsView.style.display = '';
             els.specialGiftsView.scrollTop = 0;
         }
 
@@ -6021,7 +6037,6 @@ window.convertSbtToBot = convertSbtToBot;
                             const amountHex = log.data;
                             const amount = ethers.formatEther('0x' + amountHex.slice(2));
                             const isSender = senderPadded.toLowerCase() === walletAddrPadded;
-                            if (!isSender) continue;
                             onChainTokenIds.add(tokenId);
                             let isClaimed = false;
                             try { await sbtRead.ownerOf(tokenId); } catch (e) { isClaimed = true; }
@@ -6032,6 +6047,8 @@ window.convertSbtToBot = convertSbtToBot;
                                 if (gd[2]) message = gd[2];
                                 if (gd[4]) timestamp = Number(gd[4]) * 1000;
                             } catch (e) {}
+                            const isRecipient = recipient && recipient.toLowerCase() === realWalletAddress.toLowerCase();
+                            if (!isSender && !isRecipient) continue;
                             try {
                                 const uri = await sbtRead.tokenURI(tokenId);
                                 const fetchUri = uri && uri.startsWith('ipfs://') ? PINATA_GATEWAY + uri.slice(7) : uri;
