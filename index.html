@@ -3666,7 +3666,7 @@
         function parseDaoAddresses() {
             const text = daoRecipients.value;
             const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-            const valid = lines.filter(l => l.startsWith('0x') && l.length === 42);
+            const valid = lines.filter(l => l.startsWith('0x') && l.length === 42).map(l => { try { return ethers.getAddress(l); } catch(e) { return null; } }).filter(Boolean);
             document.getElementById('daoAddressCount').textContent = lines.length + ' addresses';
             document.getElementById('daoValidCount').textContent = valid.length + ' valid';
             return valid;
@@ -3939,9 +3939,11 @@
         document.getElementById('sendDesignerCardBtn').addEventListener('click', async () => {
             if (!isWalletConnected) { openWalletModal(); return; }
             if (!sbtContractInstance || !systemSigner) { alert("Connect wallet to BOT Chain Testnet first."); return; }
-            const recipient = document.getElementById('designerRecipient').value.trim();
+            const recipientRaw = document.getElementById('designerRecipient').value.trim();
             const amount = document.getElementById('designerAmount').value.trim();
-            if (!recipient || !recipient.startsWith('0x') || recipient.length !== 42) { alert('Enter a valid recipient address'); return; }
+            if (!recipientRaw || !recipientRaw.startsWith('0x') || recipientRaw.length !== 42) { alert('Enter a valid recipient address'); return; }
+            let recipient;
+            try { recipient = ethers.getAddress(recipientRaw); } catch(e) { alert('Invalid address checksum'); return; }
             if (!amount || parseFloat(amount) <= 0) { alert('Enter a valid amount'); return; }
             if (!confirm('Send ' + amount + ' BOT as designed card NFT to ' + recipient.slice(0,6) + '...' + recipient.slice(-4) + '?')) return;
 
@@ -4075,11 +4077,13 @@
             if (!sbtContractInstance || !systemSigner) { alert("Connect wallet to BOT Chain Testnet first."); return; }
             if (!timeUnlock.value) { alert('Select unlock time'); return; }
 
-            const recipient = document.getElementById('timeRecipient').value.trim();
+            const recipientRaw = document.getElementById('timeRecipient').value.trim();
             const amount = document.getElementById('timeAmount').value.trim();
             const message = document.getElementById('timeMessage').value.trim() || 'Time-Locked Gift';
 
-            if (!recipient || !recipient.startsWith('0x') || recipient.length !== 42) { alert('Enter a valid recipient address'); return; }
+            if (!recipientRaw || !recipientRaw.startsWith('0x') || recipientRaw.length !== 42) { alert('Enter a valid recipient address'); return; }
+            let recipient;
+            try { recipient = ethers.getAddress(recipientRaw); } catch(e) { alert('Invalid address checksum'); return; }
             if (!amount || parseFloat(amount) <= 0) { alert('Enter a valid amount'); return; }
 
             const unlockTime = new Date(timeUnlock.value).getTime();
@@ -4498,7 +4502,7 @@ if (sbtConfirmMintBtn) sbtConfirmMintBtn.addEventListener('click', async () => {
     sbtConfirmText.textContent = 'Minting NFT...';
     sbtConfirmIcon.textContent = '⏳';
     try {
-        const recipient = sbtRecipient.value.trim();
+        const recipient = ethers.getAddress(sbtRecipient.value.trim());
         const amount = sbtAmount.value || '0';
         const tokenURI = `ipfs://${sbtIpfsMetadataHash}`;
         const message = sbtMessage.value || '';
@@ -5676,13 +5680,20 @@ window.convertSbtToBot = convertSbtToBot;
         window.claimGiftByTokenId = claimGiftByTokenId;
 
         async function dispatchRealGift() {
-            const recipient = els.recipientInput.value.trim();
+            const recipientRaw = els.recipientInput.value.trim();
             const amount = els.amountInput.value.trim();
             const message = els.messageInput.value.trim();
             const style = selectedGiftType || 'gift';
 
-            if (!recipient.startsWith('0x') || recipient.length !== 42) {
+            if (!recipientRaw.startsWith('0x') || recipientRaw.length !== 42) {
                 alert("Invalid recipient address.");
+                return;
+            }
+            let recipient;
+            try {
+                recipient = ethers.getAddress(recipientRaw);
+            } catch (e) {
+                alert("Invalid recipient address checksum. Please check the address.");
                 return;
             }
             if (!amount || parseFloat(amount) <= 0) {
