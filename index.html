@@ -2448,6 +2448,9 @@
             </div>
         </div>
 
+        <!-- REACT GIFTING CHATBOT -->
+        <div id="reactChatbotRoot" class="w-full max-w-md mx-auto"></div>
+
         <!-- HISTORY VIEW -->
         <div id="historyView" class="w-full max-w-5xl mx-auto view-panel-transition hidden pb-16 relative z-10 overflow-y-auto max-h-[calc(100vh-140px)] custom-scrollbar">
             <!-- Header -->
@@ -4813,6 +4816,120 @@ window.convertSbtToBot = convertSbtToBot;
         }
         const rootNode = ReactDOM.createRoot(document.getElementById('reactHeadlineRoot'));
         rootNode.render(<AnimatedHomePanel />);
+    </script>
+
+    <script>
+        // ==========================================
+        // GIFTING AI CHATBOT (React)
+        // ==========================================
+        const GiftingChatbot = () => {
+            const [messages, setMessages] = React.useState([
+                { role: 'assistant', content: 'Hey there! \u{1F381} I am your personal Gifting Assistant. Ready to spread some joy? Ask me anything about gifts, presents, or how to make someone smile today!' }
+            ]);
+            const [input, setInput] = React.useState('');
+            const [isLoading, setIsLoading] = React.useState(false);
+            const messagesEndRef = React.useRef(null);
+
+            React.useEffect(() => {
+                messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+            }, [messages]);
+
+            const handleSendMessage = async (e) => {
+                e.preventDefault();
+                if (!input.trim() || isLoading) return;
+
+                const userMessage = input.trim();
+                setInput('');
+                setMessages((prev) => [...prev, { role: 'user', content: userMessage }]);
+                setIsLoading(true);
+
+                try {
+                    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': 'Bearer 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',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            model: 'llama3-8b-8192',
+                            messages: [
+                                {
+                                    role: 'system',
+                                    content: 'You are a joyful, uplifting, and highly enthusiastic gifting assistant. Your sole purpose is to make humans happy and help them with ideas, tips, and inspiration strictly related to gifts, presents, surprises, and celebrations. CRITICAL RULE: You must ONLY talk about gifts and happiness. If the user asks about coding, politics, math, or anything else unrelated to gifts, politely and cheerfully redirect them back to gifting.'
+                                },
+                                ...messages.filter(msg => msg.role !== 'system'),
+                                { role: 'user', content: userMessage }
+                            ],
+                            temperature: 0.7,
+                            max_tokens: 250
+                        })
+                    });
+
+                    const data = await response.json();
+                    const reply = data.choices[0]?.message?.content || "Something went wrong, but don't lose your smile! Try again real quick! \u{1F389}";
+                    setMessages((prev) => [...prev, { role: 'assistant', content: reply }]);
+                } catch (error) {
+                    console.error("Chatbot Error:", error);
+                    setMessages((prev) => [...prev, { role: 'assistant', content: "Oops! My gift machinery hit a tiny bump. Let's try that again! \u{1F4E6}" }]);
+                } finally {
+                    setIsLoading(false);
+                }
+            };
+
+            return (
+                <div className="w-full max-w-md mx-auto rounded-2xl border border-purple-500/20 bg-slate-950 shadow-xl overflow-hidden my-6">
+                    <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-4 flex items-center gap-3">
+                        <div className="relative">
+                            <span className="text-2xl">{String.fromCodePoint(0x1F381)}</span>
+                            <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-400 border-2 border-slate-950 animate-pulse"></span>
+                        </div>
+                        <div>
+                            <h3 className="font-bold text-white text-sm">JoyBot {String.fromCodePoint(0x2014)} Gifting AI</h3>
+                            <p className="text-xs text-purple-100/80">Making humans happy</p>
+                        </div>
+                    </div>
+                    <div className="h-80 overflow-y-auto p-4 space-y-4 bg-slate-950/50">
+                        {messages.map((msg, index) => (
+                            <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                <div className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm ${msg.role === 'user' ? 'bg-purple-600 text-white rounded-br-none' : 'bg-slate-900 text-slate-100 border border-slate-800 rounded-bl-none'}`}>
+                                    {msg.content}
+                                </div>
+                            </div>
+                        ))}
+                        {isLoading && (
+                            <div className="flex justify-start">
+                                <div className="bg-slate-900 text-slate-400 border border-slate-800 rounded-2xl rounded-bl-none px-4 py-2.5 text-sm flex items-center gap-2">
+                                    <span className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                                    <span className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                                    <span className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                                </div>
+                            </div>
+                        )}
+                        <div ref={messagesEndRef} />
+                    </div>
+                    <form onSubmit={handleSendMessage} className="p-3 border-t border-slate-800 bg-slate-950 flex gap-2">
+                        <input
+                            type="text"
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            placeholder="Ask about gifts..."
+                            className="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-purple-500 transition"
+                            disabled={isLoading}
+                        />
+                        <button
+                            type="submit"
+                            disabled={isLoading || !input.trim()}
+                            className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-medium hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            Send
+                        </button>
+                    </form>
+                </div>
+            );
+        };
+
+        const chatbotRoot = ReactDOM.createRoot(document.getElementById('reactChatbotRoot'));
+        chatbotRoot.render(<GiftingChatbot />);
     </script>
 
     <script>
