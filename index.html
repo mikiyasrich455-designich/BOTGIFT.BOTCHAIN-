@@ -554,6 +554,55 @@
         }
         .glow-burst { animation: glowBurst 1s ease-out; }
 
+        /* ===== SPIN WHEEL ===== */
+        .spin-overlay { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.35s ease; }
+        .spin-overlay.active { opacity: 1; pointer-events: all; }
+        .spin-modal { position: relative; width: 420px; max-width: 95vw; background: linear-gradient(160deg, #18181b 0%, #09090b 100%); border: 1px solid rgba(139,92,246,0.25); border-radius: 24px; padding: 28px 24px; box-shadow: 0 0 60px rgba(139,92,246,0.15), 0 25px 50px -12px rgba(0,0,0,0.5); transform: scale(0.9) translateY(20px); transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1); }
+        .spin-overlay.active .spin-modal { transform: scale(1) translateY(0); }
+        .spin-close { position: absolute; top: 12px; right: 14px; width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); color: #a1a1aa; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; z-index: 10; }
+        .spin-close:hover { background: rgba(239,68,68,0.2); border-color: rgba(239,68,68,0.3); color: #fca5a5; }
+        .spin-title { text-align: center; font-size: 20px; font-weight: 800; color: #f4f4f5; margin-bottom: 4px; }
+        .spin-subtitle { text-align: center; font-size: 12px; color: #71717a; margin-bottom: 18px; }
+        .wheel-container { position: relative; width: 280px; height: 280px; margin: 0 auto 18px; }
+        .wheel-pointer { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); z-index: 5; width: 0; height: 0; border-left: 14px solid transparent; border-right: 14px solid transparent; border-top: 26px solid #a855f7; filter: drop-shadow(0 2px 6px rgba(168,85,247,0.5)); }
+        .wheel-outer { width: 280px; height: 280px; border-radius: 50%; padding: 6px; background: conic-gradient(from 0deg, #7c3aed, #ec4899, #f59e0b, #10b981, #3b82f6, #8b5cf6, #ef4444, #7c3aed); box-shadow: 0 0 30px rgba(139,92,246,0.3), 0 0 60px rgba(139,92,246,0.1); }
+        .wheel-inner { width: 100%; height: 100%; border-radius: 50%; overflow: hidden; position: relative; }
+        .wheel-canvas { width: 280px; height: 280px; position: absolute; top: 0; left: 0; transition: transform 4.5s cubic-bezier(0.17, 0.67, 0.12, 0.99); }
+        .wheel-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #7c3aed, #a855f7); border: 3px solid #18181b; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 0 20px rgba(139,92,246,0.4); z-index: 4; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+        .wheel-center:hover { transform: translate(-50%, -50%) scale(1.08); box-shadow: 0 0 30px rgba(139,92,246,0.6); }
+        .wheel-center:active { transform: translate(-50%, -50%) scale(0.95); }
+        .spin-recipient { width: 100%; background: rgba(24,24,27,0.8); border: 1px solid rgba(63,63,70,0.5); border-radius: 12px; padding: 12px 14px 12px 38px; color: #d4d4d8; font-size: 13px; font-family: monospace; outline: none; transition: border-color 0.2s; margin-bottom: 12px; }
+        .spin-recipient:focus { border-color: rgba(168,85,247,0.5); }
+        .spin-recipient-wrap { position: relative; margin-bottom: 12px; }
+        .spin-recipient-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #52525b; font-size: 14px; }
+        .spin-msg-input { width: 100%; background: rgba(24,24,27,0.8); border: 1px solid rgba(63,63,70,0.5); border-radius: 12px; padding: 12px 14px; color: #d4d4d8; font-size: 13px; outline: none; transition: border-color 0.2s; margin-bottom: 14px; resize: none; }
+        .spin-msg-input:focus { border-color: rgba(168,85,247,0.5); }
+        .spin-btn { width: 100%; padding: 14px; border-radius: 14px; border: none; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.25s; background: linear-gradient(135deg, #7c3aed, #a855f7); color: white; letter-spacing: 0.5px; position: relative; overflow: hidden; }
+        .spin-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(139,92,246,0.4); }
+        .spin-btn:active:not(:disabled) { transform: translateY(0); }
+        .spin-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .spin-btn .spin-btn-shine { position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent); animation: btnShine 2.5s infinite; }
+        @keyframes btnShine { 0% { left: -100%; } 50%,100% { left: 200%; } }
+        .spin-result { text-align: center; padding: 14px 0 6px; }
+        .spin-result-amount { font-size: 28px; font-weight: 800; background: linear-gradient(135deg, #fbbf24, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .spin-result-label { font-size: 11px; color: #71717a; margin-top: 2px; }
+        .spin-result-tier { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; margin-top: 6px; letter-spacing: 0.5px; }
+        .spin-result-tier.common { background: rgba(113,113,122,0.2); color: #a1a1aa; border: 1px solid rgba(113,113,122,0.3); }
+        .spin-result-tier.uncommon { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
+        .spin-result-tier.rare { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
+        .spin-result-tier.epic { background: rgba(168,85,247,0.15); color: #c084fc; border: 1px solid rgba(168,85,247,0.3); }
+        .spin-result-tier.legendary { background: linear-gradient(135deg, rgba(251,191,36,0.2), rgba(245,158,11,0.2)); color: #fbbf24; border: 1px solid rgba(251,191,36,0.4); animation: legendaryPulse 1.5s ease infinite; }
+        @keyframes legendaryPulse { 0%,100% { box-shadow: 0 0 8px rgba(251,191,36,0.2); } 50% { box-shadow: 0 0 20px rgba(251,191,36,0.4); } }
+        .spin-send-btn { width: 100%; padding: 13px; border-radius: 14px; border: none; font-size: 14px; font-weight: 700; cursor: pointer; background: linear-gradient(135deg, #10b981, #059669); color: white; margin-top: 12px; transition: all 0.25s; }
+        .spin-send-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(16,185,129,0.4); }
+        .spin-send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .spin-send-btn:active:not(:disabled) { transform: translateY(0); }
+        .spin-confetti-wrap { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 6; }
+        .spin-confetti { position: absolute; width: 6px; height: 6px; border-radius: 2px; animation: confettiFall 1.2s ease-out forwards; opacity: 0; }
+        @keyframes confettiFall { 0% { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); } 100% { opacity: 0; transform: translateY(200px) rotate(720deg) scale(0.3); } }
+        .spin-segments-info { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; margin-top: 10px; }
+        .spin-seg-tag { font-size: 9px; padding: 2px 7px; border-radius: 10px; background: rgba(255,255,255,0.05); color: #52525b; border: 1px solid rgba(255,255,255,0.06); }
+
         /* ===== ENCRYPTION ===== */
         @keyframes scramble {
             0% { opacity: 1; }
@@ -1232,10 +1281,10 @@
                         <button class="info-btn w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-white text-xs font-bold relative z-10" data-info="heart">i</button>
                     </div>
                     <div class="gift-type-card stagger-card rounded-2xl p-6 flex items-center gap-4" style="background: linear-gradient(135deg, #374151 0%, #6b7280 100%); animation-delay: 200ms;" data-type="mystery">
-                        <div class="gift-icon">🎲</div>
+                        <div class="gift-icon">🎰</div>
                         <div class="flex-1 relative z-10">
-                            <h3 class="text-lg font-bold text-white">Mystery Box</h3>
-                            <p class="text-xs text-white/70">Random surprise inside</p>
+                            <h3 class="text-lg font-bold text-white">Mystery Spin</h3>
+                            <p class="text-xs text-white/70">Spin to win a random prize</p>
                         </div>
                         <button class="info-btn w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-white text-xs font-bold relative z-10" data-info="mystery">i</button>
                     </div>
@@ -2627,7 +2676,7 @@
             loveletter: { icon: '💌', title: 'Love Letter', desc: 'A sealed envelope with hearts. Send your love on-chain.', cardImg: '' },
             birthday: { icon: '🎈', title: 'Happy Birthday', desc: 'Balloons and celebration vibes. Make their birthday special.', cardImg: '' },
             heart: { icon: '💖', title: 'Your Heart', desc: 'Send your heart away. For the ones you truly care about.', cardImg: '' },
-            mystery: { icon: '🎲', title: 'Mystery Box', desc: 'A random surprise inside. The thrill of the unknown.', cardImg: '' },
+            mystery: { icon: '🎰', title: 'Mystery Spin', desc: 'Spin the wheel to win a random $BOT prize. Real on-chain gift!', cardImg: '' },
             goldenticket: { icon: '🎫', title: 'Golden Ticket', desc: 'VIP access pass. Exclusive and golden.', cardImg: '' },
             treasure: { icon: '🏴‍☠️', title: 'Treasure Chest', desc: 'Pirate gold and gems. X marks the spot.', cardImg: '' },
             christmas: { icon: '🎄', title: 'Christmas', desc: 'Holiday spirit and cheer. Merry Christmas!', cardImg: '' },
@@ -2668,10 +2717,10 @@
             },
             mystery: {
                 gradient: ['#374151','#6b7280'], glowColor: 'rgba(156,163,175,0.4)',
-                particles: ['❓','🎲','🔮','🃏','⚡'], confetti: ['#9ca3af','#d1d5db','#e5e7eb','#6b7280','#f3f4f6'],
-                nftImageSvg: '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="%23374151"/><stop offset="100%" stop-color="%236b7280"/></linearGradient></defs><rect width="400" height="400" rx="24" fill="url(%23bg)"/><text x="200" y="160" text-anchor="middle" font-size="80">🎲</text><text x="200" y="230" text-anchor="middle" font-family="monospace" font-size="28" fill="white" font-weight="bold">MYSTERY BOX</text><text x="200" y="265" text-anchor="middle" font-family="sans-serif" font-size="14" fill="rgba(255,255,255,0.7)">What\'s Inside?</text></svg>',
-                traitName: 'Mystery Tier', traitValue: () => ['Legendary Find','Epic Loot','Rare Gem','Common Drop'][Math.floor(Math.random()*4)],
-                successIcon: '🎲', successTitle: 'Mystery Revealed!', claimIcon: '🎲',
+                particles: ['🎰','🎲','🔮','⚡','💰'], confetti: ['#fbbf24','#a855f7','#10b981','#3b82f6','#ec4899'],
+                nftImageSvg: '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="%23374151"/><stop offset="100%" stop-color="%236b7280"/></linearGradient></defs><rect width="400" height="400" rx="24" fill="url(%23bg)"/><text x="200" y="160" text-anchor="middle" font-size="80">🎰</text><text x="200" y="230" text-anchor="middle" font-family="monospace" font-size="28" fill="white" font-weight="bold">MYSTERY SPIN</text><text x="200" y="265" text-anchor="middle" font-family="sans-serif" font-size="14" fill="rgba(255,255,255,0.7)">Spin to Win!</text></svg>',
+                traitName: 'Spin Prize', traitValue: () => ['Legendary Jackpot','Epic Win','Rare Find','Common Drop'][Math.floor(Math.random()*4)],
+                successIcon: '🎰', successTitle: 'Mystery Spin Won!', claimIcon: '🎰',
                 bgStyle: 'linear-gradient(135deg, #374151 0%, #6b7280 100%)'
             },
             goldenticket: {
@@ -3090,7 +3139,7 @@
                 birthday: { emoji: '🎈', placeholders: { recipient: 'Birthday star — 0x...', amount: 'Party amount', message: 'Happy Birthday! ...' } },
                 diamond: { emoji: '💎', placeholders: { recipient: '0x... (precious address)', amount: 'Diamond-level amount', message: 'A rare message...' } },
                 goldenticket: { emoji: '🎫', placeholders: { recipient: 'Golden recipient — 0x...', amount: 'Jackpot amount', message: 'You Won! ...' } },
-                mystery: { emoji: '🎲', placeholders: { recipient: 'Mystery recipient — 0x...', amount: 'Random amount?', message: 'Something mysterious...' } },
+                mystery: { emoji: '🎰', placeholders: { recipient: 'Spin recipient — 0x...', amount: 'Spin to win!', message: 'Something mysterious...' } },
                 treasure: { emoji: '🏴\u200D☠️', placeholders: { recipient: 'Fellow pirate — 0x...', amount: 'Treasure amount', message: 'X marks the spot...' } },
                 christmas: { emoji: '🎄', placeholders: { recipient: 'Santa\'s list — 0x...', amount: 'Gift amount', message: 'Ho Ho Ho! ...' } },
                 dao: { emoji: '🏛️', placeholders: { recipient: 'Council member — 0x...', amount: 'Governance amount', message: 'Proposal message...' } },
@@ -5292,7 +5341,7 @@ window.convertSbtToBot = convertSbtToBot;
         }
 
         async function createGiftMetadata(senderAddr, style, message, amount, uploadedImage) {
-            const giftIcons = { cryptoBro:'🎁', loveletter:'💌', birthday:'🎈', heart:'💖', mystery:'🎲', goldenticket:'🎫', treasure:'🏴\u200D☠️', christmas:'🎄', rocket:'🚀', diamond:'💎', dao:'🏛️', timelock:'⏳', designer:'🎨', gift:'🎁' };
+            const giftIcons = { cryptoBro:'🎁', loveletter:'💌', birthday:'🎈', heart:'💖', mystery:'🎰', goldenticket:'🎫', treasure:'🏴\u200D☠️', christmas:'🎄', rocket:'🚀', diamond:'💎', dao:'🏛️', timelock:'⏳', designer:'🎨', gift:'🎁' };
             const theme = getGiftTheme(style);
             let imageDataUrl = await ensureImageOnIpfs('data:image/svg+xml,' + encodeURIComponent(theme.nftImageSvg));
             if (uploadedImage) {
@@ -5314,6 +5363,9 @@ window.convertSbtToBot = convertSbtToBot;
                     { trait_type: 'Chain', value: 'BOT Chain Testnet' }
                 ]
             };
+            if (style === 'mystery' && window._lastMysteryOdds) {
+                metadata.attributes.push({ trait_type: 'Odds', value: window._lastMysteryOdds + '%' });
+            }
             const ipfsHash = await uploadMetadataToPinata(metadata);
             if (ipfsHash && !ipfsHash.startsWith('data:')) return ipfsHash;
             throw new Error('Failed to upload metadata to IPFS');
@@ -5733,6 +5785,9 @@ window.convertSbtToBot = convertSbtToBot;
                         mintedTokenId = parsed.args.tokenId.toString();
                     }
 
+                    const giftOdds = style === 'mystery' ? (() => { const o = [100, 50, 30, 10]; return o[Math.floor(Math.random() * o.length)]; })() : null;
+                    if (style === 'mystery') window._lastMysteryOdds = giftOdds;
+
                     addGift({
                         id: giftId,
                         sender: realWalletAddress,
@@ -5744,7 +5799,8 @@ window.convertSbtToBot = convertSbtToBot;
                         tokenId: mintedTokenId,
                         txHash: tx.hash,
                         timestamp: Date.now(),
-                        claimed: false
+                        claimed: false,
+                        odds: giftOdds
                     });
 
                     els.txHash.textContent = tx.hash;
@@ -5800,7 +5856,7 @@ window.convertSbtToBot = convertSbtToBot;
                     loveletter: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#be123c,#f43f5e);display:flex;align-items:center;justify-content:center;font-size:22px;">💌</div>',
                     birthday: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#1e3a8a,#6366f1);display:flex;align-items:center;justify-content:center;font-size:22px;">🎈</div>',
                     heart: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#a21caf,#d946ef);display:flex;align-items:center;justify-content:center;font-size:22px;">💖</div>',
-                    mystery: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#374151,#6b7280);display:flex;align-items:center;justify-content:center;font-size:22px;">🎲</div>',
+                    mystery: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#374151,#6b7280);display:flex;align-items:center;justify-content:center;font-size:22px;">🎰</div>',
                     goldenticket: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#b45309,#f59e0b);display:flex;align-items:center;justify-content:center;font-size:22px;">🎫</div>',
                     treasure: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#78350f,#b45309);display:flex;align-items:center;justify-content:center;font-size:22px;">🏴\u200D☠️</div>',
                     christmas: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#166534,#22c55e);display:flex;align-items:center;justify-content:center;font-size:22px;">🎄</div>',
@@ -5995,7 +6051,7 @@ window.convertSbtToBot = convertSbtToBot;
                     loveletter: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#be123c,#f43f5e);display:flex;align-items:center;justify-content:center;font-size:22px;">💌</div>',
                     birthday: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#1e3a8a,#6366f1);display:flex;align-items:center;justify-content:center;font-size:22px;">🎈</div>',
                     heart: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#a21caf,#d946ef);display:flex;align-items:center;justify-content:center;font-size:22px;">💖</div>',
-                    mystery: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#374151,#6b7280);display:flex;align-items:center;justify-content:center;font-size:22px;">🎲</div>',
+                    mystery: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#374151,#6b7280);display:flex;align-items:center;justify-content:center;font-size:22px;">🎰</div>',
                     goldenticket: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#b45309,#f59e0b);display:flex;align-items:center;justify-content:center;font-size:22px;">🎫</div>',
                     treasure: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#78350f,#b45309);display:flex;align-items:center;justify-content:center;font-size:22px;">🏴\u200D☠️</div>',
                     christmas: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#166534,#22c55e);display:flex;align-items:center;justify-content:center;font-size:22px;">🎄</div>',
@@ -7204,7 +7260,7 @@ window.convertSbtToBot = convertSbtToBot;
                 loveletter: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#be123c,#f43f5e);display:flex;align-items:center;justify-content:center;font-size:22px;">💌</div>',
                 birthday: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#1e3a8a,#6366f1);display:flex;align-items:center;justify-content:center;font-size:22px;">🎈</div>',
                 heart: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#a21caf,#d946ef);display:flex;align-items:center;justify-content:center;font-size:22px;">💖</div>',
-                mystery: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#374151,#6b7280);display:flex;align-items:center;justify-content:center;font-size:22px;">🎲</div>',
+                mystery: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#374151,#6b7280);display:flex;align-items:center;justify-content:center;font-size:22px;">🎰</div>',
                 goldenticket: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#b45309,#f59e0b);display:flex;align-items:center;justify-content:center;font-size:22px;">🎫</div>',
                 treasure: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#78350f,#b45309);display:flex;align-items:center;justify-content:center;font-size:22px;">🏴\u200D☠️</div>',
                 christmas: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#166534,#22c55e);display:flex;align-items:center;justify-content:center;font-size:22px;">🎄</div>',
@@ -7615,6 +7671,8 @@ window.convertSbtToBot = convertSbtToBot;
             step1.classList.remove('hidden');
             step2.classList.add('hidden');
             step3.classList.add('hidden');
+            const claimSpinStep = document.getElementById('claimSpinStep');
+            if (claimSpinStep) claimSpinStep.classList.add('hidden');
 
             const gifts = getAllGifts();
             let gift = gifts.find(g => String(g.tokenId) === String(tokenId));
@@ -7662,6 +7720,7 @@ window.convertSbtToBot = convertSbtToBot;
                         let isClaimed = false;
                         try { await contract.ownerOf(tokenId); } catch(e) { isClaimed = true; }
                         let unlockTime = null;
+                        let chainOdds = null;
                         try {
                             const uri2 = await contract.tokenURI(tokenId);
                             const fetchUri2 = uri2 && uri2.startsWith('ipfs://') ? PINATA_GATEWAY + uri2.slice(7) : uri2;
@@ -7673,12 +7732,14 @@ window.convertSbtToBot = convertSbtToBot;
                                     if (mj && mj.attributes) {
                                         const ut = mj.attributes.find(a => a.trait_type === 'Unlock Time');
                                         if (ut && ut.value) unlockTime = Number(ut.value) * 1000;
+                                        const od = mj.attributes.find(a => a.trait_type === 'Odds');
+                                        if (od && od.value) chainOdds = parseInt(String(od.value).replace('%', ''));
                                     }
                                 } catch(e2) {}
                             } else if (fetchUri2 && fetchUri2.startsWith('http')) {
                                 try {
                                     const r2 = await fetch(fetchUri2);
-                                    if (r2.ok) { const mj = await r2.json().catch(() => null); if (mj && mj.attributes) { const ut = mj.attributes.find(a => a.trait_type === 'Unlock Time'); if (ut && ut.value) unlockTime = Number(ut.value) * 1000; } }
+                                    if (r2.ok) { const mj = await r2.json().catch(() => null); if (mj && mj.attributes) { const ut = mj.attributes.find(a => a.trait_type === 'Unlock Time'); if (ut && ut.value) unlockTime = Number(ut.value) * 1000; const od = mj.attributes.find(a => a.trait_type === 'Odds'); if (od && od.value) chainOdds = parseInt(String(od.value).replace('%', '')); } }
                                 } catch(e2) {}
                             }
                         } catch(e2) {}
@@ -7695,6 +7756,7 @@ window.convertSbtToBot = convertSbtToBot;
                             timestamp: Number(data[4] || data.timestamp || 0) * 1000 || Date.now(),
                             claimed: isClaimed,
                             unlockTime: unlockTime,
+                            odds: chainOdds,
                             source: 'onchain'
                         };
                         addGift(gift);
@@ -7771,10 +7833,159 @@ window.convertSbtToBot = convertSbtToBot;
             const delay = (themed && themed.openDelay) || 800;
             setTimeout(() => {
                 step1.classList.add('hidden');
-                step2.classList.remove('hidden');
-                startClaimFlow(gift);
+                if (gift.style === 'mystery' && gift.odds) {
+                    showClaimSpinStep(gift);
+                } else {
+                    step2.classList.remove('hidden');
+                    startClaimFlow(gift);
+                }
             }, delay);
         };
+
+        function showClaimSpinStep(gift) {
+            const spinStep = document.getElementById('claimSpinStep');
+            const oddsText = document.getElementById('claimOddsText');
+            const oddsBadge = document.getElementById('claimOddsBadge');
+            const spinBtn = document.getElementById('claimSpinBtn2');
+            const spinBtnText = document.getElementById('claimSpinBtnText');
+            const spinResult = document.getElementById('claimSpinResult');
+            const spinResultText = document.getElementById('claimSpinResultText');
+            const loseBtn = document.getElementById('claimSpinLoseBtn');
+            const confettiWrap = document.getElementById('claimSpinConfetti');
+            const canvas = document.getElementById('claimSpinCanvas');
+            const ctx = canvas.getContext('2d');
+
+            oddsText.textContent = gift.odds + '%';
+            if (gift.odds >= 100) {
+                oddsBadge.style.background = 'rgba(16,185,129,0.15)';
+                oddsBadge.style.borderColor = 'rgba(16,185,129,0.3)';
+                oddsBadge.style.color = '#6ee7b7';
+                oddsBadge.innerHTML = '✅ <span>100% Guaranteed Claim</span>';
+            } else if (gift.odds >= 50) {
+                oddsBadge.innerHTML = '🎲 <span id="claimOddsText">' + gift.odds + '%</span> Chance to Win';
+            } else if (gift.odds >= 30) {
+                oddsBadge.innerHTML = '⚡ <span id="claimOddsText">' + gift.odds + '%</span> Chance to Win';
+            } else {
+                oddsBadge.innerHTML = '🔥 <span id="claimOddsText">' + gift.odds + '%</span> Rare Chance!';
+                oddsBadge.style.background = 'rgba(239,68,68,0.15)';
+                oddsBadge.style.borderColor = 'rgba(239,68,68,0.3)';
+                oddsBadge.style.color = '#fca5a5';
+            }
+
+            spinStep.classList.remove('hidden');
+            spinBtn.disabled = false;
+            spinBtnText.textContent = '🎰 SPIN TO CLAIM';
+            spinResult.style.display = 'none';
+            loseBtn.classList.add('hidden');
+            confettiWrap.innerHTML = '';
+
+            drawClaimWheel(ctx, canvas.width);
+
+            let spinRotation = 0;
+
+            function drawClaimWheel(context, size) {
+                const cx = size / 2, cy = size / 2, r = size / 2;
+                const segs = [
+                    { color: '#065f46', emoji: '✅', label: 'WIN' },
+                    { color: '#7f1d1d', emoji: '❌', label: 'LOSE' },
+                    { color: '#064e3b', emoji: '✅', label: 'WIN' },
+                    { color: '#78350f', emoji: '❌', label: 'LOSE' }
+                ];
+                const angle = 360 / segs.length;
+                context.clearRect(0, 0, size, size);
+                segs.forEach((seg, i) => {
+                    const start = (i * angle - 90) * Math.PI / 180;
+                    const end = ((i + 1) * angle - 90) * Math.PI / 180;
+                    context.beginPath();
+                    context.moveTo(cx, cy);
+                    context.arc(cx, cy, r, start, end);
+                    context.closePath();
+                    context.fillStyle = seg.color;
+                    context.fill();
+                    context.strokeStyle = 'rgba(255,255,255,0.08)';
+                    context.lineWidth = 1;
+                    context.stroke();
+                    context.save();
+                    context.translate(cx, cy);
+                    context.rotate((i * angle + angle / 2 - 90) * Math.PI / 180);
+                    context.textAlign = 'center';
+                    context.font = (size * 0.14) + 'px sans-serif';
+                    context.fillText(seg.emoji, r * 0.6, 0);
+                    context.fillStyle = '#d4d4d8';
+                    context.font = 'bold ' + (size * 0.07) + 'px sans-serif';
+                    context.fillText(seg.label, r * 0.38, 0);
+                    context.restore();
+                });
+            }
+
+            async function doClaimSpin() {
+                spinBtn.disabled = true;
+                spinBtnText.textContent = '🎰 SPINNING...';
+                spinResult.style.display = 'none';
+                loseBtn.classList.add('hidden');
+                confettiWrap.innerHTML = '';
+
+                const won = Math.random() * 100 < gift.odds;
+                const winAngle = won ? 0 : 180;
+                const extraSpins = 4 + Math.floor(Math.random() * 3);
+                spinRotation += extraSpins * 360 + winAngle - (spinRotation % 360);
+
+                canvas.style.transition = 'transform 3.5s cubic-bezier(0.17, 0.67, 0.12, 0.99)';
+                canvas.style.transform = 'rotate(' + spinRotation + 'deg)';
+
+                setTimeout(() => {
+                    spinResult.style.display = 'block';
+                    if (won) {
+                        spinResultText.textContent = '🎉 YOU WIN!';
+                        spinResultText.style.background = 'linear-gradient(135deg, #10b981, #34d399)';
+                        spinResultText.style.webkitBackgroundClip = 'text';
+                        spinResultText.style.webkitTextFillColor = 'transparent';
+                        spinBtnText.textContent = '✅ CLAIMING...';
+                        launchClaimConfetti(confettiWrap);
+                        setTimeout(() => {
+                            spinStep.classList.add('hidden');
+                            step2.classList.remove('hidden');
+                            startClaimFlow(gift);
+                        }, 1500);
+                    } else {
+                        spinResultText.textContent = '😢 NOT THIS TIME';
+                        spinResultText.style.background = 'linear-gradient(135deg, #ef4444, #f87171)';
+                        spinResultText.style.webkitBackgroundClip = 'text';
+                        spinResultText.style.webkitTextFillColor = 'transparent';
+                        spinBtnText.textContent = '🎰 SPIN TO CLAIM';
+                        spinBtn.disabled = false;
+                        loseBtn.classList.remove('hidden');
+                    }
+                }, 3700);
+            }
+
+            function launchClaimConfetti(wrap) {
+                wrap.innerHTML = '';
+                const colors = ['#10b981', '#fbbf24', '#a855f7', '#3b82f6', '#ec4899'];
+                for (let i = 0; i < 30; i++) {
+                    const c = document.createElement('div');
+                    c.className = 'spin-confetti';
+                    c.style.left = (Math.random() * 100) + '%';
+                    c.style.top = (Math.random() * 50) + '%';
+                    c.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    c.style.width = (Math.random() * 6 + 3) + 'px';
+                    c.style.height = (Math.random() * 6 + 3) + 'px';
+                    c.style.animationDelay = (Math.random() * 0.5) + 's';
+                    c.style.animationDuration = (Math.random() * 0.8 + 0.8) + 's';
+                    wrap.appendChild(c);
+                }
+            }
+
+            spinBtn.onclick = doClaimSpin;
+            document.getElementById('claimSpinBtn').onclick = doClaimSpin;
+            loseBtn.onclick = () => {
+                canvas.style.transition = 'none';
+                canvas.style.transform = 'rotate(' + (spinRotation % 360) + 'deg)';
+                spinResult.style.display = 'none';
+                loseBtn.classList.add('hidden');
+                spinBtnText.textContent = '🎰 SPIN TO CLAIM';
+            };
+        }
 
         async function startClaimFlow(gift) {
             const p1 = document.getElementById('claimProgress1');
@@ -8129,6 +8340,44 @@ window.convertSbtToBot = convertSbtToBot;
         </div>
     </div>
 
+    <!-- MYSTERY SPIN WHEEL MODAL -->
+    <div id="spinOverlay" class="spin-overlay">
+        <div class="spin-modal">
+            <button class="spin-close" id="spinCloseBtn">&times;</button>
+            <div class="spin-title">MYSTERY SPIN</div>
+            <div class="spin-subtitle">Spin to win a random $BOT gift amount</div>
+            <div class="wheel-container" id="wheelContainer">
+                <div class="wheel-pointer"></div>
+                <div class="wheel-outer">
+                    <div class="wheel-inner">
+                        <canvas id="spinCanvas" width="280" height="280"></canvas>
+                    </div>
+                </div>
+                <div class="wheel-center" id="spinCenterBtn">🎰</div>
+                <div class="spin-confetti-wrap" id="spinConfetti"></div>
+            </div>
+            <div class="spin-segments-info" id="spinSegInfo"></div>
+            <div id="spinResultArea" class="spin-result" style="display:none;">
+                <div class="spin-result-label">YOU WON</div>
+                <div class="spin-result-amount" id="spinResultAmount">0.000</div>
+                <div class="spin-result-label">$BOT</div>
+                <div class="spin-result-tier" id="spinResultTier">COMMON</div>
+            </div>
+            <div class="spin-recipient-wrap">
+                <div class="spin-recipient-icon">👤</div>
+                <input type="text" id="spinRecipientInput" class="spin-recipient" placeholder="Recipient address (0x...)" maxlength="42">
+            </div>
+            <textarea id="spinMsgInput" class="spin-msg-input" rows="2" maxlength="140" placeholder="Gift message (optional)..."></textarea>
+            <button id="spinBtn" class="spin-btn" disabled>
+                <span class="spin-btn-shine"></span>
+                <span id="spinBtnText">🎰 SPIN TO WIN</span>
+            </button>
+            <button id="spinSendBtn" class="spin-send-btn" style="display:none;" disabled>
+                🚀 Send Gift On-Chain
+            </button>
+        </div>
+    </div>
+
     <!-- GIFT CLAIM MODAL (Shareable Link) -->
     <div id="giftClaimModal" class="hidden fixed inset-0 z-[70] flex items-center justify-center bg-zinc-950/90 backdrop-blur-md">
         <div class="glass-panel rounded-3xl p-8 max-w-md w-full mx-4 text-center space-y-5 relative overflow-hidden" id="giftClaimPanel">
@@ -8219,6 +8468,35 @@ window.convertSbtToBot = convertSbtToBot;
                 </div>
                 <button id="claimOpenBtn" onclick="window.claimOpenGift && window.claimOpenGift()" class="claim-action-btn hidden">Open Gift ✨</button>
             </div>
+            <!-- Step 1.5: Mystery Spin (only for mystery gifts) -->
+            <div id="claimSpinStep" class="hidden flex flex-col items-center text-center max-w-md w-full">
+                <div class="text-5xl mb-4 claim-float-anim">🎰</div>
+                <h2 class="text-xl font-bold text-zinc-100 mb-1">Mystery Gift!</h2>
+                <p class="text-sm text-zinc-400 mb-2">Spin the wheel to claim your gift</p>
+                <div id="claimOddsBadge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold mb-5" style="background: rgba(168,85,247,0.15); border: 1px solid rgba(168,85,247,0.3); color: #c084fc;">
+                    🎲 <span id="claimOddsText">50%</span> Chance to Win
+                </div>
+                <div class="wheel-container" id="claimWheelContainer" style="width:220px;height:220px;margin:0 auto 14px;">
+                    <div class="wheel-pointer" style="border-top-width:20px;border-left-width:11px;border-right-width:11px;top:-8px;"></div>
+                    <div class="wheel-outer" style="width:220px;height:220px;padding:5px;">
+                        <div class="wheel-inner">
+                            <canvas id="claimSpinCanvas" width="220" height="220"></canvas>
+                        </div>
+                    </div>
+                    <div class="wheel-center" id="claimSpinBtn" style="width:44px;height:44px;font-size:17px;">🎰</div>
+                    <div class="spin-confetti-wrap" id="claimSpinConfetti"></div>
+                </div>
+                <div id="claimSpinResult" class="spin-result" style="display:none;">
+                    <div class="spin-result-amount" id="claimSpinResultText" style="font-size:22px;">YOU WIN!</div>
+                </div>
+                <button id="claimSpinBtn2" class="spin-btn" style="padding:12px;font-size:14px;margin-top:6px;">
+                    <span class="spin-btn-shine"></span>
+                    <span id="claimSpinBtnText">🎰 SPIN TO CLAIM</span>
+                </button>
+                <button id="claimSpinLoseBtn" class="hidden w-full mt-3 py-3 rounded-xl font-bold text-sm cursor-pointer" style="background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5;">
+                    Try Again 🔄
+                </button>
+            </div>
             <!-- Step 2: Connecting / Claiming -->
             <div id="claimStep2" class="hidden flex flex-col items-center text-center max-w-md w-full">
                 <div id="claimSpinnerIcon" class="text-6xl mb-6 claim-pulse-anim">⏳</div>
@@ -8308,6 +8586,251 @@ window.convertSbtToBot = convertSbtToBot;
         } else {
             setTimeout(wireAiChat, 100);
         }
+    })();
+
+    /* ===== MYSTERY SPIN WHEEL ===== */
+    (function() {
+        const SEGMENTS = [
+            { amount: 0.001, label: '0.001', color: '#374151', tier: 'common', emoji: '🪙' },
+            { amount: 0.002, label: '0.002', color: '#4b5563', tier: 'common', emoji: '🎲' },
+            { amount: 0.005, label: '0.005', color: '#065f46', tier: 'uncommon', emoji: '🍀' },
+            { amount: 0.01, label: '0.01', color: '#064e3b', tier: 'uncommon', emoji: '🎯' },
+            { amount: 0.02, label: '0.02', color: '#1e3a5f', tier: 'rare', emoji: '💎' },
+            { amount: 0.05, label: '0.05', color: '#1e3a8a', tier: 'rare', emoji: '🔥' },
+            { amount: 0.1, label: '0.1', color: '#4c1d95', tier: 'epic', emoji: '⚡' },
+            { amount: 0.5, label: '0.5', color: '#78350f', tier: 'legendary', emoji: '👑' }
+        ];
+        const TIER_COLORS = { common: '#a1a1aa', uncommon: '#4ade80', rare: '#60a5fa', epic: '#c084fc', legendary: '#fbbf24' };
+        const SEG_COUNT = SEGMENTS.length;
+        const SEG_ANGLE = 360 / SEG_COUNT;
+        let currentRotation = 0;
+        let isSpinning = false;
+        let spinResult = null;
+
+        const overlay = document.getElementById('spinOverlay');
+        const canvas = document.getElementById('spinCanvas');
+        const ctx = canvas.getContext('2d');
+        const centerBtn = document.getElementById('spinCenterBtn');
+        const spinBtn = document.getElementById('spinBtn');
+        const spinBtnText = document.getElementById('spinBtnText');
+        const sendBtn = document.getElementById('spinSendBtn');
+        const resultArea = document.getElementById('spinResultArea');
+        const resultAmount = document.getElementById('spinResultAmount');
+        const resultTier = document.getElementById('spinResultTier');
+        const recipientInput = document.getElementById('spinRecipientInput');
+        const msgInput = document.getElementById('spinMsgInput');
+        const confettiWrap = document.getElementById('spinConfetti');
+        const segInfo = document.getElementById('spinSegInfo');
+
+        function drawWheel() {
+            const cx = 140, cy = 140, r = 140;
+            ctx.clearRect(0, 0, 280, 280);
+            SEGMENTS.forEach((seg, i) => {
+                const startAngle = (i * SEG_ANGLE - 90) * Math.PI / 180;
+                const endAngle = ((i + 1) * SEG_ANGLE - 90) * Math.PI / 180;
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.arc(cx, cy, r, startAngle, endAngle);
+                ctx.closePath();
+                ctx.fillStyle = seg.color;
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.rotate((i * SEG_ANGLE + SEG_ANGLE / 2 - 90) * Math.PI / 180);
+                ctx.textAlign = 'center';
+                ctx.fillStyle = '#e5e7eb';
+                ctx.font = 'bold 14px sans-serif';
+                ctx.fillText(seg.emoji, r * 0.62, 0);
+                ctx.fillStyle = '#d4d4d8';
+                ctx.font = 'bold 11px sans-serif';
+                ctx.fillText(seg.label, r * 0.42, 0);
+                ctx.fillStyle = '#71717a';
+                ctx.font = '9px sans-serif';
+                ctx.fillText('$BOT', r * 0.42, 13);
+                ctx.restore();
+            });
+        }
+
+        function renderSegInfo() {
+            segInfo.innerHTML = SEGMENTS.map(s =>
+                '<span class="spin-seg-tag" style="border-color:' + TIER_COLORS[s.tier] + '22;color:' + TIER_COLORS[s.tier] + '">' + s.emoji + ' ' + s.label + '</span>'
+            ).join('');
+        }
+
+        function pickPrize() {
+            const weights = [25, 22, 18, 14, 10, 6, 3, 2];
+            const total = weights.reduce((a, b) => a + b, 0);
+            let r = Math.random() * total;
+            for (let i = 0; i < weights.length; i++) {
+                r -= weights[i];
+                if (r <= 0) return i;
+            }
+            return 0;
+        }
+
+        function spinWheel() {
+            if (isSpinning) return;
+            const recipient = recipientInput.value.trim();
+            if (!recipient.startsWith('0x') || recipient.length !== 42) {
+                recipientInput.style.borderColor = 'rgba(239,68,68,0.5)';
+                recipientInput.focus();
+                setTimeout(() => { recipientInput.style.borderColor = ''; }, 1500);
+                return;
+            }
+            if (!window.sbtContractInstance || !window.systemSigner) {
+                alert('Connect your wallet first!');
+                return;
+            }
+
+            isSpinning = true;
+            spinBtn.disabled = true;
+            spinBtnText.textContent = '🎰 SPINNING...';
+            resultArea.style.display = 'none';
+            sendBtn.style.display = 'none';
+            confettiWrap.innerHTML = '';
+
+            const winIndex = pickPrize();
+            const offsetAngle = 360 - (winIndex * SEG_ANGLE + SEG_ANGLE / 2);
+            const extraSpins = 5 + Math.floor(Math.random() * 3);
+            const targetRotation = currentRotation + extraSpins * 360 + offsetAngle - (currentRotation % 360);
+            currentRotation = targetRotation;
+
+            const wheelEl = canvas;
+            wheelEl.style.transition = 'transform 4.5s cubic-bezier(0.17, 0.67, 0.12, 0.99)';
+            wheelEl.style.transform = 'rotate(' + targetRotation + 'deg)';
+
+            setTimeout(() => {
+                isSpinning = false;
+                spinResult = SEGMENTS[winIndex];
+                spinBtnText.textContent = '🎰 SPIN AGAIN';
+                spinBtn.disabled = false;
+                resultArea.style.display = 'block';
+                resultAmount.textContent = spinResult.amount.toFixed(spinResult.amount < 0.01 ? 3 : spinResult.amount < 0.1 ? 2 : 1);
+                resultTier.textContent = spinResult.tier.toUpperCase();
+                resultTier.className = 'spin-result-tier ' + spinResult.tier;
+                sendBtn.style.display = 'block';
+                sendBtn.disabled = false;
+                launchConfetti();
+            }, 4700);
+        }
+
+        function launchConfetti() {
+            confettiWrap.innerHTML = '';
+            const colors = ['#fbbf24', '#a855f7', '#10b981', '#3b82f6', '#ec4899', '#ef4444'];
+            for (let i = 0; i < 35; i++) {
+                const c = document.createElement('div');
+                c.className = 'spin-confetti';
+                c.style.left = (Math.random() * 100) + '%';
+                c.style.top = (Math.random() * 40) + '%';
+                c.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                c.style.width = (Math.random() * 6 + 3) + 'px';
+                c.style.height = (Math.random() * 6 + 3) + 'px';
+                c.style.animationDelay = (Math.random() * 0.6) + 's';
+                c.style.animationDuration = (Math.random() * 0.8 + 0.8) + 's';
+                confettiWrap.appendChild(c);
+            }
+        }
+
+        async function dispatchSpinGift() {
+            if (!spinResult) return;
+            const recipient = recipientInput.value.trim();
+            const message = msgInput.value.trim();
+            if (!recipient.startsWith('0x') || recipient.length !== 42) { alert('Invalid recipient.'); return; }
+            if (recipient.toLowerCase() === (window.realWalletAddress || '').toLowerCase()) { alert("You can't gift yourself."); return; }
+            if (!window.sbtContractInstance) { alert('Connect wallet first.'); return; }
+
+            sendBtn.disabled = true;
+            sendBtn.textContent = '⏳ Creating NFT...';
+
+            try {
+                const amount = spinResult.amount;
+                const style = 'mystery';
+                const tokenURIHash = await createGiftMetadata(realWalletAddress, style, message, amount.toString(), null);
+                const tokenURI = 'ipfs://' + tokenURIHash;
+
+                sendBtn.textContent = '⏳ Minting on-chain...';
+                const amountWei = ethers.parseEther(amount.toString());
+                const tx = await sbtContractInstance.mintSoulboundGift(recipient, tokenURI, message, { value: amountWei });
+
+                sendBtn.textContent = '⏳ Confirming...';
+                const receipt = await tx.wait();
+                if (receipt.status !== 1) throw new Error('Tx failed on-chain');
+
+                let mintedTokenId = '---';
+                const evt = receipt.logs.find(log => {
+                    try { const p = sbtContractInstance.interface.parseLog(log); return p && p.name === 'SoulboundGiftMinted'; } catch (e) { return false; }
+                });
+                if (evt) { mintedTokenId = sbtContractInstance.interface.parseLog(evt).args.tokenId.toString(); }
+
+                addGift({
+                    id: 'gift_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8),
+                    sender: realWalletAddress,
+                    senderName: (document.getElementById('senderNameInput') && document.getElementById('senderNameInput').value.trim()) || realWalletAddress.slice(0, 6) + '...' + realWalletAddress.slice(-4),
+                    recipient: recipient,
+                    amount: amount.toString(),
+                    style: style,
+                    message: message,
+                    tokenId: mintedTokenId,
+                    txHash: tx.hash,
+                    timestamp: Date.now(),
+                    claimed: false
+                });
+
+                sendBtn.textContent = '✅ Gift Sent!';
+                sendBtn.style.background = 'linear-gradient(135deg, #059669, #047857)';
+
+                const claimUrl = window.location.origin + window.location.pathname + '?gift=' + mintedTokenId;
+                await navigator.clipboard.writeText(claimUrl).catch(() => {});
+
+                await updateRealBalance();
+                grantGasToRecipient(recipient);
+                if (typeof loadOnChainHistory === 'function') await loadOnChainHistory();
+
+                setTimeout(() => {
+                    closeSpinModal();
+                    if (typeof resetGiftForm === 'function') resetGiftForm();
+                    alert('🎁 Mystery gift sent!\n\nWon: ' + spinResult.amount + ' $BOT\nRecipient: ' + recipient.slice(0, 6) + '...' + recipient.slice(-4) + '\nClaim link copied to clipboard!\n\nToken #' + mintedTokenId);
+                }, 1200);
+            } catch (err) {
+                console.error('Spin gift failed:', err);
+                sendBtn.textContent = '🚀 Send Gift On-Chain';
+                sendBtn.disabled = false;
+                alert('Transaction failed: ' + (err.reason || err.message || 'Unknown'));
+            }
+        }
+
+        function openSpinModal() {
+            overlay.classList.add('active');
+            spinResult = null;
+            resultArea.style.display = 'none';
+            sendBtn.style.display = 'none';
+            spinBtn.disabled = false;
+            spinBtnText.textContent = '🎰 SPIN TO WIN';
+            sendBtn.textContent = '🚀 Send Gift On-Chain';
+            sendBtn.style.background = '';
+            confettiWrap.innerHTML = '';
+            drawWheel();
+            renderSegInfo();
+        }
+        function closeSpinModal() {
+            overlay.classList.remove('active');
+            isSpinning = false;
+            const wheelEl = canvas;
+            wheelEl.style.transition = 'none';
+            wheelEl.style.transform = 'rotate(' + (currentRotation % 360) + 'deg)';
+        }
+
+        spinBtn.addEventListener('click', spinWheel);
+        centerBtn.addEventListener('click', spinWheel);
+        sendBtn.addEventListener('click', dispatchSpinGift);
+        document.getElementById('spinCloseBtn').addEventListener('click', closeSpinModal);
+        overlay.addEventListener('click', (e) => { if (e.target === overlay) closeSpinModal(); });
+
+        window.openSpinModal = openSpinModal;
+        window.closeSpinModal = closeSpinModal;
     })();
     </script>
 </body>
