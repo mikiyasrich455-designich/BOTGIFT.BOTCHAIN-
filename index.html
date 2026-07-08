@@ -1021,6 +1021,7 @@
         .ai-chat-card:hover::after { opacity: 1; animation: shineSweep 0.8s ease forwards; }
         .ai-chat-card:hover { box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1); transform: scale(1.02) translateY(-4px); }
         @keyframes chatBounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+        @keyframes chatPulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.3); } }
         .chat-typing-dot { width: 7px; height: 7px; border-radius: 50%; background: #10b981; display: inline-block; animation: chatBounce 1.4s ease-in-out infinite; }
         .chat-typing-dot:nth-child(1) { animation-delay: -0.32s; }
         .chat-typing-dot:nth-child(2) { animation-delay: -0.16s; }
@@ -2447,9 +2448,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- REACT GIFTING CHATBOT -->
-        <div id="reactChatbotRoot" class="w-full max-w-md mx-auto"></div>
 
         <!-- HISTORY VIEW -->
         <div id="historyView" class="w-full max-w-5xl mx-auto view-panel-transition hidden pb-16 relative z-10 overflow-y-auto max-h-[calc(100vh-140px)] custom-scrollbar">
@@ -4820,9 +4818,10 @@ window.convertSbtToBot = convertSbtToBot;
 
     <script type="text/babel">
         // ==========================================
-        // GIFTING AI CHATBOT (React)
+        // GIFTING AI CHATBOT (Floating Widget)
         // ==========================================
         const GiftingChatbot = () => {
+            const [isOpen, setIsOpen] = React.useState(false);
             const [messages, setMessages] = React.useState([
                 { role: 'assistant', content: 'Hey there! \u{1F381} I am your personal Gifting Assistant. Ready to spread some joy? Ask me anything about gifts, presents, or how to make someone smile today!' }
             ]);
@@ -4832,14 +4831,13 @@ window.convertSbtToBot = convertSbtToBot;
 
             React.useEffect(() => {
                 messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-            }, [messages]);
+            }, [messages, isOpen]);
 
             const handleTemplateClick = async (msg) => {
                 if (isLoading) return;
                 setInput('');
                 setMessages((prev) => [...prev, { role: 'user', content: msg }]);
                 setIsLoading(true);
-
                 try {
                     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                         method: 'POST',
@@ -4850,10 +4848,7 @@ window.convertSbtToBot = convertSbtToBot;
                         body: JSON.stringify({
                             model: 'llama3-8b-8192',
                             messages: [
-                                {
-                                    role: 'system',
-                                    content: 'You are a joyful, uplifting, and highly enthusiastic gifting assistant. Your sole purpose is to make humans happy and help them with ideas, tips, and inspiration strictly related to gifts, presents, surprises, and celebrations. CRITICAL RULE: You must ONLY talk about gifts and happiness. If the user asks about coding, politics, math, or anything else unrelated to gifts, politely and cheerfully redirect them back to gifting.'
-                                },
+                                { role: 'system', content: 'You are a joyful, uplifting, and highly enthusiastic gifting assistant. Your sole purpose is to make humans happy and help them with ideas, tips, and inspiration strictly related to gifts, presents, surprises, and celebrations. CRITICAL RULE: You must ONLY talk about gifts and happiness. If the user asks about coding, politics, math, or anything else unrelated to gifts, politely and cheerfully redirect them back to gifting.' },
                                 ...messages.filter(m => m.role !== 'system'),
                                 { role: 'user', content: msg }
                             ],
@@ -4861,12 +4856,10 @@ window.convertSbtToBot = convertSbtToBot;
                             max_tokens: 250
                         })
                     });
-
                     const data = await response.json();
-                    const reply = data.choices[0]?.message?.content || "Something went wrong, but don't lose your smile! Try again real quick! \u{1F389}";
+                    const reply = data.choices[0]?.message?.content || "Something went wrong, but don't lose your smile! Try again! \u{1F389}";
                     setMessages((prev) => [...prev, { role: 'assistant', content: reply }]);
                 } catch (error) {
-                    console.error("Chatbot Error:", error);
                     setMessages((prev) => [...prev, { role: 'assistant', content: "Oops! My gift machinery hit a tiny bump. Let's try that again! \u{1F4E6}" }]);
                 } finally {
                     setIsLoading(false);
@@ -4876,12 +4869,10 @@ window.convertSbtToBot = convertSbtToBot;
             const handleSendMessage = async (e) => {
                 e.preventDefault();
                 if (!input.trim() || isLoading) return;
-
                 const userMessage = input.trim();
                 setInput('');
                 setMessages((prev) => [...prev, { role: 'user', content: userMessage }]);
                 setIsLoading(true);
-
                 try {
                     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                         method: 'POST',
@@ -4892,90 +4883,139 @@ window.convertSbtToBot = convertSbtToBot;
                         body: JSON.stringify({
                             model: 'llama3-8b-8192',
                             messages: [
-                                {
-                                    role: 'system',
-                                    content: 'You are a joyful, uplifting, and highly enthusiastic gifting assistant. Your sole purpose is to make humans happy and help them with ideas, tips, and inspiration strictly related to gifts, presents, surprises, and celebrations. CRITICAL RULE: You must ONLY talk about gifts and happiness. If the user asks about coding, politics, math, or anything else unrelated to gifts, politely and cheerfully redirect them back to gifting.'
-                                },
-                                ...messages.filter(msg => msg.role !== 'system'),
+                                { role: 'system', content: 'You are a joyful, uplifting, and highly enthusiastic gifting assistant. Your sole purpose is to make humans happy and help them with ideas, tips, and inspiration strictly related to gifts, presents, surprises, and celebrations. CRITICAL RULE: You must ONLY talk about gifts and happiness. If the user asks about coding, politics, math, or anything else unrelated to gifts, politely and cheerfully redirect them back to gifting.' },
+                                ...messages.filter(m => m.role !== 'system'),
                                 { role: 'user', content: userMessage }
                             ],
                             temperature: 0.7,
                             max_tokens: 250
                         })
                     });
-
                     const data = await response.json();
-                    const reply = data.choices[0]?.message?.content || "Something went wrong, but don't lose your smile! Try again real quick! \u{1F389}";
+                    const reply = data.choices[0]?.message?.content || "Something went wrong, but don't lose your smile! Try again! \u{1F389}";
                     setMessages((prev) => [...prev, { role: 'assistant', content: reply }]);
                 } catch (error) {
-                    console.error("Chatbot Error:", error);
                     setMessages((prev) => [...prev, { role: 'assistant', content: "Oops! My gift machinery hit a tiny bump. Let's try that again! \u{1F4E6}" }]);
                 } finally {
                     setIsLoading(false);
                 }
             };
 
+            const panelStyle = {
+                position: 'fixed',
+                bottom: '90px',
+                right: '24px',
+                width: '380px',
+                maxHeight: '520px',
+                borderRadius: '20px',
+                overflow: 'hidden',
+                display: 'flex',
+                flexDirection: 'column',
+                background: 'linear-gradient(180deg, #0f0a1a 0%, #110d1f 100%)',
+                border: '1px solid rgba(168,85,247,0.25)',
+                boxShadow: '0 25px 60px rgba(0,0,0,0.6), 0 0 40px rgba(168,85,247,0.15)',
+                transform: isOpen ? 'scale(1) translateY(0)' : 'scale(0.9) translateY(20px)',
+                opacity: isOpen ? 1 : 0,
+                pointerEvents: isOpen ? 'auto' : 'none',
+                transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                zIndex: 99999
+            };
+
+            const btnStyle = {
+                position: 'fixed',
+                bottom: '24px',
+                right: '24px',
+                width: '56px',
+                height: '56px',
+                borderRadius: '50%',
+                border: 'none',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: 'linear-gradient(135deg, #a855f7, #ec4899)',
+                boxShadow: '0 8px 25px rgba(168,85,247,0.4), 0 0 20px rgba(168,85,247,0.2)',
+                zIndex: 100000,
+                transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                transform: isOpen ? 'rotate(90deg) scale(0.9)' : 'rotate(0deg) scale(1)'
+            };
+
             return (
-                <div className="w-full max-w-md mx-auto rounded-2xl border border-purple-500/20 bg-slate-950 shadow-xl overflow-hidden my-6">
-                    <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-4 flex items-center gap-3">
-                        <div className="relative">
-                            <span className="text-2xl">{String.fromCodePoint(0x1F381)}</span>
-                            <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-400 border-2 border-slate-950 animate-pulse"></span>
-                        </div>
-                        <div>
-                            <h3 className="font-bold text-white text-sm">JoyBot {String.fromCodePoint(0x2014)} Gifting AI</h3>
-                            <p className="text-xs text-purple-100/80">Making humans happy</p>
-                        </div>
-                    </div>
-                    <div className="h-80 overflow-y-auto p-4 space-y-4 bg-slate-950/50">
-                        {messages.map((msg, index) => (
-                            <React.Fragment key={index}>
-                                <div className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                    <div className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm ${msg.role === 'user' ? 'bg-purple-600 text-white rounded-br-none' : 'bg-slate-900 text-slate-100 border border-slate-800 rounded-bl-none'}`}>
-                                        {msg.content}
-                                    </div>
-                                </div>
-                                {index === 0 && msg.role === 'assistant' && (
-                                    <div className="flex justify-start pl-11">
-                                        <div className="space-y-2 w-full max-w-[85%]">
-                                            <p className="text-[10px] text-slate-500 uppercase tracking-wider">Quick questions</p>
-                                            <button onClick={() => handleTemplateClick('Gift me a love letter for my girlfriend')} className="w-full text-left rounded-xl px-4 py-2.5 text-xs text-slate-200 bg-purple-500/10 border border-purple-500/20 hover:bg-purple-500/20 transition cursor-pointer">{String.fromCodePoint(0x1F48C)} Gift me a love letter for my girlfriend</button>
-                                            <button onClick={() => handleTemplateClick("What's the best crypto gift for a friend?")} className="w-full text-left rounded-xl px-4 py-2.5 text-xs text-slate-200 bg-purple-500/10 border border-purple-500/20 hover:bg-purple-500/20 transition cursor-pointer">{String.fromCodePoint(0x1F680)} What's the best crypto gift for a friend?</button>
-                                            <button onClick={() => handleTemplateClick('Surprise me with a birthday gift idea!')} className="w-full text-left rounded-xl px-4 py-2.5 text-xs text-slate-200 bg-purple-500/10 border border-purple-500/20 hover:bg-purple-500/20 transition cursor-pointer">{String.fromCodePoint(0x1F382)} Surprise me with a birthday gift idea!</button>
-                                        </div>
-                                    </div>
-                                )}
-                            </React.Fragment>
-                        ))}
-                        {isLoading && (
-                            <div className="flex justify-start">
-                                <div className="bg-slate-900 text-slate-400 border border-slate-800 rounded-2xl rounded-bl-none px-4 py-2.5 text-sm flex items-center gap-2">
-                                    <span className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
-                                    <span className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                                    <span className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
-                                </div>
-                            </div>
+                <React.Fragment>
+                    {/* Floating Robot Button */}
+                    <button onClick={() => setIsOpen(!isOpen)} style={btnStyle}
+                        onMouseEnter={(e) => { e.currentTarget.style.transform = (isOpen ? 'rotate(90deg) scale(1.1)' : 'scale(1.1)'); e.currentTarget.style.boxShadow = '0 10px 35px rgba(168,85,247,0.55), 0 0 30px rgba(168,85,247,0.3)'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.transform = (isOpen ? 'rotate(90deg) scale(0.9)' : 'scale(1)'); e.currentTarget.style.boxShadow = '0 8px 25px rgba(168,85,247,0.4), 0 0 20px rgba(168,85,247,0.2)'; }}>
+                        {isOpen ? (
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        ) : (
+                            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 8V4H8"/><rect x="2" y="8" width="20" height="8" rx="2"/><path d="M6 12v4"/><path d="M18 12v4"/><circle cx="8" cy="12" r="1" fill="white"/><circle cx="16" cy="12" r="1" fill="white"/></svg>
                         )}
-                        <div ref={messagesEndRef} />
+                        {!isOpen && <span style={{position:'absolute',top:'-2px',right:'-2px',width:'14px',height:'14px',borderRadius:'50%',background:'#22c55e',border:'2px solid #110d1f',animation:'chatPulse 2s infinite'}}></span>}
+                    </button>
+
+                    {/* Chat Panel */}
+                    <div style={panelStyle}>
+                        {/* Header */}
+                        <div style={{background:'linear-gradient(135deg, #a855f7, #ec4899)',padding:'14px 16px',display:'flex',alignItems:'center',gap:'10px',flexShrink:0}}>
+                            <div style={{width:'36px',height:'36px',borderRadius:'50%',background:'rgba(255,255,255,0.2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'18px'}}>{String.fromCodePoint(0x1F381)}</div>
+                            <div style={{flex:1}}>
+                                <div style={{fontWeight:700,color:'white',fontSize:'13px'}}>JoyBot {String.fromCodePoint(0x2014)} Gifting AI</div>
+                                <div style={{fontSize:'10px',color:'rgba(255,255,255,0.75)'}}>Making humans happy</div>
+                            </div>
+                            <div style={{display:'flex',alignItems:'center',gap:'5px',padding:'3px 8px',borderRadius:'20px',background:'rgba(34,197,94,0.2)',border:'1px solid rgba(34,197,94,0.3)'}}>
+                                <span style={{width:'6px',height:'6px',borderRadius:'50%',background:'#22c55e',animation:'chatPulse 2s infinite'}}></span>
+                                <span style={{fontSize:'9px',color:'#22c55e',fontWeight:600}}>Online</span>
+                            </div>
+                        </div>
+
+                        {/* Messages */}
+                        <div style={{flex:1,overflowY:'auto',padding:'12px',display:'flex',flexDirection:'column',gap:'10px',minHeight:'0'}}>
+                            {messages.map((msg, index) => (
+                                <React.Fragment key={index}>
+                                    <div style={{display:'flex',justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start'}}>
+                                        <div style={{maxWidth:'82%',borderRadius:'16px',padding:'10px 14px',fontSize:'13px',lineHeight:'1.5',
+                                            background: msg.role === 'user' ? 'linear-gradient(135deg, #a855f7, #9333ea)' : 'rgba(30,25,50,0.9)',
+                                            color: msg.role === 'user' ? 'white' : '#e2e8f0',
+                                            border: msg.role === 'user' ? 'none' : '1px solid rgba(100,80,140,0.25)',
+                                            borderRadius: msg.role === 'user' ? '16px 16px 4px 16px' : '16px 16px 16px 4px'
+                                        }}>{msg.content}</div>
+                                    </div>
+                                    {index === 0 && msg.role === 'assistant' && (
+                                        <div style={{paddingLeft:'8px',display:'flex',flexDirection:'column',gap:'6px'}}>
+                                            <div style={{fontSize:'9px',color:'#7c6b9e',textTransform:'uppercase',letterSpacing:'1px',fontWeight:600}}>Quick questions</div>
+                                            <button onClick={() => handleTemplateClick('Gift me a love letter for my girlfriend')} style={{textAlign:'left',borderRadius:'12px',padding:'9px 12px',fontSize:'12px',color:'#d4c8ef',background:'rgba(168,85,247,0.08)',border:'1px solid rgba(168,85,247,0.18)',cursor:'pointer',transition:'all 0.2s'}} onMouseEnter={(e) => e.currentTarget.style.background='rgba(168,85,247,0.18)'} onMouseLeave={(e) => e.currentTarget.style.background='rgba(168,85,247,0.08)'}>{String.fromCodePoint(0x1F48C)} Gift me a love letter for my girlfriend</button>
+                                            <button onClick={() => handleTemplateClick("What's the best crypto gift for a friend?")} style={{textAlign:'left',borderRadius:'12px',padding:'9px 12px',fontSize:'12px',color:'#d4c8ef',background:'rgba(168,85,247,0.08)',border:'1px solid rgba(168,85,247,0.18)',cursor:'pointer',transition:'all 0.2s'}} onMouseEnter={(e) => e.currentTarget.style.background='rgba(168,85,247,0.18)'} onMouseLeave={(e) => e.currentTarget.style.background='rgba(168,85,247,0.08)'}>{String.fromCodePoint(0x1F680)} What's the best crypto gift for a friend?</button>
+                                            <button onClick={() => handleTemplateClick('Surprise me with a birthday gift idea!')} style={{textAlign:'left',borderRadius:'12px',padding:'9px 12px',fontSize:'12px',color:'#d4c8ef',background:'rgba(168,85,247,0.08)',border:'1px solid rgba(168,85,247,0.18)',cursor:'pointer',transition:'all 0.2s'}} onMouseEnter={(e) => e.currentTarget.style.background='rgba(168,85,247,0.18)'} onMouseLeave={(e) => e.currentTarget.style.background='rgba(168,85,247,0.08)'}>{String.fromCodePoint(0x1F382)} Surprise me with a birthday gift idea!</button>
+                                        </div>
+                                    )}
+                                </React.Fragment>
+                            ))}
+                            {isLoading && (
+                                <div style={{display:'flex',justifyContent:'flex-start'}}>
+                                    <div style={{background:'rgba(30,25,50,0.9)',border:'1px solid rgba(100,80,140,0.25)',borderRadius:'16px 16px 16px 4px',padding:'12px 16px',display:'flex',gap:'5px',alignItems:'center'}}>
+                                        <span style={{width:'7px',height:'7px',borderRadius:'50%',background:'#a855f7',animation:'chatBounce 1.4s ease-in-out infinite',animationDelay:'0s'}}></span>
+                                        <span style={{width:'7px',height:'7px',borderRadius:'50%',background:'#a855f7',animation:'chatBounce 1.4s ease-in-out infinite',animationDelay:'0.16s'}}></span>
+                                        <span style={{width:'7px',height:'7px',borderRadius:'50%',background:'#a855f7',animation:'chatBounce 1.4s ease-in-out infinite',animationDelay:'0.32s'}}></span>
+                                    </div>
+                                </div>
+                            )}
+                            <div ref={messagesEndRef} />
+                        </div>
+
+                        {/* Input */}
+                        <form onSubmit={handleSendMessage} style={{padding:'10px 12px',borderTop:'1px solid rgba(100,80,140,0.2)',display:'flex',gap:'8px',flexShrink:0,background:'rgba(15,10,26,0.6)'}}>
+                            <input type="text" value={input} onChange={(e) => setInput(e.target.value)} placeholder="Ask about gifts..."
+                                style={{flex:1,background:'rgba(25,20,40,0.8)',border:'1px solid rgba(100,80,140,0.3)',borderRadius:'12px',padding:'10px 14px',fontSize:'13px',color:'#e2e8f0',outline:'none',transition:'border 0.2s'}}
+                                onFocus={(e) => e.target.style.borderColor='rgba(168,85,247,0.5)'} onBlur={(e) => e.target.style.borderColor='rgba(100,80,140,0.3)'}
+                                disabled={isLoading} />
+                            <button type="submit" disabled={isLoading || !input.trim()}
+                                style={{width:'40px',height:'40px',borderRadius:'12px',border:'none',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',background:'linear-gradient(135deg, #a855f7, #ec4899)',opacity: (isLoading || !input.trim()) ? 0.5 : 1,transition:'opacity 0.2s',flexShrink:0}}>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                            </button>
+                        </form>
                     </div>
-                    <form onSubmit={handleSendMessage} className="p-3 border-t border-slate-800 bg-slate-950 flex gap-2">
-                        <input
-                            type="text"
-                            value={input}
-                            onChange={(e) => setInput(e.target.value)}
-                            placeholder="Ask about gifts..."
-                            className="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-purple-500 transition"
-                            disabled={isLoading}
-                        />
-                        <button
-                            type="submit"
-                            disabled={isLoading || !input.trim()}
-                            className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-medium hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            Send
-                        </button>
-                    </form>
-                </div>
+                </React.Fragment>
             );
         };
 
@@ -8499,5 +8539,7 @@ window.convertSbtToBot = convertSbtToBot;
         }
     })();
     </script>
+    <!-- Floating Chatbot Widget -->
+    <div id="reactChatbotRoot" style="position:fixed;bottom:24px;right:24px;z-index:9999;"></div>
 </body>
 </html>
