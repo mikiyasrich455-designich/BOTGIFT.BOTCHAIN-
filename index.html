@@ -6179,19 +6179,22 @@ window.convertSbtToBot = convertSbtToBot;
                                 }
                             }
 
-                            if (!recipient && !isClaimed) {
-                                // Fallback B: ownerOf with retry
+                            // Step 3: Determine if this gift belongs to the current wallet
+                            var isRecipient = !!(recipient && recipient.toLowerCase() === realWalletAddress.toLowerCase());
+
+                            // Fallback B: If not sender and not recipient, try ownerOf to verify actual on-chain owner
+                            if (!isSender && !isRecipient && !isClaimed) {
                                 const ownerAddr = await retryRpc(function() { return sbtRead.ownerOf(tokenId); }, 'ownerOf(' + tokenId + ')');
                                 if (ownerAddr && ownerAddr !== ethers.ZeroAddress) {
                                     recipient = ownerAddr;
+                                    isRecipient = recipient.toLowerCase() === realWalletAddress.toLowerCase();
+                                    console.log('[History] ownerOf fallback resolved token', tokenId, '→ recipient:', isRecipient ? 'MATCH' : 'no match');
                                 } else {
                                     isClaimed = true;
                                     console.warn('[History] ownerOf failed for token', tokenId, '- marking as claimed');
                                 }
                             }
 
-                            // Step 3: Determine if this gift belongs to the current wallet
-                            var isRecipient = !!(recipient && recipient.toLowerCase() === realWalletAddress.toLowerCase());
                             if (!isSender && !isRecipient) {
                                 skippedCount++;
                                 continue;
