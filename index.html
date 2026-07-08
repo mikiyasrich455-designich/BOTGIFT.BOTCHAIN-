@@ -3728,7 +3728,7 @@
                 btn.innerHTML = `Minting ${i + 1}/${valid.length}... <span class="text-sm">⏳</span>`;
                 try {
                     const daoTheme = getGiftTheme('dao');
-                    const daoImage = 'https://res.cloudinary.com/dguexkgjw/image/upload/v1783197571/photo_5931304236568218967_y_j2irwa.jpg';
+                    const daoImage = await ensureImageOnIpfs('data:image/svg+xml,' + encodeURIComponent(daoTheme.nftImageSvg));
                     const metadata = {
                         name: '🏛️ DAO Treasury Gift',
                         description: 'DAO Treasury Distribution of ' + perAmount + ' BOT',
@@ -3959,7 +3959,10 @@
                 }
 
                 const designerTheme = getGiftTheme('designer');
-                let designerImageUrl = cardIpfsHash ? (PINATA_GATEWAY + cardIpfsHash) : 'https://res.cloudinary.com/dguexkgjw/image/upload/v1783197536/photo_5931304236568218968_y_djl9s6.jpg';
+                let designerImageUrl = cardIpfsHash ? (PINATA_GATEWAY + cardIpfsHash) : null;
+                if (!designerImageUrl) {
+                    designerImageUrl = await ensureImageOnIpfs('data:image/svg+xml,' + encodeURIComponent(designerTheme.nftImageSvg));
+                }
                 const metadata = {
                     name: '🎨 Custom Gift Card',
                     description: 'A custom designed gift card on BOT Chain',
@@ -4094,7 +4097,7 @@
 
             try {
                 const timelockTheme = getGiftTheme('timelock');
-                const timelockImage = 'https://res.cloudinary.com/dguexkgjw/image/upload/v1783197672/photo_5931304236568218965_y_fugghd.jpg';
+                const timelockImage = await ensureImageOnIpfs('data:image/svg+xml,' + encodeURIComponent(timelockTheme.nftImageSvg));
                 const metadata = {
                     name: '⏳ Time-Locked Gift',
                     description: 'Gift locked until ' + new Date(timeUnlock.value).toLocaleString() + ': ' + message,
@@ -4276,8 +4279,8 @@ const SBT_CONTRACT_ABI = [
 window.SBT_CONTRACT_ABI = SBT_CONTRACT_ABI;
 
 // PINATA CONFIG — Demo/testnet key for IPFS pinning (Builder Challenge)
-const PINATA_JWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJjMTU0ZjBlMS1lOTdkLTRmYmYtODAxOS02ZjYwNTk0NzEzMTEiLCJlbWFpbCI6Im1pa2l5YXNyaWNoNDU1QGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaW5fcG9saWN5Ijp7InJlZ2lvbnMiOlt7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6IkZSQTEifSx7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6Ik5ZQzEifV0sInZlcnNpb24iOjF9LCJtZmFfZW5hYmxlZCI6ZmFsc2UsInN0YXR1cyI6IkFDVElWRSJ9LCJhdXRoZW50aWNhdGlvblR5cGUiOiJzY29wZWRLZXkiLCJzY29wZWRLZXlLZXkiOiIxYWI5YjdhZGQwYWU5ZGUzZjFjYyIsInNjb3BlZEtleVNlY3JldCI6IjkxOWIwOGZhOGM1ZDU0ZGQ2NDRlNDc5YThjZDdmOGM1Y2Q1ZjgxOTc0MWI1ODU0YjQ1NjE0OGU5MzI4MGRkMTYiLCJleHAiOjE4MTQ3Nzk0MDN9.7B78B3lf9gjwIXDQDdKFzepc02C1rJPgDua8h8aoKuM";
-const PINATA_GATEWAY = "https://gateway.pinata.cloud/ipfs/";
+var PINATA_JWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJjMTU0ZjBlMS1lOTdkLTRmYmYtODAxOS02ZjYwNTk0NzEzMTEiLCJlbWFpbCI6Im1pa2l5YXNyaWNoNDU1QGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaW5fcG9saWN5Ijp7InJlZ2lvbnMiOlt7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6IkZSQTEifSx7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6Ik5ZQzEifV0sInZlcnNpb24iOjF9LCJtZmFfZW5hYmxlZCI6ZmFsc2UsInN0YXR1cyI6IkFDVElWRSJ9LCJhdXRoZW50aWNhdGlvblR5cGUiOiJzY29wZWRLZXkiLCJzY29wZWRLZXlLZXkiOiI5ODRjY2JmNmEyMzMwNmYzYWNiMyIsInNjb3BlZEtleVNlY3JldCI6IjkxZmQ2N2E4MmQwNzdlOWRkNzlhNTQ5ZTJmMDU2NDc4ODIwZGE5ZGY3OWQ1MjhiZDM1YjkxMmYwNzUxY2QyNDUiLCJleHAiOjE4MTUwMDA4MTl9.cSTrsI-psdGuOXqQnzeNkny2eZnTXDojQR7LoIcI3sw";
+var PINATA_GATEWAY = "https://gateway.pinata.cloud/ipfs/";
 
 var sbtContractInstance = null;
 let sbtUploadedImageFile = null;
@@ -4326,49 +4329,20 @@ async function uploadImageToPinata(file) {
     }
 }
 
-async function fetchJsonFromUri(uri) {
-    if (!uri || typeof uri !== 'string') return null;
-    if (uri.startsWith('data:application/json')) {
-        try {
-            const jsonPart = uri.split(',')[1] || '';
-            const jsonStr = decodeURIComponent(escape(atob(jsonPart)));
-            return JSON.parse(jsonStr);
-        } catch (e) { return null; }
-    }
-    if (uri.startsWith('http')) {
-        try {
-            const r = await fetch(uri);
-            if (r && r.ok) return await r.json();
-        } catch (e) {}
-        try {
-            const r = await fetch('https://corsproxy.io/?url=' + encodeURIComponent(uri));
-            if (r && r.ok) return await r.json();
-        } catch (e) {}
-    }
-    return null;
-}
-
 async function uploadMetadataToPinata(metadata) {
     const url = "https://api.pinata.cloud/pinning/pinJSONToIPFS";
-    try {
-        const response = await fetch(url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${PINATA_JWT}` },
-            body: JSON.stringify({
-                pinataContent: metadata,
-                pinataMetadata: { name: `Soulbound-Metadata-${Date.now()}`, keyvalues: { type: "soulbound-gift-metadata" } }
-            })
-        });
-        if (!response.ok) { const error = await response.text(); throw new Error("Pinata metadata upload failed: " + error); }
-        const result = await response.json();
-        console.log("Metadata uploaded to IPFS:", result.IpfsHash);
-        return result.IpfsHash;
-    } catch (err) {
-        console.warn("Pinata metadata upload failed, using on-chain data URI fallback:", err);
-        const jsonStr = JSON.stringify(metadata);
-        const encoded = btoa(unescape(encodeURIComponent(jsonStr)));
-        return 'data:application/json;base64,' + encoded;
-    }
+    const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${PINATA_JWT}` },
+        body: JSON.stringify({
+            pinataContent: metadata,
+            pinataMetadata: { name: `Soulbound-Metadata-${Date.now()}`, keyvalues: { type: "soulbound-gift-metadata" } }
+        })
+    });
+    if (!response.ok) { const error = await response.text(); throw new Error("Pinata metadata upload failed: " + error); }
+    const result = await response.json();
+    console.log("Metadata uploaded to IPFS:", result.IpfsHash);
+    return result.IpfsHash;
 }
 
 // ==========================================
@@ -5262,48 +5236,114 @@ window.convertSbtToBot = convertSbtToBot;
             return getAllGifts().filter(g => g.recipient.toLowerCase() === addr.toLowerCase() && g.claimed);
         }
 
-        async function createGiftMetadata(senderAddr, style, message, amount) {
-            const giftIcons = { cryptoBro:'🎁', loveletter:'💌', birthday:'🎈', heart:'💖', mystery:'🎲', goldenticket:'🎫', treasure:'🏴\u200D☠️', christmas:'🎄', rocket:'🚀', diamond:'💎', dao:'🏛️', timelock:'⏳', designer:'🎨', gift:'🎁' };
-            const cardImageUrls = {
-                cryptoBro: 'https://res.cloudinary.com/dguexkgjw/image/upload/v1783088302/Gemini_Generated_Image_4z7vg14z7vg14z7v-removebg-preview_wqdjup.png',
-                dao: 'https://res.cloudinary.com/dguexkgjw/image/upload/v1783197571/photo_5931304236568218967_y_j2irwa.jpg',
-                timelock: 'https://res.cloudinary.com/dguexkgjw/image/upload/v1783197672/photo_5931304236568218965_y_fugghd.jpg',
-                designer: 'https://res.cloudinary.com/dguexkgjw/image/upload/v1783197536/photo_5931304236568218968_y_djl9s6.jpg',
-                loveletter: 'https://placehold.co/400x400/FF6B9D/FFFFFF?text=Love+Letter',
-                birthday: 'https://placehold.co/400x400/A855F7/FFFFFF?text=Birthday',
-                heart: 'https://placehold.co/400x400/EF4444/FFFFFF?text=Heart',
-                mystery: 'https://placehold.co/400x400/7C3AED/FFFFFF?text=Mystery+Box',
-                goldenticket: 'https://placehold.co/400x400/F59E0B/FFFFFF?text=Golden+Ticket',
-                treasure: 'https://placehold.co/400x400/D97706/FFFFFF?text=Treasure',
-                christmas: 'https://placehold.co/400x400/16A34A/FFFFFF?text=Christmas',
-                diamond: 'https://placehold.co/400x400/06B6D4/FFFFFF?text=Diamond'
-            };
+        async function createGiftMetadata(senderAddr, style, message, amount, uploadedImage) {
+            const giftIcons = { cryptoBro:'🎁', loveletter:'💌', birthday:'🎈', heart:'💖', mystery:'🎰', goldenticket:'🎫', treasure:'🏴\u200D☠️', christmas:'🎄', rocket:'🚀', diamond:'💎', dao:'🏛️', timelock:'⏳', designer:'🎨', gift:'🎁' };
             const theme = getGiftTheme(style);
-            const imageDataUri = cardImageUrls[style] || ('data:image/svg+xml,' + encodeURIComponent(theme.nftImageSvg));
+            let imageDataUrl = await ensureImageOnIpfs('data:image/svg+xml,' + encodeURIComponent(theme.nftImageSvg));
+            if (uploadedImage) {
+                const imgFile = dataUriToFile(uploadedImage, 'gift-image.png');
+                const imgHash = await uploadImageToPinata(imgFile);
+                imageDataUrl = PINATA_GATEWAY + imgHash;
+            }
             const metadata = {
                 name: theme.successIcon + ' ' + (giftTypes[style] ? giftTypes[style].title : 'Gift') + ' from ' + senderAddr.slice(0,6) + '...' + senderAddr.slice(-4),
                 description: message || 'A gift on BOT Chain Testnet',
-                image: imageDataUri,
+                image: imageDataUrl,
+                external_url: window.location.origin,
                 attributes: [
                     { trait_type: 'Gift Type', value: style },
-                    { trait_type: 'Amount', value: amount, display_type: 'number' },
+                    { trait_type: 'Amount', value: parseFloat(amount), display_type: 'number' },
                     { trait_type: 'Sender', value: senderAddr },
                     { trait_type: 'Message', value: message || '' },
                     { trait_type: theme.traitName, value: theme.traitValue() },
                     { trait_type: 'Chain', value: 'BOT Chain Testnet' }
                 ]
             };
-            try {
-                return await uploadMetadataToPinata(metadata);
-            } catch (e) {
-                console.warn('[GIFT BOT] Pinata upload failed, using on-chain data URI fallback:', e);
-                const jsonStr = JSON.stringify(metadata);
-                const encoded = btoa(unescape(encodeURIComponent(jsonStr)));
-                return 'data:application/json;base64,' + encoded;
+            if (style === 'mystery' && window._lastMysteryOdds) {
+                metadata.attributes.push({ trait_type: 'Odds', value: window._lastMysteryOdds + '%' });
             }
+            const ipfsHash = await uploadMetadataToPinata(metadata);
+            if (ipfsHash && !ipfsHash.startsWith('data:')) return ipfsHash;
+            throw new Error('Failed to upload metadata to IPFS');
         }
 
+        function dataUriToFile(dataUri, filename) {
+            const arr = dataUri.split(',');
+            const mime = arr[0].match(/:(.*?);/)[1];
+            const bstr = atob(arr[1]);
+            let n = bstr.length;
+            const u8arr = new Uint8Array(n);
+            while (n--) u8arr[n] = bstr.charCodeAt(n);
+            return new File([u8arr], filename, { type: mime });
+        }
 
+        async function ensureImageOnIpfs(imageDataUri) {
+            if (!imageDataUri) throw new Error('No image data provided');
+            if (imageDataUri.startsWith('ipfs://')) return PINATA_GATEWAY + imageDataUri.slice(7);
+            if (imageDataUri.startsWith('http')) return imageDataUri;
+            
+            // Try SVG to PNG conversion first
+            if (imageDataUri.startsWith('data:image/svg')) {
+                try {
+                    const blob = await svgToPngBlob(imageDataUri);
+                    if (blob) {
+                        const hash = await uploadImageToPinata(blob);
+                        return PINATA_GATEWAY + hash;
+                    }
+                } catch (e) {
+                    console.warn('SVG to PNG conversion failed, uploading SVG directly:', e);
+                }
+                // Fallback: upload SVG as-is
+                try {
+                    const svgBlob = dataUriToFile(imageDataUri, 'gift-image.svg');
+                    const hash = await uploadImageToPinata(svgBlob);
+                    return PINATA_GATEWAY + hash;
+                } catch (e2) {
+                    console.warn('SVG upload also failed, using placeholder:', e2);
+                }
+            } else if (imageDataUri.startsWith('data:')) {
+                try {
+                    const blob = dataUriToFile(imageDataUri, 'gift-image.png');
+                    const hash = await uploadImageToPinata(blob);
+                    return PINATA_GATEWAY + hash;
+                } catch (e) {
+                    console.warn('Image upload failed:', e);
+                }
+            } else {
+                try {
+                    const blob = dataUriToFile(imageDataUri, 'gift-image.png');
+                    const hash = await uploadImageToPinata(blob);
+                    return PINATA_GATEWAY + hash;
+                } catch (e) {
+                    console.warn('Image upload failed:', e);
+                }
+            }
+            
+            // Final fallback: return a placeholder or the original data URI
+            console.warn('All IPFS uploads failed, using original data URI');
+            return imageDataUri;
+        }
+
+        function svgToPngBlob(svgDataUri) {
+            return new Promise((resolve, reject) => {
+                try {
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = 400;
+                        canvas.height = 400;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, 400, 400);
+                        canvas.toBlob(function(blob) {
+                            if (blob) resolve(new File([blob], 'gift-image.png', { type: 'image/png' }));
+                            else reject(new Error('Canvas toBlob failed'));
+                        }, 'image/png');
+                    };
+                    img.onerror = function() { reject(new Error('SVG load failed')); };
+                    img.src = svgDataUri;
+                } catch (e) { reject(e); }
+            });
+        }
 
         function ipfsToGateway(ipfsUri) {
             if (!ipfsUri) return ipfsUri;
@@ -5704,7 +5744,7 @@ window.convertSbtToBot = convertSbtToBot;
                 const giftId = 'gift_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
 
                 els.finalBtnText.textContent = 'Uploading to IPFS...';
-                const tokenURIHash = await createGiftMetadata(realWalletAddress, style, message, amount);
+                const tokenURIHash = await createGiftMetadata(realWalletAddress, style, message, amount, sbtUploadedImageData);
                 const tokenURI = 'ipfs://' + tokenURIHash;
 
                 els.finalBtnText.textContent = 'Minting NFT...';
