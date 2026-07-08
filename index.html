@@ -6036,6 +6036,39 @@ window.convertSbtToBot = convertSbtToBot;
                         allLogs = rawLogs || [];
                     } catch (e) { console.warn('[History] eth_getLogs failed:', e); }
                     console.log('[History] Raw SoulboundGiftMinted logs found:', allLogs.length);
+
+                    // ===== TRANSFER EVENTS: Identify recipients + burn status WITHOUT contract calls =====
+                    const TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
+                    const ZERO_ADDR_PADDED = '0x0000000000000000000000000000000000000000000000000000000000000000';
+                    let transferLogs = [];
+                    try {
+                        const rawTLogs = await systemProvider.send('eth_getLogs', [{
+                            address: sbtAddr,
+                            topics: [TRANSFER_TOPIC],
+                            fromBlock: '0x0',
+                            toBlock: 'latest'
+                        }]);
+                        transferLogs = rawTLogs || [];
+                    } catch (e) { console.warn('[History] Transfer eth_getLogs failed:', e); }
+                    console.log('[History] Raw Transfer logs found:', transferLogs.length);
+
+                    // Build maps: tokenId → recipient (from mint) and burned tokenIds (from burn)
+                    const mintRecipientMap = {};
+                    const burnedTokenSet = new Set();
+                    for (const tLog of transferLogs) {
+                        try {
+                            const tFrom = tLog.topics[1];
+                            const tTo = tLog.topics[2];
+                            const tTokenId = parseInt(tLog.topics[3], 16).toString();
+                            if (tFrom === ZERO_ADDR_PADDED) {
+                                mintRecipientMap[tTokenId] = '0x' + tTo.slice(26);
+                            } else if (tTo === ZERO_ADDR_PADDED) {
+                                burnedTokenSet.add(tTokenId);
+                            }
+                        } catch (e) {}
+                    }
+                    console.log('[History] Mint recipients mapped:', Object.keys(mintRecipientMap).length, '| Burned tokens:', burnedTokenSet.size);
+
                     const walletAddrPadded = '0x000000000000000000000000' + realWalletAddress.slice(2).toLowerCase();
                     for (const log of allLogs) {
                         try {
@@ -6046,19 +6079,31 @@ window.convertSbtToBot = convertSbtToBot;
                             const amount = ethers.formatEther('0x' + amountHex.slice(2));
                             const isSender = senderPadded.toLowerCase() === walletAddrPadded;
                             onChainTokenIds.add(tokenId);
-                            let isClaimed = false;
-                            let owner = '';
-                            try { owner = await sbtRead.ownerOf(tokenId); } catch (e) { isClaimed = true; }
-                            let message = '', style = 'gift', recipient = '', timestamp = Date.now(), unlockTime = null, image = '';
+
+                            let isClaimed = burnedTokenSet.has(tokenId);
+                            let recipient = mintRecipientMap[tokenId] || '';
+                            let message = '', style = 'gift', timestamp = Date.now(), unlockTime = null, image = '';
+
+                            // getGiftData: metadata + fallback recipient
                             try {
                                 const gd = await sbtRead.getGiftData(tokenId);
-                                if (gd[1] && gd[1] !== ethers.ZeroAddress) recipient = gd[1];
+                                if (!recipient && gd[1] && gd[1] !== ethers.ZeroAddress) recipient = gd[1];
                                 if (gd[2]) message = gd[2];
                                 if (gd[4]) timestamp = Number(gd[4]) * 1000;
                             } catch (e) {}
-                            const isOwner = owner && owner.toLowerCase() === realWalletAddress.toLowerCase();
-                            const isRecipient = isOwner || (recipient && recipient.toLowerCase() === realWalletAddress.toLowerCase());
+
+                            // ownerOf: final fallback for recipient identification
+                            if (!recipient && !isClaimed) {
+                                try {
+                                    const ownerAddr = await sbtRead.ownerOf(tokenId);
+                                    if (ownerAddr && ownerAddr !== ethers.ZeroAddress) recipient = ownerAddr;
+                                } catch (e) { isClaimed = true; }
+                            }
+
+                            const isRecipient = (recipient && recipient.toLowerCase() === realWalletAddress.toLowerCase());
                             if (!isSender && !isRecipient) continue;
+
+                            // tokenURI: image + style metadata
                             try {
                                 const uri = await sbtRead.tokenURI(tokenId);
                                 const fetchUri = uri && uri.startsWith('ipfs://') ? PINATA_GATEWAY + uri.slice(7) : uri;
@@ -6095,7 +6140,8 @@ window.convertSbtToBot = convertSbtToBot;
                                     }
                                 }
                             } catch (e) {}
-                            if (isOwner || (recipient && recipient.toLowerCase() === realWalletAddress.toLowerCase())) {
+
+                            if (isRecipient) {
                                 onChainReceivedGifts.push({ id:'ocr_'+tokenId, sender:senderAddr, recipient:recipient || realWalletAddress, senderName:shortAddr(senderAddr), amount, style, message, image, tokenId, txHash:log.transactionHash, timestamp, claimed:isClaimed, unlockTime:unlockTime, source:'onchain' });
                             } else {
                                 onChainSentGifts.push({ id:'ocs_'+tokenId, sender:realWalletAddress, recipient:recipient || 'unknown', senderName:shortAddr(realWalletAddress), amount, style, message, image, tokenId, txHash:log.transactionHash, timestamp, claimed:isClaimed, unlockTime:unlockTime, source:'onchain' });
