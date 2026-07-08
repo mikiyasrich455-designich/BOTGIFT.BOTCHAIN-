@@ -4690,6 +4690,14 @@ function showSoulboundSuccess(hash, tokenId) {
                 <p class="text-[10px] text-zinc-500 mb-2">Transaction Hash</p>
                 <p class="text-xs text-zinc-300 font-mono truncate">${hash}</p>
             </div>
+            <div class="relative z-10 bg-emerald-950/30 rounded-xl p-3 border border-emerald-500/20 max-w-xs mx-auto">
+                <p class="text-[10px] text-emerald-400 mb-1.5 font-medium">Share Claim Link</p>
+                <div class="flex gap-1.5">
+                    <input type="text" readonly value="${window.location.origin + window.location.pathname + '?gift=' + tokenId}" class="flex-1 bg-zinc-900/80 border border-zinc-700/50 rounded-lg px-2 py-1.5 text-[10px] text-emerald-300 font-mono cursor-pointer min-w-0" onclick="this.select()">
+                    <button onclick="navigator.clipboard.writeText('${window.location.origin + window.location.pathname + '?gift=' + tokenId}').then(()=>{this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1500)})" style="font-size:10px;padding:4px 10px;border-radius:8px;background:rgba(16,185,129,0.2);border:1px solid rgba(16,185,129,0.3);color:#6ee7b7;cursor:pointer;transition:all 0.2s;white-space:nowrap;">Copy</button>
+                    <button onclick="navigator.share ? navigator.share({title:'Soulbound Gift',text:'Claim your gift!',url:'${window.location.origin + window.location.pathname + '?gift=' + tokenId}'}) : window.open('${window.location.origin + window.location.pathname + '?gift=' + tokenId}','_blank')" style="font-size:10px;padding:4px 10px;border-radius:8px;background:rgba(99,102,241,0.2);border:1px solid rgba(99,102,241,0.3);color:#a5b4fc;cursor:pointer;transition:all 0.2s;white-space:nowrap;">Share</button>
+                </div>
+            </div>
             <div class="relative z-10 flex gap-3 max-w-xs mx-auto">
                 <button id="sbtSuccessCloseBtn" class="flex-1 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-indigo-400 py-3 rounded-xl font-medium text-xs transition cursor-pointer hover:scale-[1.02]">Awesome</button>
                 <a href="https://scan.bohr.life/tx/${hash}" target="_blank" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl font-medium text-xs transition cursor-pointer hover:scale-[1.02] flex items-center justify-center gap-1">
@@ -6029,72 +6037,83 @@ window.convertSbtToBot = convertSbtToBot;
                     } catch (e) { console.warn('[History] eth_getLogs failed:', e); }
                     console.log('[History] Raw SoulboundGiftMinted logs found:', allLogs.length);
                     const walletAddrPadded = '0x000000000000000000000000' + realWalletAddress.slice(2).toLowerCase();
-                    for (const log of allLogs) {
+                    // Step 1: Parse basic event data (fast, no RPC calls)
+                    const parsedLogs = allLogs.map(log => {
+                        const tokenId = parseInt(log.topics[1], 16).toString();
+                        const senderPadded = log.topics[2];
+                        const senderAddr = '0x' + senderPadded.slice(26);
+                        const amountHex = log.data;
+                        const amount = ethers.formatEther('0x' + amountHex.slice(2));
+                        const isSender = senderPadded.toLowerCase() === walletAddrPadded;
+                        onChainTokenIds.add(tokenId);
+                        return { tokenId, senderAddr, amount, isSender, log };
+                    });
+                    // Step 2: Process each event in parallel (batch of 5 at a time)
+                    async function processEvent(evt) {
+                        let isClaimed = false;
+                        try { await sbtRead.ownerOf(evt.tokenId); } catch (e) { isClaimed = true; }
+                        let message = '', style = 'gift', recipient = '', timestamp = Date.now(), unlockTime = null, image = '';
                         try {
-                            const tokenId = parseInt(log.topics[1], 16).toString();
-                            const senderPadded = log.topics[2];
-                            const senderAddr = '0x' + senderPadded.slice(26);
-                            const amountHex = log.data;
-                            const amount = ethers.formatEther('0x' + amountHex.slice(2));
-                            const isSender = senderPadded.toLowerCase() === walletAddrPadded;
-                            onChainTokenIds.add(tokenId);
-                            let isClaimed = false;
-                            try { await sbtRead.ownerOf(tokenId); } catch (e) { isClaimed = true; }
-                            let message = '', style = 'gift', recipient = '', timestamp = Date.now(), unlockTime = null, image = '';
-                            try {
-                                const gd = await sbtRead.getGiftData(tokenId);
-                                if (gd[1] && gd[1] !== ethers.ZeroAddress) recipient = gd[1];
-                                if (gd[2]) message = gd[2];
-                                if (gd[4]) timestamp = Number(gd[4]) * 1000;
-                            } catch (e) {}
-                            const isRecipient = recipient && recipient.toLowerCase() === realWalletAddress.toLowerCase();
-                            if (!isSender && !isRecipient) continue;
-                            try {
-                                const uri = await sbtRead.tokenURI(tokenId);
-                                const fetchUri = uri && uri.startsWith('ipfs://') ? PINATA_GATEWAY + uri.slice(7) : uri;
-                                if (fetchUri && fetchUri.startsWith('http')) {
-                                    try {
-                                        const r = await fetch(fetchUri).catch(() => null);
-                                        if (r && r.ok) { const m = await r.json().catch(() => null); if (m && m.attributes) {
-                                            const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
-                                            if (ta) style = ta.value;
-                                            const na = m.attributes.find(a => a.trait_type === 'Sender Name');
-                                            if (na && na.value) {} else {}
-                                            const ut = m.attributes.find(a => a.trait_type === 'Unlock Time');
-                                            if (ut && ut.value) unlockTime = Number(ut.value) * 1000;
-                                        } if (m && m.image) { image = m.image.startsWith('ipfs://') ? PINATA_GATEWAY + m.image.slice(7) : m.image; } }
-                                    } catch (e) {}
-                                } else if (uri && uri.startsWith('data:application/json')) {
-                                    try {
-                                        const jsonPart = uri.split(',')[1] || '';
-                                        const jsonStr = decodeURIComponent(escape(atob(jsonPart)));
-                                        const m = JSON.parse(jsonStr);
-                                        if (m && m.image) image = m.image.startsWith('ipfs://') ? PINATA_GATEWAY + m.image.slice(7) : m.image;
-                                        if (m && m.attributes) {
-                                            const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
-                                            if (ta) style = ta.value;
-                                            const na = m.attributes.find(a => a.trait_type === 'Sender Name');
-                                            if (na && na.value) {}
-                                            const ut = m.attributes.find(a => a.trait_type === 'Unlock Time');
-                                            if (ut && ut.value) unlockTime = Number(ut.value) * 1000;
-                                        }
-                                    } catch (e) {}
-                                } else if (uri && uri.startsWith('data:image/svg+xml')) {
-                                    const svgPart = uri.split(',')[1] || '';
-                                    const svgStr = svgPart.includes('%') ? decodeURIComponent(svgPart) : (svgPart.length > 100 && !svgPart.includes(' ') ? atob(svgPart) : svgPart);
-                                    const match = svgStr.match(/CRYPTO BRO|LOVE LETTER|HAPPY BIRTHDAY|YOUR HEART|MYSTERY BOX|GOLDEN TICKET|TREASURE CHEST|CHRISTMAS|DIAMOND HANDS/);
-                                    if (match) {
-                                        const nm = { 'CRYPTO BRO':'cryptoBro','LOVE LETTER':'loveletter','HAPPY BIRTHDAY':'birthday','YOUR HEART':'heart','MYSTERY BOX':'mystery','GOLDEN TICKET':'goldenticket','TREASURE CHEST':'treasure','CHRISTMAS':'christmas','DIAMOND HANDS':'diamond' };
-                                        style = nm[match[0]] || 'gift';
+                            const gd = await sbtRead.getGiftData(evt.tokenId);
+                            if (gd[1] && gd[1] !== ethers.ZeroAddress) recipient = gd[1];
+                            if (gd[2]) message = gd[2];
+                            if (gd[4]) timestamp = Number(gd[4]) * 1000;
+                        } catch (e) {}
+                        const isRecipient = recipient && recipient.toLowerCase() === realWalletAddress.toLowerCase();
+                        if (!evt.isSender && !isRecipient) return null;
+                        try {
+                            const uri = await sbtRead.tokenURI(evt.tokenId);
+                            const fetchUri = uri && uri.startsWith('ipfs://') ? PINATA_GATEWAY + uri.slice(7) : uri;
+                            if (fetchUri && fetchUri.startsWith('http')) {
+                                try {
+                                    const r = await fetch(fetchUri).catch(() => null);
+                                    if (r && r.ok) { const m = await r.json().catch(() => null); if (m && m.attributes) {
+                                        const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
+                                        if (ta) style = ta.value;
+                                        const ut = m.attributes.find(a => a.trait_type === 'Unlock Time');
+                                        if (ut && ut.value) unlockTime = Number(ut.value) * 1000;
+                                    } if (m && m.image) { image = m.image.startsWith('ipfs://') ? PINATA_GATEWAY + m.image.slice(7) : m.image; } }
+                                } catch (e) {}
+                            } else if (uri && uri.startsWith('data:application/json')) {
+                                try {
+                                    const jsonPart = uri.split(',')[1] || '';
+                                    const jsonStr = decodeURIComponent(escape(atob(jsonPart)));
+                                    const m = JSON.parse(jsonStr);
+                                    if (m && m.image) image = m.image.startsWith('ipfs://') ? PINATA_GATEWAY + m.image.slice(7) : m.image;
+                                    if (m && m.attributes) {
+                                        const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
+                                        if (ta) style = ta.value;
+                                        const ut = m.attributes.find(a => a.trait_type === 'Unlock Time');
+                                        if (ut && ut.value) unlockTime = Number(ut.value) * 1000;
                                     }
+                                } catch (e) {}
+                            } else if (uri && uri.startsWith('data:image/svg+xml')) {
+                                const svgPart = uri.split(',')[1] || '';
+                                const svgStr = svgPart.includes('%') ? decodeURIComponent(svgPart) : (svgPart.length > 100 && !svgPart.includes(' ') ? atob(svgPart) : svgPart);
+                                const match = svgStr.match(/CRYPTO BRO|LOVE LETTER|HAPPY BIRTHDAY|YOUR HEART|MYSTERY BOX|GOLDEN TICKET|TREASURE CHEST|CHRISTMAS|DIAMOND HANDS/);
+                                if (match) {
+                                    const nm = { 'CRYPTO BRO':'cryptoBro','LOVE LETTER':'loveletter','HAPPY BIRTHDAY':'birthday','YOUR HEART':'heart','MYSTERY BOX':'mystery','GOLDEN TICKET':'goldenticket','TREASURE CHEST':'treasure','CHRISTMAS':'christmas','DIAMOND HANDS':'diamond' };
+                                    style = nm[match[0]] || 'gift';
                                 }
-                            } catch (e) {}
-                            if (recipient && recipient.toLowerCase() === realWalletAddress.toLowerCase()) {
-                                onChainReceivedGifts.push({ id:'ocr_'+tokenId, sender:senderAddr, recipient:realWalletAddress, senderName:shortAddr(senderAddr), amount, style, message, image, tokenId, txHash:log.transactionHash, timestamp, claimed:isClaimed, unlockTime:unlockTime, source:'onchain' });
-                            } else {
-                                onChainSentGifts.push({ id:'ocs_'+tokenId, sender:realWalletAddress, recipient:recipient || 'unknown', senderName:shortAddr(realWalletAddress), amount, style, message, image, tokenId, txHash:log.transactionHash, timestamp, claimed:isClaimed, unlockTime:unlockTime, source:'onchain' });
                             }
-                        } catch (e) { console.warn('[History] Failed to parse event log:', e); }
+                        } catch (e) {}
+                        if (recipient && recipient.toLowerCase() === realWalletAddress.toLowerCase()) {
+                            return { id:'ocr_'+evt.tokenId, sender:evt.senderAddr, recipient:realWalletAddress, senderName:shortAddr(evt.senderAddr), amount:evt.amount, style, message, image, tokenId:evt.tokenId, txHash:evt.log.transactionHash, timestamp, claimed:isClaimed, unlockTime:unlockTime, source:'onchain', isReceived:true };
+                        } else {
+                            return { id:'ocs_'+evt.tokenId, sender:realWalletAddress, recipient:recipient || 'unknown', senderName:shortAddr(realWalletAddress), amount:evt.amount, style, message, image, tokenId:evt.tokenId, txHash:evt.log.transactionHash, timestamp, claimed:isClaimed, unlockTime:unlockTime, source:'onchain', isReceived:false };
+                        }
+                    }
+                    // Process in batches of 5 for speed
+                    const BATCH_SIZE = 5;
+                    for (let i = 0; i < parsedLogs.length; i += BATCH_SIZE) {
+                        const batch = parsedLogs.slice(i, i + BATCH_SIZE);
+                        const results = await Promise.allSettled(batch.map(processEvent));
+                        results.forEach(r => {
+                            if (r.status === 'fulfilled' && r.value) {
+                                if (r.value.isReceived) { onChainReceivedGifts.push(r.value); }
+                                else { onChainSentGifts.push(r.value); }
+                            }
+                        });
                     }
                     console.log('[History] On-chain gifts: received=' + onChainReceivedGifts.length + ' sent=' + onChainSentGifts.length);
                 }
