@@ -5066,6 +5066,32 @@ window.convertSbtToBot = convertSbtToBot;
                 balanceInterval = setInterval(updateRealBalance, 8000);
 
                 await loadOnChainHistory();
+
+                // ===== REAL-TIME EVENT LISTENER: Receiver sees gifts instantly =====
+                try {
+                    if (window._giftTransferCleanup) { window._giftTransferCleanup(); window._giftTransferCleanup = null; }
+                    if (window.sbtContractInstance) {
+                        var _giftTransferHandler = function(from, to, tokenId) {
+                            try {
+                                var curAddr = (window.realWalletAddress || '').toLowerCase();
+                                var toAddr = (to || '').toLowerCase();
+                                var fromAddr = (from || '').toLowerCase();
+                                var zeroAddr = '0x0000000000000000000000000000000000000000';
+                                if (toAddr === curAddr && fromAddr === zeroAddr) {
+                                    console.log('[History] Real-time: Gift received! Token #' + tokenId + ' from ' + from);
+                                    if (window._historyRefreshTimer) clearTimeout(window._historyRefreshTimer);
+                                    window._historyRefreshTimer = setTimeout(function() { if (typeof loadOnChainHistory === 'function') loadOnChainHistory(); }, 1500);
+                                }
+                            } catch (e) {}
+                        };
+                        window.sbtContractInstance.on('Transfer', _giftTransferHandler);
+                        window._giftTransferCleanup = function() {
+                            try { if (window.sbtContractInstance) window.sbtContractInstance.removeAllListeners('Transfer'); } catch (e) {}
+                        };
+                        console.log('[History] Real-time Transfer listener active');
+                    }
+                } catch (e) { console.warn('[History] Failed to add real-time listener:', e); }
+
             } catch (err) {
                 console.error("Real wallet init failed:", err);
                 alert("Wallet connection failed: " + (err.message || err));
@@ -5098,6 +5124,8 @@ window.convertSbtToBot = convertSbtToBot;
             if (dpa4) dpa4.innerHTML = '<span>👤</span>';
 
             if (balanceInterval) clearInterval(balanceInterval);
+            if (window._historyRefreshTimer) { clearTimeout(window._historyRefreshTimer); window._historyRefreshTimer = null; }
+            if (window._giftTransferCleanup) { window._giftTransferCleanup(); window._giftTransferCleanup = null; }
             systemProvider = null;
             systemSigner = null;
             realWalletAddress = null;
@@ -6017,13 +6045,20 @@ window.convertSbtToBot = convertSbtToBot;
             try {
                 const sbtAddr = window.SBT_CONTRACT_ADDRESS || '0x740e1ce98364EfF4d5e3d89b2b1fa513e0F75b16';
                 const sbtAbi = window.SBT_CONTRACT_ABI;
-                if (sbtAddr && sbtAbi) {
-                    // STANDALONE RPC: Avoid MetaMask throttling (MetaMask drops sequential calls after ~5-10)
-                    const readOnlyProvider = new ethers.JsonRpcProvider('https://rpc.bohr.life');
-                    const sbtRead = new ethers.Contract(sbtAddr, sbtAbi, readOnlyProvider);
-                    console.log('[History] Using standalone RPC for read-only calls (avoids MetaMask throttling)');
+                if (sbtAddr && sbtAbi && systemProvider) {
+                    // Try standalone RPC first (no throttling), fall back to MetaMask if CORS blocks it
+                    var historyProvider = systemProvider;
+                    try {
+                        var testProvider = new ethers.JsonRpcProvider('https://rpc.bohr.life');
+                        await testProvider.getBlockNumber();
+                        historyProvider = testProvider;
+                        console.log('[History] Standalone RPC OK - using direct RPC (no MetaMask throttling)');
+                    } catch (e) {
+                        console.warn('[History] Standalone RPC failed (CORS/network), using MetaMask provider:', e.message || e);
+                    }
+                    const sbtRead = new ethers.Contract(sbtAddr, sbtAbi, historyProvider);
 
-                    // Retry helper: attempts up to maxRetries times with exponential backoff
+                    // Retry helper: attempts up to maxRetries times with backoff
                     async function retryRpc(fn, label, maxRetries) {
                         maxRetries = maxRetries || 3;
                         for (var ri = 0; ri < maxRetries; ri++) {
@@ -6044,14 +6079,25 @@ window.convertSbtToBot = convertSbtToBot;
                     const EVENT_TOPIC = '0xa0ebaf2a4b1dfb60c926826384f931391e4881e2250e4be34b621dca5ee35d2b';
                     let allLogs = [];
                     try {
-                        const rawLogs = await readOnlyProvider.send('eth_getLogs', [{
+                        const rawLogs = await historyProvider.send('eth_getLogs', [{
                             address: sbtAddr,
                             topics: [EVENT_TOPIC],
                             fromBlock: '0x0',
                             toBlock: 'latest'
                         }]);
                         allLogs = rawLogs || [];
-                    } catch (e) { console.warn('[History] SoulboundGiftMinted eth_getLogs failed:', e.message || e); }
+                    } catch (e) {
+                        console.warn('[History] eth_getLogs via historyProvider failed, retrying via MetaMask:', e.message || e);
+                        try {
+                            const rawLogs = await systemProvider.send('eth_getLogs', [{
+                                address: sbtAddr,
+                                topics: [EVENT_TOPIC],
+                                fromBlock: '0x0',
+                                toBlock: 'latest'
+                            }]);
+                            allLogs = rawLogs || [];
+                        } catch (e2) { console.warn('[History] eth_getLogs via MetaMask also failed:', e2.message || e2); }
+                    }
                     console.log('[History] SoulboundGiftMinted logs found:', allLogs.length);
 
                     // TRANSFER EVENTS: Identify recipients + burn status via ERC721 standard events
@@ -6059,14 +6105,25 @@ window.convertSbtToBot = convertSbtToBot;
                     const ZERO_ADDR_PADDED = '0x0000000000000000000000000000000000000000000000000000000000000000';
                     let transferLogs = [];
                     try {
-                        const rawTLogs = await readOnlyProvider.send('eth_getLogs', [{
+                        const rawTLogs = await historyProvider.send('eth_getLogs', [{
                             address: sbtAddr,
                             topics: [TRANSFER_TOPIC],
                             fromBlock: '0x0',
                             toBlock: 'latest'
                         }]);
                         transferLogs = rawTLogs || [];
-                    } catch (e) { console.warn('[History] Transfer eth_getLogs failed:', e.message || e); }
+                    } catch (e) {
+                        console.warn('[History] Transfer eth_getLogs failed via historyProvider, retrying via MetaMask:', e.message || e);
+                        try {
+                            const rawTLogs = await systemProvider.send('eth_getLogs', [{
+                                address: sbtAddr,
+                                topics: [TRANSFER_TOPIC],
+                                fromBlock: '0x0',
+                                toBlock: 'latest'
+                            }]);
+                            transferLogs = rawTLogs || [];
+                        } catch (e2) { console.warn('[History] Transfer eth_getLogs via MetaMask also failed:', e2.message || e2); }
+                    }
                     console.log('[History] Transfer logs found:', transferLogs.length);
 
                     // Build maps: tokenId → recipient (from mint transfers) and burned tokenIds (from burn transfers)
@@ -6107,27 +6164,27 @@ window.convertSbtToBot = convertSbtToBot;
 
                             // Step 2: Identify recipient - layered fallback strategy
                             let recipient = mintRecipientMap[tokenId] || '';
+                            var message = '';
+                            var timestamp = Date.now();
 
                             if (!recipient) {
-                                // Fallback A: getGiftData with retry (reads giftData mapping from contract)
+                                // Fallback A: getGiftData with retry
                                 const gd = await retryRpc(function() { return sbtRead.getGiftData(tokenId); }, 'getGiftData(' + tokenId + ')');
                                 if (gd) {
                                     if (gd[1] && gd[1] !== ethers.ZeroAddress) recipient = gd[1];
-                                    // Also grab message + timestamp while we're here
-                                    var message = gd[2] || '';
-                                    var timestamp = gd[4] ? Number(gd[4]) * 1000 : Date.now();
+                                    message = gd[2] || '';
+                                    timestamp = gd[4] ? Number(gd[4]) * 1000 : Date.now();
                                 } else {
-                                    console.warn('[History] getGiftData returned null for token', tokenId, '- trying ownerOf');
+                                    console.warn('[History] getGiftData returned null for token', tokenId);
                                 }
                             }
 
                             if (!recipient && !isClaimed) {
-                                // Fallback B: ownerOf with retry (check current token owner)
+                                // Fallback B: ownerOf with retry
                                 const ownerAddr = await retryRpc(function() { return sbtRead.ownerOf(tokenId); }, 'ownerOf(' + tokenId + ')');
                                 if (ownerAddr && ownerAddr !== ethers.ZeroAddress) {
                                     recipient = ownerAddr;
                                 } else {
-                                    // ownerOf failed - token is likely burned but wasn't in Transfer events
                                     isClaimed = true;
                                     console.warn('[History] ownerOf failed for token', tokenId, '- marking as claimed');
                                 }
@@ -6143,10 +6200,8 @@ window.convertSbtToBot = convertSbtToBot;
                             if (isSender) senderCount++;
                             if (isRecipient) recipientCount++;
 
-                            // Step 4: Fetch metadata ONLY for gifts relevant to this wallet (saves RPC calls)
-                            var message = message || '';
+                            // Step 4: Fetch metadata ONLY for gifts relevant to this wallet
                             var style = 'gift';
-                            var timestamp = timestamp || Date.now();
                             var unlockTime = null;
                             var image = '';
 
@@ -6191,7 +6246,7 @@ window.convertSbtToBot = convertSbtToBot;
                                         }
                                     }
                                 }
-                            } catch (e) { console.warn('[History] tokenURI/metadata failed for token', tokenId, ':', e.message || e); }
+                            } catch (e) { console.warn('[History] tokenURI failed for token', tokenId, ':', e.message || e); }
 
                             // Step 5: Add to appropriate array
                             processedCount++;
