@@ -8146,5 +8146,57 @@ window.convertSbtToBot = convertSbtToBot;
             </div>
         </div>
     </div>
+
+    <script>
+    (function() {
+        function wireAiChat() {
+            function showChat(src) {
+                var chatView = document.getElementById('aiChatView');
+                var giftView = document.getElementById('giftView');
+                var specialView = document.getElementById('specialGiftsView');
+                var homeView = document.getElementById('homeView');
+                var historyView = document.getElementById('historyView');
+                var aboutView = document.getElementById('aboutView');
+                if (!chatView) return;
+                [giftView, specialView, homeView, historyView, aboutView].forEach(function(v) { if (v) { v.classList.add('hidden'); v.style.opacity = '0'; } });
+                var soulboundView = document.getElementById('soulboundView');
+                var mySbtGiftsView = document.getElementById('mySbtGiftsView');
+                var gaslessView = document.getElementById('gaslessView');
+                var mysteryBoxView = document.getElementById('mysteryBoxView');
+                var daoView = document.getElementById('daoView');
+                var designerView = document.getElementById('designerView');
+                var timelockView = document.getElementById('timelockView');
+                [soulboundView, mySbtGiftsView, gaslessView, mysteryBoxView, daoView, designerView, timelockView].forEach(function(v) { if (v) { v.classList.add('hidden'); v.style.opacity = '0'; } });
+                chatView.classList.remove('hidden');
+                chatView.style.opacity = '1';
+                chatView.scrollTop = 0;
+                var inp = document.getElementById('aiChatInput');
+                if (inp) inp.focus();
+            }
+            if (!window.openAiChat) window.openAiChat = showChat;
+            var giftCard = document.getElementById('aiChatGiftCard');
+            if (giftCard) {
+                giftCard.onclick = function(e) { e.stopPropagation(); window.openAiChat('gifts'); };
+                giftCard.style.pointerEvents = 'auto';
+                giftCard.style.cursor = 'pointer';
+                giftCard.style.position = 'relative';
+                giftCard.style.zIndex = '999';
+            }
+            var specialCard = document.getElementById('aiChatSpecialCard');
+            if (specialCard) {
+                specialCard.onclick = function(e) { e.stopPropagation(); window.openAiChat('special'); };
+                specialCard.style.pointerEvents = 'auto';
+                specialCard.style.cursor = 'pointer';
+                specialCard.style.position = 'relative';
+                specialCard.style.zIndex = '999';
+            }
+        }
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() { setTimeout(wireAiChat, 100); });
+        } else {
+            setTimeout(wireAiChat, 100);
+        }
+    })();
+    </script>
 </body>
 </html>
