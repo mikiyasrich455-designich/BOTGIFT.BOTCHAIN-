@@ -3047,104 +3047,39 @@
         }
 
         function connectMetaMask() {
-            if (typeof window.connectMetaMask === 'function' && window.connectMetaMask !== connectMetaMask) {
-                return window.connectMetaMask();
-            }
-            if (typeof window.ethereum !== 'undefined') {
-                window.ethereum.request({ method: 'eth_requestAccounts' })
-                    .then(accounts => {
-                        if (accounts.length > 0) handleWalletConnect(accounts[0]);
-                    })
-                    .catch(() => {
-                        handleWalletConnect('0x7a2f' + Math.random().toString(16).slice(2, 10) + '9c4b');
-                    });
-            } else {
-                alert('MetaMask not detected! Opening download page...');
-                window.open('https://metamask.io/download/', '_blank');
-                setTimeout(() => handleWalletConnect('0x7a2f' + Math.random().toString(16).slice(2, 10) + '9c4b'), 500);
+            if (typeof window.connectMetaMask === 'function') {
+                window.connectMetaMask().catch(function(e){ console.error('[Web3GiftHub] connectMetaMask error:', e); });
             }
         }
         function connectWalletConnect() {
-            if (typeof window.connectWalletConnect === 'function' && window.connectWalletConnect !== connectWalletConnect) {
-                return window.connectWalletConnect();
+            if (typeof window.connectWalletConnect === 'function') {
+                window.connectWalletConnect();
             }
-            openWalletConnectModal();
-            setTimeout(() => {
-                closeWalletConnectModal();
-                handleWalletConnect('0x3f5c' + Math.random().toString(16).slice(2, 10) + '0b6a');
-            }, 3000);
         }
         function connectCoinbase() {
-            if (typeof window.connectCoinbase === 'function' && window.connectCoinbase !== connectCoinbase) {
-                return window.connectCoinbase();
-            }
-            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-            if (isMobile) {
-                window.location.href = 'cbwallet://dapp?url=' + encodeURIComponent(window.location.href);
-                setTimeout(() => handleWalletConnect('0xdAC1' + Math.random().toString(16).slice(2, 10) + '1ec7'), 2000);
-            } else {
-                window.open('https://www.coinbase.com/wallet', '_blank');
-                setTimeout(() => handleWalletConnect('0xdAC1' + Math.random().toString(16).slice(2, 10) + '1ec7'), 1500);
+            if (typeof window.connectCoinbase === 'function') {
+                window.connectCoinbase();
             }
         }
         function connectPhantom() {
-            if (typeof window.connectPhantom === 'function' && window.connectPhantom !== connectPhantom) {
-                return window.connectPhantom();
-            }
-            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-            if (isMobile) {
-                window.location.href = 'phantom://browse/' + encodeURIComponent(window.location.href);
-                setTimeout(() => handleWalletConnect('0xPhan' + Math.random().toString(16).slice(2, 10) + 'tom'), 2000);
-            } else {
-                if (window.phantom?.ethereum) {
-                    window.phantom.ethereum.request({ method: 'eth_requestAccounts' })
-                        .then(accounts => handleWalletConnect(accounts[0]))
-                        .catch(() => handleWalletConnect('0xPhan' + Math.random().toString(16).slice(2, 10) + 'tom'));
-                } else {
-                    window.open('https://phantom.app/download', '_blank');
-                    setTimeout(() => handleWalletConnect('0xPhan' + Math.random().toString(16).slice(2, 10) + 'tom'), 1500);
-                }
+            if (typeof window.connectPhantom === 'function') {
+                window.connectPhantom();
             }
         }
         function handleWalletConnect(address) {
             if (window.handleWalletConnect) { return window.handleWalletConnect(address); }
-            isWalletConnected = true;
-            window.isWalletConnected = true;
-            walletAddress = address;
-            window.realWalletAddress = address;
-            closeWalletModal();
-            closeWalletConnectModal();
-            els.connectWalletBtn.classList.add('hidden');
-            els.walletConnectedDisplay.classList.remove('hidden');
-            els.connectedAddress.textContent = address.slice(0, 6) + '...' + address.slice(-4);
-            const bellWrap = document.getElementById('notifBellWrap');
-            if (bellWrap) bellWrap.classList.remove('hidden');
-            try { if (typeof initNotifications === 'function') initNotifications(); } catch(e) { console.warn('[Notif] init error:', e); }
         }
         function toggleWalletDropdown() {
             els.walletDropdown.classList.toggle('show');
         }
         function copyAddress() {
-            navigator.clipboard.writeText(walletAddress).then(() => alert('Address copied!')).catch(() => alert('Address: ' + walletAddress));
-            els.walletDropdown.classList.remove('show');
+            if (window.copyAddress) { window.copyAddress(); }
         }
         function viewOnExplorer() {
-            window.open('https://scan.bohr.life/address/' + walletAddress, '_blank');
-            els.walletDropdown.classList.remove('show');
+            if (window.viewOnExplorer) { window.viewOnExplorer(); }
         }
         function disconnectWallet() {
-            if (window.disconnectWallet) { window.disconnectWallet(); return; }
-            isWalletConnected = false;
-            window.isWalletConnected = false;
-            walletAddress = '';
-            els.connectWalletBtn.classList.remove('hidden');
-            els.walletConnectedDisplay.classList.add('hidden');
-            els.walletDropdown.classList.remove('show');
-            const bellWrap = document.getElementById('notifBellWrap');
-            if (bellWrap) bellWrap.classList.add('hidden');
-            const dd = document.getElementById('notifDropdown');
-            if (dd) dd.classList.remove('open');
-            try { sessionStorage.setItem('web3gift_explicit_disconnect', 'true'); } catch (e) {}
+            if (window.disconnectWallet) { window.disconnectWallet(); }
         }
 
         els.connectWalletBtn.addEventListener('click', () => {
@@ -3156,10 +3091,7 @@
         });
         els.closeWalletModalBtn.addEventListener('click', closeWalletModal);
         els.closeWalletConnectModalBtn.addEventListener('click', closeWalletConnectModal);
-        els.connectMetaMaskBtn.addEventListener('click', () => {
-            console.log('[Web3GiftHub] MetaMask button clicked, window.connectMetaMask=' + typeof window.connectMetaMask);
-            if (window.connectMetaMask) window.connectMetaMask().catch(function(e){ console.error('[Web3GiftHub] connectMetaMask error:', e); }); else connectMetaMask();
-        });
+        els.connectMetaMaskBtn.addEventListener('click', connectMetaMask);
         if (els.connectWalletConnectBtn) els.connectWalletConnectBtn.addEventListener('click', connectWalletConnect);
         if (els.connectCoinbaseBtn) els.connectCoinbaseBtn.addEventListener('click', connectCoinbase);
         if (els.connectPhantomBtn) els.connectPhantomBtn.addEventListener('click', connectPhantom);
@@ -3176,44 +3108,6 @@
         els.walletModal.addEventListener('click', (e) => { if (e.target === els.walletModal) closeWalletModal(); });
         els.walletConnectModal.addEventListener('click', (e) => { if (e.target === els.walletConnectModal) closeWalletConnectModal(); });
         els.infoModal.addEventListener('click', (e) => { if (e.target === els.infoModal) closeInfo(); });
-
-        // Chain and account change listeners for real-time updates
-        if (typeof window.ethereum !== 'undefined') {
-            window.ethereum.on('accountsChanged', (accounts) => {
-                if (accounts.length === 0) {
-                    // User disconnected from MetaMask
-                    window.disconnectWallet();
-                } else if (realWalletAddress && accounts[0].toLowerCase() !== realWalletAddress.toLowerCase()) {
-                    // User switched to a different account
-                    console.log("Account switched to:", accounts[0]);
-                    window.disconnectWallet();
-                    window.handleWalletConnect(accounts[0]);
-                }
-            });
-            window.ethereum.on('chainChanged', (chainId) => {
-                console.log("Chain changed to:", chainId);
-                if (chainId !== BOT_CHAIN_TESTNET.chainId) {
-                    alert("⚠️ Network switched! Please switch back to BOT Chain Testnet (Chain ID: 968).");
-                } else {
-                    // Refresh data on correct chain
-                    if (realWalletAddress) {
-                        window.handleWalletConnect(realWalletAddress);
-                    }
-                }
-            });
-        }
-
-        window.addEventListener('load', () => {
-            if (typeof window.ethereum !== 'undefined') {
-                let wasExplicitDisconnect = false;
-                try { wasExplicitDisconnect = sessionStorage.getItem('web3gift_explicit_disconnect') === 'true'; } catch (e) {}
-                if (!wasExplicitDisconnect) {
-                    window.ethereum.request({ method: 'eth_accounts' })
-                        .then(accounts => { if (accounts.length > 0) handleWalletConnect(accounts[0]); })
-                        .catch(() => {});
-                }
-            }
-        });
 
         function cardTilt(e, card) {
             const rect = card.getBoundingClientRect();
@@ -5308,10 +5202,6 @@ window.convertSbtToBot = convertSbtToBot;
             // Mark as explicitly disconnected so we don't auto-reconnect
             try { sessionStorage.setItem('web3gift_explicit_disconnect', 'true'); } catch (e) {}
 
-            // Revoke MetaMask permissions so it shows popup on next connect
-            if (window.ethereum && window.ethereum.request) {
-                window.ethereum.request({ method: 'wallet_revokePermissions', params: [{ eth_accounts: {} }] }).catch(() => {});
-            }
         };
 
         window.copyAddress = function() {
@@ -5327,6 +5217,21 @@ window.convertSbtToBot = convertSbtToBot;
             window.open(url, '_blank');
             els.walletDropdown.classList.remove('show');
         };
+
+        // Real-time wallet event listeners
+        if (window.ethereum) {
+            window.ethereum.on('accountsChanged', (accounts) => {
+                if (accounts.length === 0) {
+                    window.disconnectWallet();
+                } else if (realWalletAddress && accounts[0].toLowerCase() !== realWalletAddress.toLowerCase()) {
+                    window.disconnectWallet();
+                    window.handleWalletConnect(accounts[0]);
+                }
+            });
+            window.ethereum.on('chainChanged', () => {
+                window.location.reload();
+            });
+        }
 
         async function updateRealBalance() {
             if (!systemProvider || !realWalletAddress) return;
