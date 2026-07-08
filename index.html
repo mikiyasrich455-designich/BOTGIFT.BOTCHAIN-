@@ -3622,11 +3622,12 @@
                     name: mysteryTheme.successIcon + ' Mystery Box - ' + selectedMysteryTier.toUpperCase(),
                     description: 'A mystery gift containing ' + mysteryReward + ' BOT and a ' + gift + ' NFT!',
                     image: mysteryImage,
+                    external_url: window.location.origin,
                     attributes: [
                         { trait_type: 'Gift Type', value: 'mystery' },
                         { trait_type: 'Tier', value: selectedMysteryTier },
                         { trait_type: 'Reward', value: gift },
-                        { trait_type: 'Amount', value: mysteryReward, display_type: 'number' },
+                        { trait_type: 'Amount', value: parseFloat(mysteryReward), display_type: 'number' },
                         { trait_type: 'Sender', value: mysteryAddr },
                         { trait_type: mysteryTheme.traitName, value: mysteryTheme.traitValue() },
                         { trait_type: 'Chain', value: 'BOT Chain Testnet' }
@@ -3635,7 +3636,7 @@
 
                 status.textContent = 'Uploading to IPFS...';
                 const metaHash = await uploadMetadataToPinata(metadata);
-                const tokenURI = PINATA_GATEWAY + metaHash;
+                const tokenURI = 'ipfs://' + metaHash;
 
                 status.textContent = 'Minting NFT...';
                 const amountWei = ethers.parseEther(tier.min.toString());
@@ -3770,16 +3771,17 @@
                         name: '🏛️ DAO Treasury Gift',
                         description: 'DAO Treasury Distribution of ' + perAmount + ' BOT',
                         image: daoImage,
+                        external_url: window.location.origin,
                         attributes: [
                             { trait_type: 'Gift Type', value: 'dao' },
-                            { trait_type: 'Amount', value: perAmount.toString(), display_type: 'number' },
+                            { trait_type: 'Amount', value: parseFloat(perAmount), display_type: 'number' },
                             { trait_type: 'Sender', value: realWalletAddress },
                             { trait_type: daoTheme.traitName, value: daoTheme.traitValue() },
                             { trait_type: 'Chain', value: 'BOT Chain Testnet' }
                         ]
                     };
                 const metaHash = await uploadMetadataToPinata(metadata);
-                const tokenURI = PINATA_GATEWAY + metaHash;
+                const tokenURI = 'ipfs://' + metaHash;
 
                     const tx = await sbtContractInstance.mintSoulboundGift(valid[i], tokenURI, 'DAO Treasury Distribution', {
                         value: ethers.parseUnits(perAmount.toString(), 18)
@@ -3995,7 +3997,7 @@
                 }
 
                 const designerTheme = getGiftTheme('designer');
-                let designerImageUrl = cardIpfsHash ? (PINATA_GATEWAY + cardIpfsHash) : null;
+                let designerImageUrl = cardIpfsHash ? ('ipfs://' + cardIpfsHash) : null;
                 if (!designerImageUrl) {
                     designerImageUrl = await ensureImageOnIpfs('data:image/svg+xml,' + encodeURIComponent(designerTheme.nftImageSvg));
                 }
@@ -4003,16 +4005,17 @@
                     name: '🎨 Custom Gift Card',
                     description: 'A custom designed gift card on BOT Chain',
                     image: designerImageUrl,
+                    external_url: window.location.origin,
                     attributes: [
                         { trait_type: 'Gift Type', value: 'designer' },
-                        { trait_type: 'Amount', value: amount, display_type: 'number' },
+                        { trait_type: 'Amount', value: parseFloat(amount), display_type: 'number' },
                         { trait_type: 'Sender', value: realWalletAddress },
                         { trait_type: designerTheme.traitName, value: designerTheme.traitValue() },
                         { trait_type: 'Chain', value: 'BOT Chain Testnet' }
                     ]
                 };
                 const metaHash = await uploadMetadataToPinata(metadata);
-                const tokenURI = PINATA_GATEWAY + metaHash;
+                const tokenURI = 'ipfs://' + metaHash;
 
                 btn.textContent = 'Minting NFT...';
                 const tx = await sbtContractInstance.mintSoulboundGift(recipient, tokenURI, 'Custom Card Gift', {
@@ -4137,9 +4140,10 @@
                     name: '⏳ Time-Locked Gift',
                     description: 'Gift locked until ' + new Date(timeUnlock.value).toLocaleString() + ': ' + message,
                     image: timelockImage,
+                    external_url: window.location.origin,
                     attributes: [
                         { trait_type: 'Gift Type', value: 'timelock' },
-                        { trait_type: 'Amount', value: amount, display_type: 'number' },
+                        { trait_type: 'Amount', value: parseFloat(amount), display_type: 'number' },
                         { trait_type: 'Unlock Time', value: Math.floor(unlockTime / 1000), display_type: 'date' },
                         { trait_type: 'Sender', value: realWalletAddress },
                         { trait_type: 'Message', value: message },
@@ -4148,7 +4152,7 @@
                     ]
                 };
                 const metaHash = await uploadMetadataToPinata(metadata);
-                const tokenURI = PINATA_GATEWAY + metaHash;
+                const tokenURI = 'ipfs://' + metaHash;
 
                 btn.innerHTML = 'Minting NFT...';
                 const tx = await sbtContractInstance.mintSoulboundGift(recipient, tokenURI, message, {
@@ -4454,10 +4458,11 @@ if (mintSbtBtn) mintSbtBtn.addEventListener('click', async () => {
         const metadata = {
             name: sbtName.value || "Soulbound Gift",
             description: sbtMessage.value || "A permanent soulbound gift on BOT Chain",
-            image: `${PINATA_GATEWAY}${sbtIpfsImageHash}`,
+            image: `ipfs://${sbtIpfsImageHash}`,
+            external_url: window.location.origin,
             attributes: [
                 { trait_type: "Gift Type", value: "Soulbound" },
-                { trait_type: "Amount", value: sbtAmount.value || "0", display_type: "number" },
+                { trait_type: "Amount", value: parseFloat(sbtAmount.value || '0'), display_type: "number" },
                 { trait_type: "Sender", value: realWalletAddress || walletAddress },
                 { trait_type: "Sender Name", value: sbtSenderName && sbtSenderName.value.trim() ? sbtSenderName.value.trim() : (realWalletAddress ? realWalletAddress.slice(0,6)+'...'+realWalletAddress.slice(-4) : 'Anonymous') },
                 { trait_type: "Message", value: sbtMessage.value || "" },
@@ -4508,7 +4513,7 @@ if (sbtConfirmMintBtn) sbtConfirmMintBtn.addEventListener('click', async () => {
     try {
         const recipient = sbtRecipient.value.trim();
         const amount = sbtAmount.value || '0';
-        const tokenURI = `${PINATA_GATEWAY}${sbtIpfsMetadataHash}`;
+        const tokenURI = `ipfs://${sbtIpfsMetadataHash}`;
         const message = sbtMessage.value || '';
         const amountWei = ethers.parseEther(amount);
         const tx = await sbtContractInstance.mintSoulboundGift(recipient, tokenURI, message, { value: amountWei });
@@ -4573,22 +4578,24 @@ async function loadUserSbtTokens() {
                 const data = await sbtContractInstance.getGiftData(tokenId);
                 const uri = await sbtContractInstance.tokenURI(tokenId);
                 const amount = ethers.formatEther(data.amount);
+                const fetchUri = uri && uri.startsWith('ipfs://') ? PINATA_GATEWAY + uri.slice(7) : uri;
                 let nftImage = '';
                 try {
                     if (uri && uri.startsWith('data:application/json')) {
                         const jp = uri.split(',')[1] || '';
                         const js = decodeURIComponent(escape(atob(jp)));
                         const mj = JSON.parse(js);
-                        if (mj && mj.image) nftImage = mj.image;
-                    } else if (uri && uri.startsWith('http')) {
-                        const r = await fetch(uri);
-                        if (r.ok) { const mj = await r.json().catch(() => null); if (mj && mj.image) nftImage = mj.image; }
+                        if (mj && mj.image) nftImage = mj.image.startsWith('ipfs://') ? PINATA_GATEWAY + mj.image.slice(7) : mj.image;
+                    } else if (fetchUri && fetchUri.startsWith('http')) {
+                        const r = await fetch(fetchUri);
+                        if (r.ok) { const mj = await r.json().catch(() => null); if (mj && mj.image) { nftImage = mj.image.startsWith('ipfs://') ? PINATA_GATEWAY + mj.image.slice(7) : mj.image; } }
                     }
                 } catch (e) {}
                 const card = document.createElement('div');
                 card.className = 'glass-panel rounded-2xl overflow-hidden border border-indigo-500/20 mb-3 animate-fade-up';
-                const imgHtml = nftImage
-                    ? '<img src="' + nftImage + '" style="width:80px;height:80px;object-fit:cover;border-radius:14px;border:2px solid rgba(99,102,21,0.3);" alt="NFT">'
+                const displayImage = nftImage && nftImage.startsWith('ipfs://') ? PINATA_GATEWAY + nftImage.slice(7) : nftImage;
+                const imgHtml = displayImage
+                    ? '<img src="' + displayImage + '" style="width:80px;height:80px;object-fit:cover;border-radius:14px;border:2px solid rgba(99,102,21,0.3);" alt="NFT">'
                     : '<div class="w-[80px] h-[80px] rounded-[14px] bg-indigo-500/10 border-2 border-indigo-500/30 flex items-center justify-center text-3xl">🏆</div>';
                 card.innerHTML = `
                     <div class="flex items-center gap-4 p-1">
@@ -5234,22 +5241,13 @@ window.convertSbtToBot = convertSbtToBot;
 
         async function createGiftMetadata(senderAddr, style, message, amount, uploadedImage) {
             const giftIcons = { cryptoBro:'🎁', loveletter:'💌', birthday:'🎈', heart:'💖', mystery:'🎲', goldenticket:'🎫', treasure:'🏴\u200D☠️', christmas:'🎄', rocket:'🚀', diamond:'💎', dao:'🏛️', timelock:'⏳', designer:'🎨', gift:'🎁' };
-            const cardImageUrls = {
-                cryptoBro: 'https://res.cloudinary.com/dguexkgjw/image/upload/v1783088302/Gemini_Generated_Image_4z7vg14z7vg14z7v-removebg-preview_wqdjup.png',
-                dao: 'https://res.cloudinary.com/dguexkgjw/image/upload/v1783197571/photo_5931304236568218967_y_j2irwa.jpg',
-                timelock: 'https://res.cloudinary.com/dguexkgjw/image/upload/v1783197672/photo_5931304236568218965_y_fugghd.jpg',
-                designer: 'https://res.cloudinary.com/dguexkgjw/image/upload/v1783197536/photo_5931304236568218968_y_djl9s6.jpg'
-            };
             const theme = getGiftTheme(style);
-            let imageDataUrl = cardImageUrls[style];
-            if (!imageDataUrl) {
-                imageDataUrl = await ensureImageOnIpfs('data:image/svg+xml,' + encodeURIComponent(theme.nftImageSvg));
-            }
+            let imageDataUrl = await ensureImageOnIpfs('data:image/svg+xml,' + encodeURIComponent(theme.nftImageSvg));
             if (uploadedImage) {
                 try {
                     const imgFile = dataUriToFile(uploadedImage, 'gift-image.png');
                     const imgHash = await uploadImageToPinata(imgFile);
-                    imageDataUrl = PINATA_GATEWAY + imgHash;
+                    imageDataUrl = 'ipfs://' + imgHash;
                     console.log('[GIFT BOT] User image uploaded to IPFS:', imageDataUrl);
                 } catch (e) {
                     console.warn('[GIFT BOT] Image upload failed, using default:', e);
@@ -5259,9 +5257,10 @@ window.convertSbtToBot = convertSbtToBot;
                 name: theme.successIcon + ' ' + (giftTypes[style] ? giftTypes[style].title : 'Gift') + ' from ' + senderAddr.slice(0,6) + '...' + senderAddr.slice(-4),
                 description: message || 'A gift on BOT Chain Testnet',
                 image: imageDataUrl,
+                external_url: window.location.origin,
                 attributes: [
                     { trait_type: 'Gift Type', value: style },
-                    { trait_type: 'Amount', value: amount, display_type: 'number' },
+                    { trait_type: 'Amount', value: parseFloat(amount), display_type: 'number' },
                     { trait_type: 'Sender', value: senderAddr },
                     { trait_type: 'Message', value: message || '' },
                     { trait_type: theme.traitName, value: theme.traitValue() },
@@ -5285,15 +5284,53 @@ window.convertSbtToBot = convertSbtToBot;
 
         async function ensureImageOnIpfs(imageDataUri) {
             if (!imageDataUri) return imageDataUri;
-            if (imageDataUri.startsWith('http') && !imageDataUri.startsWith('data:')) return imageDataUri;
+            if (imageDataUri.startsWith('ipfs://')) return imageDataUri;
             try {
-                const svgBlob = dataUriToFile(imageDataUri, 'gift-image.svg');
-                const hash = await uploadImageToPinata(svgBlob);
-                return PINATA_GATEWAY + hash;
+                let blob;
+                if (imageDataUri.startsWith('data:image/svg') || imageDataUri.startsWith('data:image/svg+xml')) {
+                    blob = await svgToPngBlob(imageDataUri);
+                } else if (imageDataUri.startsWith('data:')) {
+                    blob = dataUriToFile(imageDataUri, 'gift-image.png');
+                } else if (imageDataUri.startsWith('http')) {
+                    const resp = await fetch(imageDataUri);
+                    const arrBuf = await resp.arrayBuffer();
+                    blob = new File([arrBuf], 'gift-image.png', { type: 'image/png' });
+                } else {
+                    blob = dataUriToFile(imageDataUri, 'gift-image.png');
+                }
+                const hash = await uploadImageToPinata(blob);
+                return 'ipfs://' + hash;
             } catch (e) {
                 console.warn('[GIFT BOT] Image IPFS upload failed, using fallback:', e);
                 return imageDataUri;
             }
+        }
+
+        function svgToPngBlob(svgDataUri) {
+            return new Promise((resolve, reject) => {
+                try {
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = 400;
+                        canvas.height = 400;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, 400, 400);
+                        canvas.toBlob(function(blob) {
+                            if (blob) resolve(new File([blob], 'gift-image.png', { type: 'image/png' }));
+                            else reject(new Error('Canvas toBlob failed'));
+                        }, 'image/png');
+                    };
+                    img.onerror = function() { reject(new Error('SVG load failed')); };
+                    img.src = svgDataUri;
+                } catch (e) { reject(e); }
+            });
+        }
+
+        function ipfsToGateway(ipfsUri) {
+            if (!ipfsUri) return ipfsUri;
+            if (ipfsUri.startsWith('ipfs://')) return PINATA_GATEWAY + ipfsUri.slice(7);
+            return ipfsUri;
         }
 
         async function claimGift(giftId) {
@@ -5517,9 +5554,10 @@ window.convertSbtToBot = convertSbtToBot;
                             const nameMap = { 'CRYPTO BRO':'cryptoBro', 'LOVE LETTER':'loveletter', 'HAPPY BIRTHDAY':'birthday', 'YOUR HEART':'heart', 'MYSTERY BOX':'mystery', 'GOLDEN TICKET':'goldenticket', 'TREASURE CHEST':'treasure', 'CHRISTMAS':'christmas', 'TO THE MOON':'rocket', 'DIAMOND HANDS':'diamond' };
                             giftStyle = nameMap[match[0]] || 'gift';
                         }
-                    } else if (uri && uri.startsWith('http')) {
+                    } else if (uri && (uri.startsWith('http') || uri.startsWith('ipfs://'))) {
                         try {
-                            const r = await fetch(uri).catch(() => null);
+                            const fetchUri = uri.startsWith('ipfs://') ? PINATA_GATEWAY + uri.slice(7) : uri;
+                            const r = await fetch(fetchUri).catch(() => null);
                             if (r && r.ok) { const m = await r.json().catch(() => null); if (m && m.attributes) {
                                 const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
                                 if (ta) giftStyle = ta.value;
@@ -5637,7 +5675,7 @@ window.convertSbtToBot = convertSbtToBot;
 
                 els.finalBtnText.textContent = 'Uploading to IPFS...';
                 const tokenURIHash = await createGiftMetadata(realWalletAddress, style, message, amount, sbtUploadedImageData);
-                const tokenURI = PINATA_GATEWAY + tokenURIHash;
+                const tokenURI = 'ipfs://' + tokenURIHash;
 
                 els.finalBtnText.textContent = 'Minting NFT...';
                 const amountWei = ethers.parseEther(amount);
@@ -5945,6 +5983,7 @@ window.convertSbtToBot = convertSbtToBot;
                 cardIndex++;
             }
             function shortAddr(a) { return a ? a.slice(0,6) + '...' + a.slice(-4) : '0x...'; }
+            function toGatewayUrl(url) { return url && url.startsWith('ipfs://') ? PINATA_GATEWAY + url.slice(7) : url; }
             function makeClaimLink(tokenId, unclaimed) {
                 if (!tokenId || tokenId === '---') return '';
                 const claimUrl = window.location.origin + window.location.pathname + '?gift=' + tokenId;
@@ -6008,9 +6047,10 @@ window.convertSbtToBot = convertSbtToBot;
                             } catch (e) {}
                             try {
                                 const uri = await sbtRead.tokenURI(tokenId);
-                                if (uri && uri.startsWith('http')) {
+                                const fetchUri = uri && uri.startsWith('ipfs://') ? PINATA_GATEWAY + uri.slice(7) : uri;
+                                if (fetchUri && fetchUri.startsWith('http')) {
                                     try {
-                                        const r = await fetch(uri).catch(() => null);
+                                        const r = await fetch(fetchUri).catch(() => null);
                                         if (r && r.ok) { const m = await r.json().catch(() => null); if (m && m.attributes) {
                                             const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
                                             if (ta) style = ta.value;
@@ -6018,14 +6058,14 @@ window.convertSbtToBot = convertSbtToBot;
                                             if (na && na.value) {} else {}
                                             const ut = m.attributes.find(a => a.trait_type === 'Unlock Time');
                                             if (ut && ut.value) unlockTime = Number(ut.value) * 1000;
-                                        } if (m && m.image) image = m.image; }
+                                        } if (m && m.image) { image = m.image.startsWith('ipfs://') ? PINATA_GATEWAY + m.image.slice(7) : m.image; } }
                                     } catch (e) {}
                                 } else if (uri && uri.startsWith('data:application/json')) {
                                     try {
                                         const jsonPart = uri.split(',')[1] || '';
                                         const jsonStr = decodeURIComponent(escape(atob(jsonPart)));
                                         const m = JSON.parse(jsonStr);
-                                        if (m && m.image) image = m.image;
+                                        if (m && m.image) image = m.image.startsWith('ipfs://') ? PINATA_GATEWAY + m.image.slice(7) : m.image;
                                         if (m && m.attributes) {
                                             const ta = m.attributes.find(a => a.trait_type === 'Gift Type');
                                             if (ta) style = ta.value;
@@ -6158,7 +6198,7 @@ window.convertSbtToBot = convertSbtToBot;
                     createCard('pending', `
                         <div style="position:relative;z-index:2;display:flex;align-items:flex-start;justify-content:space-between;gap:14px;">
                             <div style="display:flex;align-items:center;gap:14px;min-width:0;flex:1;">
-                                <div class="hist-card-icon" style="${isTimelocked ? 'background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);' : ''}${gift.image ? 'overflow:hidden;padding:0;' : ''}">${isTimelocked ? '🔒' : (gift.image ? '<img src="' + gift.image + '" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;" alt="NFT">' : giftIconFor(gift.style))}</div>
+                                <div class="hist-card-icon" style="${isTimelocked ? 'background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);' : ''}${gift.image ? 'overflow:hidden;padding:0;' : ''}">`${isTimelocked ? '🔒' : (gift.image ? '<img src="' + toGatewayUrl(gift.image) + '" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;" alt="NFT">' : giftIconFor(gift.style))}</div>
                                 <div style="min-width:0;">
                                     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
                                         <span style="font-size:14px;font-weight:700;color:#f4f4f5;">From ${senderDisplayName}</span>
@@ -6203,7 +6243,7 @@ window.convertSbtToBot = convertSbtToBot;
                     createCard('sent', `
                         <div style="position:relative;z-index:2;display:flex;align-items:flex-start;justify-content:space-between;gap:14px;">
                             <div style="display:flex;align-items:center;gap:14px;min-width:0;flex:1;">
-                                <div class="hist-card-icon"${gift.image ? ' style="overflow:hidden;padding:0;"' : ''}>${gift.image ? '<img src="' + gift.image + '" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;" alt="NFT">' : giftIconFor(gift.style)}</div>
+                                <div class="hist-card-icon"${gift.image ? ' style="overflow:hidden;padding:0;"' : ''}>${gift.image ? '<img src="' + toGatewayUrl(gift.image) + '" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;" alt="NFT">' : giftIconFor(gift.style)}</div>
                                 <div style="min-width:0;">
                                     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
                                         <span style="font-size:14px;font-weight:700;color:#f4f4f5;">To ${shortAddr(gift.recipient)}</span>
@@ -6235,7 +6275,7 @@ window.convertSbtToBot = convertSbtToBot;
                     createCard('claimed', `
                         <div style="position:relative;z-index:2;display:flex;align-items:flex-start;justify-content:space-between;gap:14px;">
                             <div style="display:flex;align-items:center;gap:14px;min-width:0;flex:1;">
-                                <div class="hist-card-icon"${gift.image ? ' style="overflow:hidden;padding:0;"' : ''}>${gift.image ? '<img src="' + gift.image + '" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;" alt="NFT">' : giftIconFor(gift.style)}</div>
+                                <div class="hist-card-icon"${gift.image ? ' style="overflow:hidden;padding:0;"' : ''}>${gift.image ? '<img src="' + toGatewayUrl(gift.image) + '" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;" alt="NFT">' : giftIconFor(gift.style)}</div>
                                 <div style="min-width:0;">
                                     <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
                                         <span style="font-size:14px;font-weight:700;color:#d4d4d8;">From ${senderDisplayName}</span>
@@ -7532,6 +7572,7 @@ window.convertSbtToBot = convertSbtToBot;
                         let style = 'gift';
                         try {
                             const uri = await contract.tokenURI(tokenId);
+                            const fetchUri = uri && uri.startsWith('ipfs://') ? PINATA_GATEWAY + uri.slice(7) : uri;
                             if (uri && uri.startsWith('data:image/svg+xml')) {
                                 const svgPart = uri.split(',')[1] || '';
                                 const svgStr = svgPart.includes('%') ? decodeURIComponent(svgPart) : (svgPart.length > 100 ? atob(svgPart) : svgPart);
@@ -7541,9 +7582,9 @@ window.convertSbtToBot = convertSbtToBot;
                                     style = nm[match[0]] || 'gift';
                                 }
                             }
-                            if (uri && uri.startsWith('http')) {
+                            if (fetchUri && fetchUri.startsWith('http')) {
                                 try {
-                                    const r = await fetch(uri);
+                                    const r = await fetch(fetchUri);
                                     if (r.ok) { const m = await r.json(); if (m && m.attributes) { const ta = m.attributes.find(a => a.trait_type === 'Gift Type'); if (ta) style = ta.value; } }
                                 } catch(e) {}
                             }
@@ -7553,6 +7594,7 @@ window.convertSbtToBot = convertSbtToBot;
                         let unlockTime = null;
                         try {
                             const uri2 = await contract.tokenURI(tokenId);
+                            const fetchUri2 = uri2 && uri2.startsWith('ipfs://') ? PINATA_GATEWAY + uri2.slice(7) : uri2;
                             if (uri2 && uri2.startsWith('data:application/json')) {
                                 try {
                                     const jp = uri2.split(',')[1] || '';
@@ -7563,9 +7605,9 @@ window.convertSbtToBot = convertSbtToBot;
                                         if (ut && ut.value) unlockTime = Number(ut.value) * 1000;
                                     }
                                 } catch(e2) {}
-                            } else if (uri2 && uri2.startsWith('http')) {
+                            } else if (fetchUri2 && fetchUri2.startsWith('http')) {
                                 try {
-                                    const r2 = await fetch(uri2);
+                                    const r2 = await fetch(fetchUri2);
                                     if (r2.ok) { const mj = await r2.json().catch(() => null); if (mj && mj.attributes) { const ut = mj.attributes.find(a => a.trait_type === 'Unlock Time'); if (ut && ut.value) unlockTime = Number(ut.value) * 1000; } }
                                 } catch(e2) {}
                             }
