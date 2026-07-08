@@ -1231,13 +1231,24 @@
                         </div>
                         <button class="info-btn w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-white text-xs font-bold relative z-10" data-info="heart">i</button>
                     </div>
-                    <div class="gift-type-card stagger-card rounded-2xl p-6 flex items-center gap-4" style="background: linear-gradient(135deg, #374151 0%, #6b7280 100%); animation-delay: 200ms;" data-type="mystery">
-                        <div class="gift-icon">🎲</div>
-                        <div class="flex-1 relative z-10">
-                            <h3 class="text-lg font-bold text-white">Mystery Box</h3>
-                            <p class="text-xs text-white/70">Random surprise inside</p>
+                    <div class="relative pointer-events-none opacity-60" style="animation-delay: 200ms;">
+                        <div class="absolute -top-1 -right-1 z-30">
+                            <div class="relative">
+                                <div class="absolute -inset-1 rounded-full bg-amber-400/30 blur-sm animate-pulse"></div>
+                                <div class="relative px-3 py-1 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-[9px] font-black text-white uppercase tracking-wider shadow-lg shadow-amber-500/30 border border-amber-400/50">🔒 In Development</div>
+                            </div>
                         </div>
-                        <button class="info-btn w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-white text-xs font-bold relative z-10" data-info="mystery">i</button>
+                        <div class="rounded-2xl p-1 bg-gradient-to-r from-amber-500/40 via-orange-500/40 to-amber-500/40 animate-[borderRotate_3s_linear_infinite]" style="--angle:0deg;">
+                            <style>@keyframes borderRotate{0%{background:linear-gradient(0deg,rgba(245,158,11,0.4),rgba(249,115,22,0.4),rgba(245,158,11,0.4))}25%{background:linear-gradient(90deg,rgba(245,158,11,0.4),rgba(249,115,22,0.4),rgba(245,158,11,0.4))}50%{background:linear-gradient(180deg,rgba(245,158,11,0.4),rgba(249,115,22,0.4),rgba(245,158,11,0.4))}75%{background:linear-gradient(270deg,rgba(245,158,11,0.4),rgba(249,115,22,0.4),rgba(245,158,11,0.4))}100%{background:linear-gradient(360deg,rgba(245,158,11,0.4),rgba(249,115,22,0.4),rgba(245,158,11,0.4))}}</style>
+                            <div class="gift-type-card stagger-card rounded-xl p-6 flex items-center gap-4" style="background: linear-gradient(135deg, #374151 0%, #6b7280 100%); animation-delay: 200ms;" data-type="mystery">
+                                <div class="gift-icon">🎲</div>
+                                <div class="flex-1 relative z-10">
+                                    <h3 class="text-lg font-bold text-white">Mystery Box</h3>
+                                    <p class="text-xs text-white/70">Random surprise inside</p>
+                                </div>
+                                <button class="info-btn w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-white text-xs font-bold relative z-10" data-info="mystery">i</button>
+                            </div>
+                        </div>
                     </div>
                     <div class="gift-type-card stagger-card rounded-2xl p-6 flex items-center gap-4" style="background: linear-gradient(135deg, #166534 0%, #22c55e 100%); animation-delay: 350ms;" data-type="christmas">
                         <div class="gift-icon">🎄</div>
@@ -1577,27 +1588,37 @@
                 </div>
 
                 <!-- 3. Mystery Box -->
-                <div class="special-gift-card stagger-card rounded-2xl overflow-hidden flex flex-col relative" 
-                     style="animation-delay: 120ms;" 
-                     data-special="mysteryBox">
-                    <div class="relative h-48 overflow-hidden">
-                        <img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783197614/photo_5931304236568218966_y_ooycxv.jpg" 
-                             class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" 
-                             alt="Mystery Box"
-                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-                        <div class="absolute inset-0 bg-gradient-to-t from-[#7c2d12] via-[#7c2d12]/60 to-transparent"></div>
-                        <div class="absolute inset-0 bg-[#7c2d12]/40 backdrop-blur-[2px] hidden items-center justify-center text-4xl">🎲</div>
-                    </div>
-                    <div class="relative z-10 p-5 -mt-8 flex flex-col flex-1" style="background: linear-gradient(180deg, transparent 0%, #7c2d12 20%);">
-                        <div class="flex items-center gap-2 mb-2">
-                            <div class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></div>
-                            <h3 class="text-lg font-bold text-white">Mystery Box</h3>
+                <div class="relative pointer-events-none opacity-60" 
+                     style="animation-delay: 120ms;">
+                    <div class="absolute -top-1 -right-1 z-30">
+                        <div class="relative">
+                            <div class="absolute -inset-1 rounded-full bg-amber-400/30 blur-sm animate-pulse"></div>
+                            <div class="relative px-3 py-1 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-[9px] font-black text-white uppercase tracking-wider shadow-lg shadow-amber-500/30 border border-amber-400/50">🔒 In Development</div>
                         </div>
-                        <p class="text-xs text-white/70 leading-relaxed flex-1">Randomized on-chain loot. Provably fair, verifiably random.</p>
-                        <div class="mt-3 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-[10px] text-white/80 font-medium inline-block self-start">Chainlink VRF</div>
                     </div>
-                    <div class="absolute inset-0 rounded-2xl border border-amber-500/20 pointer-events-none"></div>
-                    <div class="absolute -inset-0.5 rounded-2xl bg-amber-500/20 blur-lg opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                    <div class="rounded-2xl p-1 bg-gradient-to-r from-amber-500/40 via-orange-500/40 to-amber-500/40 animate-[borderRotate_3s_linear_infinite]">
+                        <div class="special-gift-card stagger-card rounded-xl overflow-hidden flex flex-col relative" 
+                             data-special="mysteryBox">
+                            <div class="relative h-48 overflow-hidden">
+                                <img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783197614/photo_5931304236568218966_y_ooycxv.jpg" 
+                                     class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" 
+                                     alt="Mystery Box"
+                                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                                <div class="absolute inset-0 bg-gradient-to-t from-[#7c2d12] via-[#7c2d12]/60 to-transparent"></div>
+                                <div class="absolute inset-0 bg-[#7c2d12]/40 backdrop-blur-[2px] hidden items-center justify-center text-4xl">🎲</div>
+                            </div>
+                            <div class="relative z-10 p-5 -mt-8 flex flex-col flex-1" style="background: linear-gradient(180deg, transparent 0%, #7c2d12 20%);">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <div class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></div>
+                                    <h3 class="text-lg font-bold text-white">Mystery Box</h3>
+                                </div>
+                                <p class="text-xs text-white/70 leading-relaxed flex-1">Randomized on-chain loot. Provably fair, verifiably random.</p>
+                                <div class="mt-3 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-[10px] text-white/80 font-medium inline-block self-start">Chainlink VRF</div>
+                            </div>
+                            <div class="absolute inset-0 rounded-2xl border border-amber-500/20 pointer-events-none"></div>
+                            <div class="absolute -inset-0.5 rounded-2xl bg-amber-500/20 blur-lg opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- 4. DAO Treasury -->
