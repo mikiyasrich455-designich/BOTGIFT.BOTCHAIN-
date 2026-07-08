@@ -6047,7 +6047,8 @@ window.convertSbtToBot = convertSbtToBot;
                             const isSender = senderPadded.toLowerCase() === walletAddrPadded;
                             onChainTokenIds.add(tokenId);
                             let isClaimed = false;
-                            try { await sbtRead.ownerOf(tokenId); } catch (e) { isClaimed = true; }
+                            let owner = '';
+                            try { owner = await sbtRead.ownerOf(tokenId); } catch (e) { isClaimed = true; }
                             let message = '', style = 'gift', recipient = '', timestamp = Date.now(), unlockTime = null, image = '';
                             try {
                                 const gd = await sbtRead.getGiftData(tokenId);
@@ -6055,7 +6056,8 @@ window.convertSbtToBot = convertSbtToBot;
                                 if (gd[2]) message = gd[2];
                                 if (gd[4]) timestamp = Number(gd[4]) * 1000;
                             } catch (e) {}
-                            const isRecipient = recipient && recipient.toLowerCase() === realWalletAddress.toLowerCase();
+                            const isOwner = owner && owner.toLowerCase() === realWalletAddress.toLowerCase();
+                            const isRecipient = isOwner || (recipient && recipient.toLowerCase() === realWalletAddress.toLowerCase());
                             if (!isSender && !isRecipient) continue;
                             try {
                                 const uri = await sbtRead.tokenURI(tokenId);
@@ -6093,8 +6095,8 @@ window.convertSbtToBot = convertSbtToBot;
                                     }
                                 }
                             } catch (e) {}
-                            if (recipient && recipient.toLowerCase() === realWalletAddress.toLowerCase()) {
-                                onChainReceivedGifts.push({ id:'ocr_'+tokenId, sender:senderAddr, recipient:realWalletAddress, senderName:shortAddr(senderAddr), amount, style, message, image, tokenId, txHash:log.transactionHash, timestamp, claimed:isClaimed, unlockTime:unlockTime, source:'onchain' });
+                            if (isOwner || (recipient && recipient.toLowerCase() === realWalletAddress.toLowerCase())) {
+                                onChainReceivedGifts.push({ id:'ocr_'+tokenId, sender:senderAddr, recipient:recipient || realWalletAddress, senderName:shortAddr(senderAddr), amount, style, message, image, tokenId, txHash:log.transactionHash, timestamp, claimed:isClaimed, unlockTime:unlockTime, source:'onchain' });
                             } else {
                                 onChainSentGifts.push({ id:'ocs_'+tokenId, sender:realWalletAddress, recipient:recipient || 'unknown', senderName:shortAddr(realWalletAddress), amount, style, message, image, tokenId, txHash:log.transactionHash, timestamp, claimed:isClaimed, unlockTime:unlockTime, source:'onchain' });
                             }
