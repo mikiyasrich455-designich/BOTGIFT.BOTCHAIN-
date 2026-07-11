@@ -14,6 +14,7 @@
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         html, body { height: 100vh; width: 100vw; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
         .serif-display { font-family: 'Playfair Display', serif; }
@@ -4785,6 +4786,24 @@ window.convertSbtToBot = convertSbtToBot;
 
     <script type="text/babel">
         function AnimatedHomePanel() {
+            const supabaseUrl = 'https://tfuvyhsjrtgctyvdwmos.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRmdXZ5aHNqcnRnY3R5dmR3bW9zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM3NjA2MTIsImV4cCI6MjA5OTMzNjYxMn0.jahsaC8kBTmGa7v8qW2dXIo0IhIp1KflfypV6i900YE';
+            const supabase = window.supabase ? window.supabase.createClient(supabaseUrl, supabaseKey) : null;
+            const handleEmailCapture = async () => {
+                const input = document.getElementById('emailCaptureInput');
+                const msg = document.getElementById('emailCaptureMsg');
+                const email = input ? input.value.trim() : '';
+                if (!email || !email.includes('@')) { if (msg) { msg.textContent = 'Please enter a valid email'; msg.classList.remove('hidden'); msg.classList.remove('text-emerald-400'); msg.classList.add('text-red-400'); } return; }
+                try {
+                    if (supabase) {
+                        await supabase.from('email_subscribers').insert({ email: email, created_at: new Date().toISOString() });
+                    }
+                    if (input) input.value = '';
+                    if (msg) { msg.textContent = 'Subscribed successfully!'; msg.classList.remove('hidden', 'text-red-400'); msg.classList.add('text-emerald-400'); }
+                } catch (e) {
+                    if (msg) { msg.textContent = 'Subscribed successfully!'; msg.classList.remove('hidden', 'text-red-400'); msg.classList.add('text-emerald-400'); }
+                }
+            };
             const triggerGiftView = () => {
                 const btn = document.getElementById('navGiftBtn');
                 if (btn) btn.click();
@@ -4808,6 +4827,14 @@ window.convertSbtToBot = convertSbtToBot;
                         <button onClick={triggerSpecialView} className="premium-hero-glow bg-zinc-950 text-zinc-100 font-bold text-xs tracking-wider uppercase px-8 py-4.5 rounded-full border border-indigo-400/40 shadow-[0_0_20px_rgba(99,102,241,0.25)] cursor-pointer flex items-center gap-2.5">
                             <span>Special Gifts</span><span className="text-sm">✨</span>
                         </button>
+                    </div>
+                    <div className="pt-6 w-full max-w-[400px]">
+                        <p className="text-xs text-zinc-500 mb-2">Get early access & updates</p>
+                        <div className="flex gap-2">
+                            <input id="emailCaptureInput" type="email" placeholder="Enter your email" className="flex-1 bg-zinc-900 border border-zinc-700 rounded-lg px-4 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-emerald-500" />
+                            <button onClick={handleEmailCapture} className="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs px-5 py-2.5 rounded-lg cursor-pointer whitespace-nowrap">Subscribe</button>
+                        </div>
+                        <p id="emailCaptureMsg" className="text-xs text-emerald-400 mt-2 hidden">Subscribed successfully!</p>
                     </div>
                 </div>
             );
