@@ -2812,9 +2812,11 @@
                 provider: 'google',
                 options: { redirectTo: SITE_URL }
             });
-            if (error) {
+            if (data && data.url) {
+                window.location.href = data.url;
+            } else if (error) {
                 var errEl = document.getElementById('emailRegError');
-                errEl.textContent = 'Google sign-in failed. Try again.';
+                errEl.textContent = 'Google sign-in failed: ' + error.message;
                 errEl.classList.remove('hidden');
             }
         }
