@@ -2807,7 +2807,7 @@
         }
 
         async function signInWithGoogle() {
-            var SITE_URL = window.location.origin + window.location.pathname;
+            var SITE_URL = 'https://botgift-botchain.vercel.app/';
             var { data, error } = await authClient.auth.signInWithOAuth({
                 provider: 'google',
                 options: { redirectTo: SITE_URL }
