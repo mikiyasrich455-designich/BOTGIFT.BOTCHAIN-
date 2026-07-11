@@ -7987,7 +7987,6 @@ window.convertSbtToBot = convertSbtToBot;
                     statusEl.textContent = 'Claiming ' + parseFloat(ethers.formatEther(balance)).toFixed(4) + ' BOT...';
                     claimBtnEl.textContent = 'Sending...';
 
-                    const claimerAddress = await systemSigner.getAddress();
                     const tx = await vaultWallet.sendTransaction({ to: claimerAddress, value: balance });
                     const receipt = await tx.wait();
 
