@@ -14,6 +14,8 @@
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         html, body { height: 100vh; width: 100vw; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
         .serif-display { font-family: 'Playfair Display', serif; }
@@ -2188,6 +2190,23 @@
                             <textarea id="sgMessage" placeholder="A secret message for the lucky one..." rows="3" maxlength="140" class="w-full bg-zinc-950/80 border border-zinc-700/50 rounded-xl p-3.5 text-xs text-zinc-100 focus:outline-none focus:border-orange-500/50 input-glow transition resize-none"></textarea>
                             <p class="text-[10px] text-zinc-600 text-right"><span id="sgCharCount">0</span>/140</p>
                         </div>
+                        <div class="space-y-2">
+                            <label class="text-[11px] tracking-wide text-zinc-400 font-medium block uppercase flex items-center gap-1.5">
+                                <span>🔑</span> Claim Code
+                            </label>
+                            <input type="text" id="sgClaimCode" placeholder="e.g. BDAY-GIFT-2024" maxlength="30" class="w-full bg-zinc-950/80 border border-zinc-700/50 rounded-xl p-3.5 text-sm text-zinc-100 focus:outline-none focus:border-orange-500/50 input-glow transition font-mono uppercase tracking-wider">
+                            <p class="text-[10px] text-zinc-500" id="sgClaimCodeStatus">A short code the receiver will enter to claim</p>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[11px] tracking-wide text-zinc-400 font-medium block uppercase flex items-center gap-1.5">
+                                <span>🔐</span> Password (optional)
+                            </label>
+                            <div class="relative">
+                                <input type="password" id="sgPassword" placeholder="Extra protection — optional" class="w-full bg-zinc-950/80 border border-zinc-700/50 rounded-xl p-3.5 pr-10 text-xs text-zinc-100 focus:outline-none focus:border-orange-500/50 input-glow transition">
+                                <button type="button" id="sgTogglePassword" class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 transition text-sm cursor-pointer">👁️</button>
+                            </div>
+                            <p class="text-[10px] text-orange-400/60">If set, receiver must enter this too</p>
+                        </div>
                         <div class="glass-panel rounded-xl p-4 space-y-2">
                             <div class="flex items-center justify-between">
                                 <span class="text-[11px] text-zinc-500">Network</span>
@@ -2228,8 +2247,18 @@
 
                         <div class="space-y-2">
                             <label class="text-[11px] tracking-wide text-zinc-400 font-medium block uppercase">Claim Code</label>
-                            <input type="text" id="sgRedeemCode" placeholder="Paste the claim code here (starts with SG-)" maxlength="500" class="w-full bg-zinc-950/80 border border-zinc-700/50 rounded-xl p-4 text-sm text-zinc-100 focus:outline-none focus:border-emerald-500/50 input-glow transition font-mono text-center tracking-wider">
-                            <p class="text-[9px] text-zinc-500 text-center">Paste the full code shared with you</p>
+                            <input type="text" id="sgRedeemCode" placeholder="e.g. BDAY-GIFT-2024" maxlength="30" class="w-full bg-zinc-950/80 border border-zinc-700/50 rounded-xl p-4 text-sm text-zinc-100 focus:outline-none focus:border-emerald-500/50 input-glow transition font-mono text-center tracking-wider uppercase">
+                            <p class="text-[9px] text-zinc-500 text-center">Enter the code shared with you</p>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-[11px] tracking-wide text-zinc-400 font-medium block uppercase flex items-center gap-1.5">
+                                <span>🔐</span> Password <span class="text-zinc-600">(if set)</span>
+                            </label>
+                            <div class="relative">
+                                <input type="password" id="sgRedeemPassword" placeholder="Enter password if one was set" class="w-full bg-zinc-950/80 border border-zinc-700/50 rounded-xl p-3.5 pr-10 text-xs text-zinc-100 focus:outline-none focus:border-emerald-500/50 input-glow transition font-mono">
+                                <button type="button" id="sgRedeemTogglePw" class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 transition text-sm cursor-pointer">👁️</button>
+                            </div>
                         </div>
 
                         <div id="sgRedeemPreview" class="hidden glass-panel rounded-xl p-4 space-y-2" style="border-color: rgba(234,88,12,0.2);">
@@ -2293,6 +2322,14 @@
                         <div class="flex justify-between items-center py-1.5 border-b border-zinc-700/20">
                             <span class="text-[11px] text-zinc-500">Amount</span>
                             <span class="text-sm text-orange-400 font-bold font-mono" id="sgFinalAmountDetail">0.0 $BOT</span>
+                        </div>
+                        <div class="flex justify-between items-center py-1.5 border-b border-zinc-700/20">
+                            <span class="text-[11px] text-zinc-500">Claim Code</span>
+                            <span class="text-[11px] text-orange-300 font-mono font-bold tracking-wider" id="sgFinalClaimCode">—</span>
+                        </div>
+                        <div class="flex justify-between items-center py-1.5 border-b border-zinc-700/20">
+                            <span class="text-[11px] text-zinc-500">Password</span>
+                            <span class="text-[11px] text-zinc-300 font-mono" id="sgFinalPassword">None</span>
                         </div>
                         <div class="flex justify-between items-center py-1.5">
                             <span class="text-[11px] text-zinc-500">Est. Gas</span>
@@ -4661,6 +4698,13 @@ window.SBT_CONTRACT_ABI = SBT_CONTRACT_ABI;
 // PINATA CONFIG — Demo/testnet key for IPFS pinning (Builder Challenge)
 const PINATA_JWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJjMTU0ZjBlMS1lOTdkLTRmYmYtODAxOS02ZjYwNTk0NzEzMTEiLCJlbWFpbCI6Im1pa2l5YXNyaWNoNDU1QGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaW5fcG9saWN5Ijp7InJlZ2lvbnMiOlt7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6IkZSQTEifSx7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6Ik5ZQzEifV0sInZlcnNpb24iOjF9LCJtZmFfZW5hYmxlZCI6ZmFsc2UsInN0YXR1cyI6IkFDVElWRSJ9LCJhdXRoZW50aWNhdGlvblR5cGUiOiJzY29wZWRLZXkiLCJzY29wZWRLZXlLZXkiOiI5ODRjY2JmNmEyMzMwNmYzYWNiMyIsInNjb3BlZEtleVNlY3JldCI6IjkxZmQ2N2E4MmQwNzdlOWRkNzlhNTQ5ZTJmMDU2NDc4ODIwZGE5ZGY3OWQ1MjhiZDM1YjkxMmYwNzUxY2QyNDUiLCJleHAiOjE4MTUwMDA4MTl9.cSTrsI-psdGuOXqQnzeNkny2eZnTXDojQR7LoIcI3sw";
 const PINATA_GATEWAY = "https://gateway.pinata.cloud/ipfs/";
+
+// ==========================================
+// SUPABASE CONFIG — Secret Gift Database
+// ==========================================
+const SG_SUPABASE_URL = 'https://vjljoydtwvpvhqiecbqr.supabase.co';
+const SG_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqbGpveWR0d3ZwdmhxaWVjYnFyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM3OTAwMjYsImV4cCI6MjA5OTM2NjAyNn0.YFIbiUGGzGvjuvF2bsm4dQv_yzNtJr8G1La8Rtqexy8';
+const sgDB = window.supabase.createClient(SG_SUPABASE_URL, SG_SUPABASE_KEY);
 
 var sbtContractInstance = null;
 let sbtUploadedImageFile = null;
@@ -7463,13 +7507,13 @@ window.convertSbtToBot = convertSbtToBot;
         })();
 
         // ==========================================
-        // 8b. SECRET GIFT BACKEND
+        // 8b. SECRET GIFT BACKEND (Supabase)
         // ==========================================
-        // Secret Gift: Creator funds a vault wallet + mints SBT NFT to vault,
-        // encrypts vault PK with random key, embeds key inside SG- code.
-        // Claimer pastes code → decrypts PK → sweeps vault funds.
+        // Creator funds vault + mints NFT, stores encrypted PK in Supabase.
+        // Generates SHORT code like SG-ABCD-1234.
+        // Claimer enters code → Supabase lookup → decrypts PK → sweeps vault.
 
-        async function encryptWithPassword(data, password) {
+        async function encryptAES(data, password) {
             const enc = new TextEncoder();
             const salt = crypto.getRandomValues(new Uint8Array(16));
             const iv = crypto.getRandomValues(new Uint8Array(12));
@@ -7479,7 +7523,7 @@ window.convertSbtToBot = convertSbtToBot;
             return btoa(String.fromCharCode(...salt, ...iv, ...new Uint8Array(encrypted)));
         }
 
-        async function decryptWithPassword(encryptedB64, password) {
+        async function decryptAES(encryptedB64, password) {
             const enc = new TextEncoder();
             const dec = new TextDecoder();
             const raw = Uint8Array.from(atob(encryptedB64), c => c.charCodeAt(0));
@@ -7492,11 +7536,35 @@ window.convertSbtToBot = convertSbtToBot;
             return dec.decode(decrypted);
         }
 
-        function getSecretGiftStorage() {
-            try { return JSON.parse(localStorage.getItem('web3gift_secretgifts') || '{}'); } catch (e) { return {}; }
+        async function sgGenerateCode() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let code = 'SG-';
+            for (let i = 0; i < 4; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
+            code += '-';
+            for (let i = 0; i < 4; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
+            const { data: existing } = await sgDB.from('secret_gifts').select('code').eq('code', code).single();
+            if (existing) return sgGenerateCode();
+            return code;
         }
-        function saveSecretGiftStorage(data) {
-            try { localStorage.setItem('web3gift_secretgifts', JSON.stringify(data)); } catch (e) {}
+
+        async function sgStoreGift(code, giftData) {
+            const { error } = await sgDB.from('secret_gifts').insert(giftData);
+            if (error) throw new Error('Failed to save gift: ' + error.message);
+        }
+
+        async function sgLookupGift(code) {
+            const { data, error } = await sgDB.from('secret_gifts').select('*').eq('code', code.toUpperCase().trim()).single();
+            if (error || !data) return null;
+            return data;
+        }
+
+        async function sgMarkClaimed(code, claimerAddress) {
+            const { error } = await sgDB.from('secret_gifts')
+                .update({ claimed: true, claimed_by: claimerAddress, claimed_at: new Date().toISOString() })
+                .eq('code', code)
+                .eq('claimed', false);
+            if (error) throw error;
+            return true;
         }
 
         let sgUploadedImageData = null;
@@ -7514,106 +7582,105 @@ window.convertSbtToBot = convertSbtToBot;
             const confirmBtn = document.getElementById('sgConfirmBtn');
             const doneBtn = document.getElementById('sgDoneBtn');
             const shareBtn = document.getElementById('sgShareBtn');
-            const copyLinkBtn = document.getElementById('sgCopyLinkBtn');
+            const copyCodeBtn = document.getElementById('sgCopyCodeBtn');
+            const toggleBtn = document.getElementById('sgTogglePassword');
+            const passwordInput = document.getElementById('sgPassword');
+            const claimCodeInput = document.getElementById('sgClaimCode');
+            const claimCodeStatus = document.getElementById('sgClaimCodeStatus');
+
+            // Claim code availability check
+            if (claimCodeInput) claimCodeInput.addEventListener('input', async () => {
+                const val = claimCodeInput.value.trim().toUpperCase();
+                if (val.length < 3) { claimCodeStatus.textContent = 'A short code the receiver will enter to claim'; claimCodeStatus.className = 'text-[10px] text-zinc-500'; return; }
+                const existing = await sgLookupGift(val);
+                if (existing) { claimCodeStatus.textContent = '⚠️ This code is already taken!'; claimCodeStatus.className = 'text-[10px] text-red-400 font-medium'; }
+                else { claimCodeStatus.textContent = '✅ Code is available!'; claimCodeStatus.className = 'text-[10px] text-emerald-400'; }
+            });
+
+            // Password toggle
+            if (toggleBtn) toggleBtn.addEventListener('click', () => {
+                passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
+                toggleBtn.textContent = passwordInput.type === 'password' ? '👁️' : '🙈';
+            });
 
             // === CHOICE PANEL HANDLERS ===
             const choicePanel = document.getElementById('secretGiftChoicePanel');
             const formPanel = document.getElementById('secretGiftFormPanel');
             const redeemPanel = document.getElementById('secretGiftRedeemPanel');
 
-            document.getElementById('sgChoiceSend').addEventListener('click', () => {
-                choicePanel.classList.add('hidden');
-                formPanel.classList.remove('hidden');
-            });
-            document.getElementById('sgChoiceRedeem').addEventListener('click', () => {
-                choicePanel.classList.add('hidden');
-                redeemPanel.classList.remove('hidden');
-            });
-            document.getElementById('sgBackToSendChoice').addEventListener('click', () => {
-                formPanel.classList.add('hidden');
-                choicePanel.classList.remove('hidden');
-            });
-            document.getElementById('sgBackToRedeemChoice').addEventListener('click', () => {
-                redeemPanel.classList.add('hidden');
-                choicePanel.classList.remove('hidden');
-            });
+            document.getElementById('sgChoiceSend').addEventListener('click', () => { choicePanel.classList.add('hidden'); formPanel.classList.remove('hidden'); });
+            document.getElementById('sgChoiceRedeem').addEventListener('click', () => { choicePanel.classList.add('hidden'); redeemPanel.classList.remove('hidden'); });
+            document.getElementById('sgBackToSendChoice').addEventListener('click', () => { formPanel.classList.add('hidden'); choicePanel.classList.remove('hidden'); });
+            document.getElementById('sgBackToRedeemChoice').addEventListener('click', () => { redeemPanel.classList.add('hidden'); choicePanel.classList.remove('hidden'); });
 
             // === REDEEM PANEL LOGIC ===
             const redeemCodeInput = document.getElementById('sgRedeemCode');
+            const redeemPasswordInput = document.getElementById('sgRedeemPassword');
+            const redeemTogglePw = document.getElementById('sgRedeemTogglePw');
             const redeemClaimBtn = document.getElementById('sgRedeemClaimBtn');
             const redeemPreview = document.getElementById('sgRedeemPreview');
             const redeemStatus = document.getElementById('sgRedeemStatus');
 
-            function fromBase64url(str) {
-                let s = str.replace(/-/g, '+').replace(/_/g, '/');
-                while (s.length % 4) s += '=';
-                return atob(s);
-            }
+            if (redeemTogglePw) redeemTogglePw.addEventListener('click', () => {
+                redeemPasswordInput.type = redeemPasswordInput.type === 'password' ? 'text' : 'password';
+                redeemTogglePw.textContent = redeemPasswordInput.type === 'password' ? '👁️' : '🙈';
+            });
 
-            function decodeGiftCode(code) {
-                const raw = code.trim();
-                if (!raw.startsWith('SG-')) return null;
-                const encoded = raw.slice(3);
-                try {
-                    const json = fromBase64url(encoded);
-                    const data = JSON.parse(json);
-                    if (data.ep && data.key && data.amt) return data;
-                } catch(e) {}
-                return null;
-            }
-
-            if (redeemCodeInput) redeemCodeInput.addEventListener('input', () => {
+            if (redeemCodeInput) redeemCodeInput.addEventListener('input', async () => {
                 redeemPreview.classList.add('hidden');
                 redeemStatus.classList.add('hidden');
-                const val = redeemCodeInput.value.trim();
-                const data = decodeGiftCode(val);
-                if (data) {
+                const val = redeemCodeInput.value.trim().toUpperCase();
+                if (val.length < 4) return;
+                const gift = await sgLookupGift(val);
+                if (gift && !gift.claimed) {
                     redeemPreview.classList.remove('hidden');
-                    document.getElementById('sgRedeemAmount').textContent = parseFloat(data.amt).toFixed(4) + ' BOT';
-                    document.getElementById('sgRedeemMsg').textContent = '"' + (data.msg || 'A secret gift') + '"';
-                    document.getElementById('sgRedeemSender').textContent = data.senderName || (data.sender ? data.sender.slice(0,6)+'...'+data.sender.slice(-4) : 'Anonymous');
+                    document.getElementById('sgRedeemAmount').textContent = parseFloat(gift.amount).toFixed(4) + ' BOT';
+                    document.getElementById('sgRedeemMsg').textContent = '"' + (gift.message || 'A secret gift') + '"';
+                    document.getElementById('sgRedeemSender').textContent = gift.sender_name || 'Anonymous';
+                } else if (gift && gift.claimed) {
+                    redeemStatus.textContent = 'This gift has already been claimed.';
+                    redeemStatus.className = 'text-[11px] text-center text-red-400';
+                    redeemStatus.classList.remove('hidden');
                 }
             });
 
             if (redeemClaimBtn) redeemClaimBtn.addEventListener('click', async () => {
-                const codeVal = redeemCodeInput.value.trim();
+                const codeVal = redeemCodeInput.value.trim().toUpperCase();
+                const pwVal = redeemPasswordInput ? redeemPasswordInput.value.trim() : '';
                 if (!codeVal) { redeemStatus.textContent = 'Please enter the claim code.'; redeemStatus.className = 'text-[11px] text-center text-red-400'; redeemStatus.classList.remove('hidden'); return; }
-                if (!codeVal.startsWith('SG-')) { redeemStatus.textContent = 'Invalid code format.'; redeemStatus.className = 'text-[11px] text-center text-red-400'; redeemStatus.classList.remove('hidden'); return; }
-
-                const data = decodeGiftCode(codeVal);
-                if (!data || !data.key) { redeemStatus.textContent = 'Invalid or corrupted claim code.'; redeemStatus.className = 'text-[11px] text-center text-red-400'; redeemStatus.classList.remove('hidden'); return; }
-
-                if (!isWalletConnected) { openWalletModal(); return; }
 
                 redeemClaimBtn.disabled = true;
-                document.getElementById('sgRedeemClaimText').textContent = 'Claiming...';
-                redeemStatus.textContent = 'Verifying...';
+                document.getElementById('sgRedeemClaimText').textContent = 'Looking up gift...';
+                redeemStatus.textContent = 'Searching database...';
                 redeemStatus.className = 'text-[11px] text-center text-orange-400';
                 redeemStatus.classList.remove('hidden');
 
                 try {
+                    const gift = await sgLookupGift(codeVal);
+                    if (!gift) { throw new Error('Invalid claim code. Check the code and try again.'); }
+                    if (gift.claimed) { throw new Error('This gift has already been claimed.'); }
+
+                    if (gift.password_hash && pwVal !== gift.password_hash) {
+                        throw new Error('Wrong password. Check the password and try again.');
+                    }
+
+                    if (!isWalletConnected) { openWalletModal(); return; }
+
                     const claimerAddress = await systemSigner.getAddress();
-                    const signMsg = 'Claim Secret Gift: ' + parseFloat(data.amt).toFixed(4) + ' BOT\nFrom: ' + (data.senderName || 'Anonymous');
+                    const signMsg = 'Claim Secret Gift: ' + parseFloat(gift.amount).toFixed(4) + ' BOT\nFrom: ' + (gift.sender_name || 'Anonymous');
                     redeemStatus.textContent = 'Open MetaMask to confirm...';
 
                     try {
-                        await window.ethereum.request({
-                            method: 'personal_sign',
-                            params: [signMsg, claimerAddress]
-                        });
-                    } catch(signErr) {
-                        throw new Error('Signature rejected in MetaMask.');
-                    }
+                        await window.ethereum.request({ method: 'personal_sign', params: [signMsg, claimerAddress] });
+                    } catch(signErr) { throw new Error('Signature rejected in MetaMask.'); }
 
                     redeemStatus.textContent = 'Decrypting vault...';
-                    const privateKey = await decryptWithPassword(data.ep, data.key);
+                    const privateKey = await decryptAES(gift.encrypted_pk, gift.enc_key);
                     const vaultWallet = new ethers.Wallet(privateKey, systemProvider);
                     const vaultAddress = vaultWallet.address;
                     const balance = await systemProvider.getBalance(vaultAddress);
 
-                    if (balance === 0n) {
-                        throw new Error('This gift has already been claimed or the vault is empty.');
-                    }
+                    if (balance === 0n) { throw new Error('This gift has already been claimed or the vault is empty.'); }
 
                     redeemStatus.textContent = 'Claiming ' + parseFloat(ethers.formatEther(balance)).toFixed(4) + ' BOT...';
 
@@ -7621,19 +7688,18 @@ window.convertSbtToBot = convertSbtToBot;
                     const receipt = await tx.wait();
 
                     if (receipt.status === 1) {
+                        await sgMarkClaimed(codeVal, claimerAddress);
                         redeemStatus.textContent = '';
                         redeemStatus.classList.add('hidden');
                         redeemClaimBtn.disabled = false;
                         document.getElementById('sgRedeemClaimText').textContent = 'Claim Gift';
-
-                        // Show success popup
-                        showSecretGiftClaimedPopup(data, balance, tx.hash);
+                        showSecretGiftClaimedPopup({ msg: gift.message, senderName: gift.sender_name }, balance, tx.hash);
                         await updateRealBalance();
                         if (typeof loadOnChainHistory === 'function') await loadOnChainHistory();
                     }
                 } catch(err) {
                     console.error('Secret Gift claim failed:', err);
-                    redeemStatus.textContent = err.message || 'Claim failed. Check the code and try again.';
+                    redeemStatus.textContent = err.message || 'Claim failed.';
                     redeemStatus.className = 'text-[11px] text-center text-red-400';
                     redeemStatus.classList.remove('hidden');
                     redeemClaimBtn.disabled = false;
@@ -7659,13 +7725,9 @@ window.convertSbtToBot = convertSbtToBot;
                 const check = document.getElementById('sgRecipientCheck');
                 const status = document.getElementById('sgRecipientStatus');
                 const val = recipientInput.value.trim();
-                if (val.startsWith('0x') && val.length === 42) {
-                    check.style.background = '#10b981'; check.style.opacity = '1'; status.textContent = 'Valid address'; status.className = 'text-[10px] text-emerald-400';
-                } else if (val.length > 0) {
-                    check.style.background = '#ef4444'; check.style.opacity = '1'; status.textContent = 'Invalid address'; status.className = 'text-[10px] text-red-400';
-                } else {
-                    check.style.opacity = '0'; status.textContent = '';
-                }
+                if (val.startsWith('0x') && val.length === 42) { check.style.background = '#10b981'; check.style.opacity = '1'; status.textContent = 'Valid address'; status.className = 'text-[10px] text-emerald-400'; }
+                else if (val.length > 0) { check.style.background = '#ef4444'; check.style.opacity = '1'; status.textContent = 'Invalid address'; status.className = 'text-[10px] text-red-400'; }
+                else { check.style.opacity = '0'; status.textContent = ''; }
                 updateSgPreview();
             });
 
@@ -7681,17 +7743,23 @@ window.convertSbtToBot = convertSbtToBot;
                 if (message && previewMsg) previewMsg.textContent = message.value || 'Your secret message here...';
             }
 
-            if (createBtn) createBtn.addEventListener('click', () => {
+            if (createBtn) createBtn.addEventListener('click', async () => {
                 if (!isWalletConnected) { openWalletModal(); return; }
                 if (!systemSigner) { alert('Connect wallet to BOT Chain Testnet first.'); return; }
                 const recipient = recipientInput.value.trim();
                 const amount = amountInput.value.trim();
                 const message = messageInput.value.trim();
                 const senderName = document.getElementById('sgSenderName').value.trim();
+                const claimCodeVal = claimCodeInput ? claimCodeInput.value.trim().toUpperCase() : '';
+                const passwordVal = passwordInput ? passwordInput.value.trim() : '';
 
                 if (!recipient || !recipient.startsWith('0x') || recipient.length !== 42) { alert('Please enter a valid recipient address.'); return; }
                 if (!amount || parseFloat(amount) <= 0) { alert('Amount must be greater than 0.'); return; }
                 if (!sgUploadedImageData) { alert('Please upload an image for the gift card.'); return; }
+                if (!claimCodeVal || claimCodeVal.length < 3) { alert('Please enter a claim code (at least 3 characters).'); return; }
+
+                const existing = await sgLookupGift(claimCodeVal);
+                if (existing) { alert('This claim code is already taken. Use a different one.'); return; }
 
                 document.getElementById('sgFinalImage').src = sgUploadedImageData;
                 document.getElementById('sgFinalAmount').textContent = amount.value || '0.0';
@@ -7699,6 +7767,8 @@ window.convertSbtToBot = convertSbtToBot;
                 document.getElementById('sgFinalRecipient').textContent = recipient.slice(0, 6) + '...' + recipient.slice(-4);
                 document.getElementById('sgFinalSender').textContent = senderName || realWalletAddress.slice(0, 6) + '...' + realWalletAddress.slice(-4);
                 document.getElementById('sgFinalAmountDetail').textContent = parseFloat(amount).toFixed(4) + ' $BOT';
+                document.getElementById('sgFinalClaimCode').textContent = claimCodeVal;
+                document.getElementById('sgFinalPassword').textContent = passwordVal ? '•'.repeat(passwordVal.length) : 'None';
 
                 document.getElementById('secretGiftFormPanel').classList.add('hidden');
                 document.getElementById('secretGiftReviewPanel').classList.remove('hidden');
@@ -7720,16 +7790,18 @@ window.convertSbtToBot = convertSbtToBot;
                     const amount = amountInput.value.trim();
                     const message = messageInput.value.trim();
                     const senderName = document.getElementById('sgSenderName').value.trim() || realWalletAddress.slice(0, 6) + '...' + realWalletAddress.slice(-4);
+                    const claimCodeVal = claimCodeInput ? claimCodeInput.value.trim().toUpperCase() : '';
+                    const passwordVal = passwordInput ? passwordInput.value.trim() : '';
 
-                    document.getElementById('sgConfirmText').textContent = 'Uploading to IPFS...';
+                    document.getElementById('sgConfirmText').textContent = 'Creating vault...';
                     const vaultWallet = ethers.Wallet.createRandom();
                     const vaultAddress = vaultWallet.address;
 
                     const imgFile = dataUriToFile(sgUploadedImageData, 'secret-gift.png');
+                    document.getElementById('sgConfirmText').textContent = 'Uploading to IPFS...';
                     const imgHash = await uploadImageToPinata(imgFile);
                     const imageDataUrl = PINATA_GATEWAY + imgHash;
 
-                    document.getElementById('sgConfirmText').textContent = 'Creating metadata...';
                     const metadata = {
                         name: '🔐 Secret Gift from ' + senderName,
                         description: message || 'A secret gift on BOT Chain',
@@ -7751,7 +7823,7 @@ window.convertSbtToBot = convertSbtToBot;
                     const amountWei = ethers.parseEther(amount);
                     const tx = await sbtContractInstance.mintSoulboundGift(vaultAddress, tokenURI, message || 'Secret Gift', { value: amountWei });
 
-                    document.getElementById('sgConfirmText').textContent = 'Encrypting...';
+                    document.getElementById('sgConfirmText').textContent = 'Encrypting vault...';
                     const receipt = await tx.wait();
                     if (receipt.status !== 1) throw new Error('Transaction failed on-chain');
 
@@ -7764,53 +7836,28 @@ window.convertSbtToBot = convertSbtToBot;
                         mintedTokenId = parsed.args.tokenId.toString();
                     }
 
-                    // Generate random encryption key — embedded in the code, no password needed
-                    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
-                    let randomKey = '';
-                    for (let i = 0; i < 16; i++) randomKey += chars.charAt(Math.floor(Math.random() * chars.length));
+                    const encKey = vaultWallet.privateKey;
+                    const encryptedPK = await encryptAES(vaultWallet.privateKey, encKey);
 
-                    const encryptedPK = await encryptWithPassword(vaultWallet.privateKey, randomKey);
-                    const claimPayload = {
-                        ep: encryptedPK,
-                        key: randomKey,
-                        amt: parseFloat(amount),
-                        msg: message || '',
-                        sender: realWalletAddress,
-                        senderName: senderName,
-                        tokenId: mintedTokenId,
-                        img: imageDataUrl,
-                        created: Date.now()
-                    };
+                    const giftCode = claimCodeVal || await sgGenerateCode();
 
-                    // Embed data INSIDE the code itself — works cross-device
-                    function toBase64url(str) {
-                        return btoa(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-                    }
-                    function fromBase64url(str) {
-                        let s = str.replace(/-/g, '+').replace(/_/g, '/');
-                        while (s.length % 4) s += '=';
-                        return atob(s);
-                    }
-                    const encodedPayload = toBase64url(JSON.stringify(claimPayload));
-                    const fullCode = 'SG-' + encodedPayload;
-
-                    // Also save to localStorage for sender's own history
-                    const storage = getSecretGiftStorage();
-                    storage[vaultAddress.toLowerCase()] = {
+                    document.getElementById('sgConfirmText').textContent = 'Saving to database...';
+                    await sgStoreGift(giftCode, {
+                        code: giftCode,
+                        vault_address: vaultAddress,
+                        encrypted_pk: encryptedPK,
+                        enc_key: encKey,
                         amount: parseFloat(amount),
-                        message: message,
                         sender: realWalletAddress,
-                        senderName: senderName,
-                        vaultAddress: vaultAddress,
-                        tokenId: mintedTokenId,
-                        txHash: tx.hash,
-                        claimed: false,
-                        claimCode: fullCode,
-                        createdAt: Date.now()
-                    };
-                    saveSecretGiftStorage(storage);
+                        sender_name: senderName,
+                        message: message || '',
+                        image_url: imageDataUrl,
+                        token_id: mintedTokenId,
+                        recipient: recipient,
+                        password_hash: passwordVal || '',
+                        claimed: false
+                    });
 
-                    // Save to vault_gifts for history display
                     addGift({
                         id: 'sg_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8),
                         sender: realWalletAddress,
@@ -7825,18 +7872,17 @@ window.convertSbtToBot = convertSbtToBot;
                         claimed: false
                     });
 
-                    document.getElementById('sgSuccessCode').textContent = fullCode;
+                    document.getElementById('sgSuccessCode').textContent = giftCode;
                     document.getElementById('sgSuccessAmount').textContent = parseFloat(amount).toFixed(4) + ' BOT';
                     document.getElementById('sgSuccessTx').textContent = tx.hash;
 
-                    const copyCodeBtn = document.getElementById('sgCopyCodeBtn');
                     if (copyCodeBtn) copyCodeBtn.addEventListener('click', () => {
-                        navigator.clipboard.writeText(fullCode).then(() => {
+                        navigator.clipboard.writeText(giftCode).then(() => {
                             copyCodeBtn.textContent = 'Copied!'; setTimeout(() => { copyCodeBtn.textContent = 'Copy Code'; }, 2000);
                         }).catch(() => { copyCodeBtn.textContent = 'Failed'; });
                     });
                     if (shareBtn) shareBtn.addEventListener('click', () => {
-                        const shareText = '🔐 Secret Gift Code:\n' + fullCode + '\n\nGo to GIFT BOT → Special Gifts → Secret Gift → Redeem\nPaste this code to claim your gift!';
+                        const shareText = '🔐 Secret Gift Code: ' + giftCode + '\n\nGo to GIFT BOT → Secret Gift → Redeem\nEnter this code to claim your gift!';
                         if (navigator.share) {
                             navigator.share({ title: '🔐 Secret Gift!', text: shareText });
                         } else {
@@ -7897,14 +7943,7 @@ window.convertSbtToBot = convertSbtToBot;
 
         function resetSecretGiftForm() {
             sgUploadedImageData = null;
-            const recipientInput = document.getElementById('sgRecipient');
-            const amountInput = document.getElementById('sgAmount');
-            const messageInput = document.getElementById('sgMessage');
-            const senderNameInput = document.getElementById('sgSenderName');
-            if (recipientInput) recipientInput.value = '';
-            if (amountInput) amountInput.value = '';
-            if (messageInput) messageInput.value = '';
-            if (senderNameInput) senderNameInput.value = '';
+            ['sgRecipient','sgAmount','sgMessage','sgSenderName','sgPassword','sgClaimCode'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
             const previewImg = document.getElementById('secretGiftPreviewImg');
             const previewImage = document.getElementById('secretGiftPreviewImage');
             const uploadArea = document.getElementById('secretGiftUploadArea');
@@ -7915,27 +7954,27 @@ window.convertSbtToBot = convertSbtToBot;
             document.getElementById('sgPreviewMessage').textContent = 'Your secret message here...';
             const check = document.getElementById('sgRecipientCheck');
             if (check) check.style.opacity = '0';
+            document.getElementById('sgClaimCodeStatus').textContent = 'A short code the receiver will enter to claim';
+            document.getElementById('sgClaimCodeStatus').className = 'text-[10px] text-zinc-500';
             document.getElementById('secretGiftChoicePanel').classList.remove('hidden');
             document.getElementById('secretGiftFormPanel').classList.add('hidden');
             document.getElementById('secretGiftReviewPanel').classList.add('hidden');
             document.getElementById('secretGiftSuccessPanel').classList.add('hidden');
             document.getElementById('secretGiftRedeemPanel').classList.add('hidden');
-            // Reset redeem panel
-            const redeemCode = document.getElementById('sgRedeemCode');
+            ['sgRedeemCode','sgRedeemPassword'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
             const redeemPrev = document.getElementById('sgRedeemPreview');
             const redeemStat = document.getElementById('sgRedeemStatus');
-            if (redeemCode) redeemCode.value = '';
             if (redeemPrev) redeemPrev.classList.add('hidden');
             if (redeemStat) redeemStat.classList.add('hidden');
         }
 
-        async function claimSecretGift(payload) {
+        async function claimSecretGift(code) {
             if (!isWalletConnected) { openWalletModal(); return; }
             if (!systemProvider || !systemSigner) { alert('Connect wallet to BOT Chain Testnet first.'); return; }
 
-            let data;
-            try { data = JSON.parse(atob(payload)); } catch (e) { alert('Invalid secret gift code.'); return; }
-            if (!data.ep || !data.amt || !data.key) { alert('Invalid secret gift format.'); return; }
+            const gift = await sgLookupGift(code);
+            if (!gift) { alert('Invalid secret gift code.'); return; }
+            if (gift.claimed) { alert('This gift has already been claimed.'); return; }
 
             const overlay = document.createElement('div');
             overlay.id = 'secretGiftClaimOverlay';
@@ -7943,10 +7982,11 @@ window.convertSbtToBot = convertSbtToBot;
             overlay.innerHTML = '<div class="glass-panel rounded-3xl p-8 max-w-md w-full mx-4 text-center space-y-5 relative overflow-hidden" style="border-color: rgba(234,88,12,0.3);">' +
                 '<div class="w-20 h-20 rounded-full bg-orange-500/20 border-2 border-orange-500/40 flex items-center justify-center mx-auto mb-4 gift-float-anim"><span class="text-4xl">🔐</span></div>' +
                 '<h3 class="text-2xl font-bold text-zinc-100">Secret Gift</h3>' +
-                (data.img ? '<div class="rounded-xl overflow-hidden border border-orange-500/20 mx-auto max-w-[200px]"><img src="' + data.img + '" class="w-full h-auto" alt="Gift"></div>' : '') +
-                '<p class="text-xs text-zinc-400">' + (data.msg || 'A secret gift awaits!') + '</p>' +
-                '<p class="text-sm font-bold text-orange-400 font-mono">' + parseFloat(data.amt).toFixed(4) + ' BOT</p>' +
-                '<p class="text-[10px] text-zinc-500">From: ' + (data.senderName || (data.sender ? data.sender.slice(0,6)+'...'+data.sender.slice(-4) : 'Anonymous')) + '</p>' +
+                (gift.image_url ? '<div class="rounded-xl overflow-hidden border border-orange-500/20 mx-auto max-w-[200px]"><img src="' + gift.image_url + '" class="w-full h-auto" alt="Gift"></div>' : '') +
+                '<p class="text-xs text-zinc-400">' + (gift.message || 'A secret gift awaits!') + '</p>' +
+                '<p class="text-sm font-bold text-orange-400 font-mono">' + parseFloat(gift.amount).toFixed(4) + ' BOT</p>' +
+                '<p class="text-[10px] text-zinc-500">From: ' + (gift.sender_name || 'Anonymous') + '</p>' +
+                (gift.password_hash ? '<div class="space-y-1"><input type="password" id="sgOverlayPw" placeholder="Enter password" class="w-full bg-zinc-950/80 border border-zinc-700/50 rounded-xl p-3 text-xs text-zinc-100 focus:outline-none focus:border-orange-500/50 font-mono"></div>' : '') +
                 '<button id="sgClaimBtn" class="w-full py-3.5 rounded-xl font-bold text-sm text-white transition-all duration-300 cursor-pointer" style="background: linear-gradient(135deg, #ea580c, #f97316);">Claim Gift 🔐</button>' +
                 '<p id="sgClaimStatus" class="text-[10px] text-zinc-500 hidden"></p>' +
                 '<button id="sgClaimCloseBtn" class="w-full bg-zinc-800 hover:bg-zinc-700 text-zinc-400 py-2.5 rounded-xl text-xs transition cursor-pointer">Close</button>' +
@@ -7957,6 +7997,14 @@ window.convertSbtToBot = convertSbtToBot;
             document.getElementById('sgClaimBtn').addEventListener('click', async () => {
                 const statusEl = document.getElementById('sgClaimStatus');
                 const claimBtnEl = document.getElementById('sgClaimBtn');
+                const pwInput = document.getElementById('sgOverlayPw');
+
+                if (gift.password_hash && pwInput && !pwInput.value.trim()) {
+                    statusEl.textContent = 'Please enter the password.'; statusEl.className = 'text-[10px] text-red-400'; statusEl.classList.remove('hidden'); return;
+                }
+                if (gift.password_hash && pwInput && pwInput.value.trim() !== gift.password_hash) {
+                    statusEl.textContent = 'Wrong password.'; statusEl.className = 'text-[10px] text-red-400'; statusEl.classList.remove('hidden'); return;
+                }
 
                 claimBtnEl.disabled = true;
                 claimBtnEl.textContent = 'Claiming...';
@@ -7965,24 +8013,17 @@ window.convertSbtToBot = convertSbtToBot;
 
                 try {
                     const claimerAddress = await systemSigner.getAddress();
-                    const signMsg = 'Claim Secret Gift: ' + parseFloat(data.amt).toFixed(4) + ' BOT\nFrom: ' + (data.senderName || 'Anonymous');
+                    const signMsg = 'Claim Secret Gift: ' + parseFloat(gift.amount).toFixed(4) + ' BOT\nFrom: ' + (gift.sender_name || 'Anonymous');
                     try {
                         await window.ethereum.request({ method: 'personal_sign', params: [signMsg, claimerAddress] });
                     } catch(signErr) { throw new Error('Signature rejected in MetaMask.'); }
 
                     statusEl.textContent = 'Decrypting vault...';
-                    const privateKey = await decryptWithPassword(data.ep, data.key);
+                    const privateKey = await decryptAES(gift.encrypted_pk, gift.enc_key);
                     const vaultWallet = new ethers.Wallet(privateKey, systemProvider);
-                    const vaultAddress = vaultWallet.address;
-                    const balance = await systemProvider.getBalance(vaultAddress);
+                    const balance = await systemProvider.getBalance(vaultWallet.address);
 
-                    if (balance === 0n) {
-                        statusEl.textContent = 'This gift has already been claimed or the vault is empty.';
-                        statusEl.className = 'text-[10px] text-red-400';
-                        claimBtnEl.disabled = false;
-                        claimBtnEl.textContent = 'Claim Gift 🔐';
-                        return;
-                    }
+                    if (balance === 0n) { statusEl.textContent = 'This gift has already been claimed.'; statusEl.className = 'text-[10px] text-red-400'; claimBtnEl.disabled = false; claimBtnEl.textContent = 'Claim Gift 🔐'; return; }
 
                     statusEl.textContent = 'Claiming ' + parseFloat(ethers.formatEther(balance)).toFixed(4) + ' BOT...';
                     claimBtnEl.textContent = 'Sending...';
@@ -7991,50 +8032,16 @@ window.convertSbtToBot = convertSbtToBot;
                     const receipt = await tx.wait();
 
                     if (receipt.status === 1) {
-                        const storage = getSecretGiftStorage();
-                        if (storage[vaultAddress.toLowerCase()]) {
-                            storage[vaultAddress.toLowerCase()].claimed = true;
-                            saveSecretGiftStorage(storage);
-                        }
-
+                        await sgMarkClaimed(code, claimerAddress);
                         overlay.remove();
-                        const successOverlay = document.createElement('div');
-                        successOverlay.className = 'fixed inset-0 z-[80] flex items-center justify-center bg-zinc-950/90 backdrop-blur-md';
-                        successOverlay.innerHTML = '<div class="glass-panel rounded-3xl p-8 max-w-md w-full mx-4 text-center space-y-5 relative overflow-hidden" style="border-color: rgba(234,88,12,0.3);">' +
-                            '<div class="absolute inset-0 pointer-events-none">' +
-                                Array(25).fill(0).map((_, i) => {
-                                    const c = ['#ea580c','#f97316','#fb923c','#fed7aa','#7c2d12'][Math.floor(Math.random()*5)];
-                                    return '<div class="absolute rounded-full" style="width:'+(4+Math.random()*8)+'px;height:'+(4+Math.random()*8)+'px;background:'+c+';left:'+Math.random()*100+'%;top:'+Math.random()*100+'%;opacity:0;animation:confettiFall '+(1.5+Math.random())+'s ease-out '+Math.random()*0.5+'s forwards;"></div>';
-                                }).join('') +
-                            '</div>' +
-                            '<div class="relative z-10">' +
-                                '<div class="w-20 h-20 rounded-full bg-orange-500/20 border-2 border-orange-500/40 flex items-center justify-center mx-auto mb-4 claim-success-pop"><span class="text-4xl">🎉</span></div>' +
-                                '<h3 class="text-2xl font-bold text-zinc-100 mb-2">Secret Gift Claimed!</h3>' +
-                                '<p class="text-lg font-bold text-orange-400 font-mono">+' + parseFloat(ethers.formatEther(balance)).toFixed(4) + ' BOT</p>' +
-                                '<p class="text-xs text-zinc-400 mt-1">' + (data.msg || '') + '</p>' +
-                            '</div>' +
-                            '<div class="relative z-10 bg-zinc-950/60 rounded-2xl p-3 border border-zinc-700/30">' +
-                                '<p class="text-[10px] text-zinc-500 mb-1">Transaction Hash</p>' +
-                                '<p class="text-xs text-zinc-300 font-mono truncate">' + tx.hash + '</p>' +
-                            '</div>' +
-                            '<a href="https://scan.bohr.life/tx/' + tx.hash + '" target="_blank" class="relative z-10 text-[10px] text-orange-400/80 hover:underline">View on Explorer →</a>' +
-                            '<button id="sgClaimSuccessClose" class="relative z-10 w-full bg-orange-500 hover:bg-orange-400 text-white py-3 rounded-xl font-bold text-sm transition cursor-pointer mt-2">Awesome!</button>' +
-                        '</div>';
-                        document.body.appendChild(successOverlay);
-                        document.getElementById('sgClaimSuccessClose').addEventListener('click', () => successOverlay.remove());
-
+                        showSecretGiftClaimedPopup({ msg: gift.message, senderName: gift.sender_name }, balance, tx.hash);
                         await updateRealBalance();
                         if (typeof loadOnChainHistory === 'function') await loadOnChainHistory();
                     }
                 } catch (err) {
                     console.error('Secret Gift claim failed:', err);
-                    if (err.message && err.message.includes('decrypt')) {
-                        statusEl.textContent = 'Invalid code. It may be corrupted.';
-                        statusEl.className = 'text-[10px] text-red-400';
-                    } else {
-                        statusEl.textContent = 'Claim failed: ' + (err.reason || err.message || 'Unknown error');
-                        statusEl.className = 'text-[10px] text-red-400';
-                    }
+                    statusEl.textContent = 'Claim failed: ' + (err.reason || err.message || 'Unknown error');
+                    statusEl.className = 'text-[10px] text-red-400';
                     claimBtnEl.disabled = false;
                     claimBtnEl.textContent = 'Claim Gift 🔐';
                 }
@@ -8046,12 +8053,12 @@ window.convertSbtToBot = convertSbtToBot;
         // Check URL for secret gift claim code on page load
         (function checkSecretGiftUrl() {
             const params = new URLSearchParams(window.location.search);
-            const payload = params.get('secretGift');
-            if (payload) {
+            const code = params.get('secretGift');
+            if (code) {
                 window.addEventListener('load', () => {
                     setTimeout(() => {
                         if (isWalletConnected) {
-                            claimSecretGift(payload);
+                            claimSecretGift(code);
                         } else {
                             const claimBtn = document.createElement('button');
                             claimBtn.id = 'secretGiftClaimBanner';
@@ -8066,11 +8073,11 @@ window.convertSbtToBot = convertSbtToBot;
                                     const checkInterval = setInterval(() => {
                                         if (isWalletConnected && systemSigner) {
                                             clearInterval(checkInterval);
-                                            claimSecretGift(payload);
+                                            claimSecretGift(code);
                                         }
                                     }, 500);
                                 } else {
-                                    claimSecretGift(payload);
+                                    claimSecretGift(code);
                                 }
                             });
                             document.body.appendChild(claimBtn);
