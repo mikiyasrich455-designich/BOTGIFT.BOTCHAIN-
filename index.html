@@ -2093,8 +2093,37 @@
                 <p class="text-sm text-zinc-400">Password-locked gift. Only the one who knows the code can claim it.</p>
             </div>
 
-            <!-- Main Form Panel -->
-            <div id="secretGiftFormPanel">
+            <!-- CHOICE PANEL: Send or Redeem -->
+            <div id="secretGiftChoicePanel" class="animate-slide-in">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-lg mx-auto">
+                    <button id="sgChoiceSend" class="group glass-panel rounded-2xl p-8 flex flex-col items-center gap-4 cursor-pointer transition-all duration-300 hover:scale-[1.03] hover:border-orange-500/40 hover:shadow-[0_0_30px_rgba(234,88,12,0.15)]">
+                        <div class="w-16 h-16 rounded-full bg-orange-500/15 border border-orange-500/30 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <span class="text-3xl">📤</span>
+                        </div>
+                        <div class="text-center">
+                            <h3 class="text-lg font-bold text-zinc-100 mb-1">Send Gift</h3>
+                            <p class="text-[11px] text-zinc-400">Create a password-locked gift with custom image</p>
+                        </div>
+                        <div class="px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-[10px] text-orange-300 font-medium">Create & Share</div>
+                    </button>
+                    <button id="sgChoiceRedeem" class="group glass-panel rounded-2xl p-8 flex flex-col items-center gap-4 cursor-pointer transition-all duration-300 hover:scale-[1.03] hover:border-emerald-500/40 hover:shadow-[0_0_30px_rgba(16,185,129,0.15)]">
+                        <div class="w-16 h-16 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <span class="text-3xl">📥</span>
+                        </div>
+                        <div class="text-center">
+                            <h3 class="text-lg font-bold text-zinc-100 mb-1">Redeem Gift</h3>
+                            <p class="text-[11px] text-zinc-400">Enter claim code and password to receive gift</p>
+                        </div>
+                        <div class="px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[10px] text-emerald-300 font-medium">Claim Now</div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- SEND GIFT PANEL (hidden by default) -->
+            <div id="secretGiftFormPanel" class="hidden">
+                <div class="flex items-center gap-2 mb-4">
+                    <button id="sgBackToSendChoice" class="text-zinc-400 hover:text-zinc-200 transition text-xs flex items-center gap-1 cursor-pointer glass-panel px-3 py-1.5 rounded-full">← Back</button>
+                </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Left: Card Preview -->
                     <div class="relative">
@@ -2188,6 +2217,61 @@
                         <button id="sgCreateBtn" class="w-full py-4 rounded-xl font-semibold text-sm tracking-wide transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 shadow-[0_0_30px_rgba(234,88,12,0.2)] hover:shadow-[0_0_40px_rgba(234,88,12,0.35)] hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100" style="background: linear-gradient(135deg, #ea580c, #f97316); color: white;">
                             <span id="sgCreateBtnText">Create Secret Gift</span>
                             <span id="sgCreateBtnIcon">🔐</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- REDEEM GIFT PANEL (hidden by default) -->
+            <div id="secretGiftRedeemPanel" class="hidden animate-slide-in">
+                <div class="flex items-center gap-2 mb-4">
+                    <button id="sgBackToRedeemChoice" class="text-zinc-400 hover:text-zinc-200 transition text-xs flex items-center gap-1 cursor-pointer glass-panel px-3 py-1.5 rounded-full">← Back</button>
+                </div>
+                <div class="max-w-md mx-auto">
+                    <div class="glass-panel rounded-3xl p-8 space-y-6" style="border-color: rgba(16,185,129,0.2);">
+                        <div class="text-center">
+                            <div class="w-16 h-16 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center mx-auto mb-4">
+                                <span class="text-3xl">📥</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-zinc-100 mb-1">Redeem Secret Gift</h3>
+                            <p class="text-xs text-zinc-400">Paste your claim link or enter the claim code below</p>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-[11px] tracking-wide text-zinc-400 font-medium block uppercase">Claim Link or Code</label>
+                            <textarea id="sgRedeemCode" placeholder="Paste the claim link or code here..." rows="3" class="w-full bg-zinc-950/80 border border-zinc-700/50 rounded-xl p-3.5 text-[11px] text-zinc-100 focus:outline-none focus:border-emerald-500/50 input-glow transition resize-none font-mono"></textarea>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-[11px] tracking-wide text-zinc-400 font-medium block uppercase flex items-center gap-1.5">
+                                <span>🔐</span> Password
+                            </label>
+                            <div class="relative">
+                                <input type="password" id="sgRedeemPassword" placeholder="Enter the secret password" class="w-full bg-zinc-950/80 border border-zinc-700/50 rounded-xl p-3.5 pr-10 text-xs text-zinc-100 focus:outline-none focus:border-emerald-500/50 input-glow transition font-mono">
+                                <button type="button" id="sgRedeemTogglePw" class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 transition text-sm cursor-pointer">👁️</button>
+                            </div>
+                        </div>
+
+                        <div id="sgRedeemPreview" class="hidden glass-panel rounded-xl p-4 space-y-2" style="border-color: rgba(234,88,12,0.2);">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[11px] text-zinc-500">Amount</span>
+                                <span class="text-sm text-orange-400 font-bold font-mono" id="sgRedeemAmount">0.0 BOT</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-[11px] text-zinc-500">Message</span>
+                                <span class="text-[11px] text-zinc-400 italic max-w-[200px] truncate" id="sgRedeemMsg">"..."</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-[11px] text-zinc-500">From</span>
+                                <span class="text-[11px] text-zinc-300 font-mono" id="sgRedeemSender">0x...</span>
+                            </div>
+                        </div>
+
+                        <p id="sgRedeemStatus" class="text-[11px] text-center hidden"></p>
+
+                        <button id="sgRedeemClaimBtn" class="w-full py-4 rounded-xl font-bold text-sm text-white transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed" style="background: linear-gradient(135deg, #10b981, #059669);">
+                            <span id="sgRedeemClaimText">Claim Gift</span>
+                            <span>🎉</span>
                         </button>
                     </div>
                 </div>
@@ -7454,6 +7538,150 @@ window.convertSbtToBot = convertSbtToBot;
             const shareBtn = document.getElementById('sgShareBtn');
             const copyLinkBtn = document.getElementById('sgCopyLinkBtn');
 
+            // === CHOICE PANEL HANDLERS ===
+            const choicePanel = document.getElementById('secretGiftChoicePanel');
+            const formPanel = document.getElementById('secretGiftFormPanel');
+            const redeemPanel = document.getElementById('secretGiftRedeemPanel');
+
+            document.getElementById('sgChoiceSend').addEventListener('click', () => {
+                choicePanel.classList.add('hidden');
+                formPanel.classList.remove('hidden');
+            });
+            document.getElementById('sgChoiceRedeem').addEventListener('click', () => {
+                choicePanel.classList.add('hidden');
+                redeemPanel.classList.remove('hidden');
+            });
+            document.getElementById('sgBackToSendChoice').addEventListener('click', () => {
+                formPanel.classList.add('hidden');
+                choicePanel.classList.remove('hidden');
+            });
+            document.getElementById('sgBackToRedeemChoice').addEventListener('click', () => {
+                redeemPanel.classList.add('hidden');
+                choicePanel.classList.remove('hidden');
+            });
+
+            // === REDEEM PANEL LOGIC ===
+            const redeemCodeInput = document.getElementById('sgRedeemCode');
+            const redeemPasswordInput = document.getElementById('sgRedeemPassword');
+            const redeemTogglePw = document.getElementById('sgRedeemTogglePw');
+            const redeemClaimBtn = document.getElementById('sgRedeemClaimBtn');
+            const redeemPreview = document.getElementById('sgRedeemPreview');
+            const redeemStatus = document.getElementById('sgRedeemStatus');
+
+            if (redeemTogglePw) redeemTogglePw.addEventListener('click', () => {
+                redeemPasswordInput.type = redeemPasswordInput.type === 'password' ? 'text' : 'password';
+                redeemTogglePw.textContent = redeemPasswordInput.type === 'password' ? '👁️' : '🙈';
+            });
+
+            if (redeemCodeInput) redeemCodeInput.addEventListener('input', () => {
+                const val = redeemCodeInput.value.trim();
+                // Try to extract payload from URL or raw base64
+                let payload = val;
+                if (val.includes('secretGift=')) {
+                    try { payload = new URL(val).searchParams.get('secretGift'); } catch(e) {
+                        const idx = val.indexOf('secretGift=');
+                        if (idx !== -1) payload = val.slice(idx + 11).split('&')[0];
+                    }
+                }
+                try {
+                    const data = JSON.parse(atob(payload));
+                    if (data.amt) {
+                        redeemPreview.classList.remove('hidden');
+                        document.getElementById('sgRedeemAmount').textContent = parseFloat(data.amt).toFixed(4) + ' BOT';
+                        document.getElementById('sgRedeemMsg').textContent = '"' + (data.msg || 'A secret gift') + '"';
+                        document.getElementById('sgRedeemSender').textContent = data.senderName || (data.sender ? data.sender.slice(0,6)+'...'+data.sender.slice(-4) : 'Anonymous');
+                        redeemStatus.classList.add('hidden');
+                    }
+                } catch(e) {
+                    redeemPreview.classList.add('hidden');
+                }
+            });
+
+            if (redeemClaimBtn) redeemClaimBtn.addEventListener('click', async () => {
+                const codeVal = redeemCodeInput.value.trim();
+                const pwVal = redeemPasswordInput.value.trim();
+                if (!codeVal) { redeemStatus.textContent = 'Please paste the claim link or code.'; redeemStatus.className = 'text-[11px] text-center text-red-400'; redeemStatus.classList.remove('hidden'); return; }
+                if (!pwVal) { redeemStatus.textContent = 'Please enter the password.'; redeemStatus.className = 'text-[11px] text-center text-red-400'; redeemStatus.classList.remove('hidden'); return; }
+
+                let payload = codeVal;
+                if (codeVal.includes('secretGift=')) {
+                    try { payload = new URL(codeVal).searchParams.get('secretGift'); } catch(e) {
+                        const idx = codeVal.indexOf('secretGift=');
+                        if (idx !== -1) payload = codeVal.slice(idx + 11).split('&')[0];
+                    }
+                }
+
+                if (!isWalletConnected) { openWalletModal(); return; }
+
+                redeemClaimBtn.disabled = true;
+                document.getElementById('sgRedeemClaimText').textContent = 'Claiming...';
+                redeemStatus.textContent = 'Decrypting vault key...';
+                redeemStatus.className = 'text-[11px] text-center text-orange-400';
+                redeemStatus.classList.remove('hidden');
+
+                try {
+                    let data;
+                    try { data = JSON.parse(atob(payload)); } catch(e) { throw new Error('Invalid claim code format.'); }
+                    if (!data.ep || !data.amt) throw new Error('Invalid claim code data.');
+
+                    // MetaMask personal_sign to verify intent
+                    const claimerAddress = await systemSigner.getAddress();
+                    const signMsg = 'Claim Secret Gift: ' + parseFloat(data.amt).toFixed(4) + ' BOT\nFrom: ' + (data.senderName || 'Anonymous') + '\nTimestamp: ' + Date.now();
+                    redeemStatus.textContent = 'Open MetaMask to confirm...';
+
+                    let signed;
+                    try {
+                        signed = await window.ethereum.request({
+                            method: 'personal_sign',
+                            params: [signMsg, claimerAddress]
+                        });
+                    } catch(signErr) {
+                        throw new Error('Signature rejected in MetaMask.');
+                    }
+
+                    redeemStatus.textContent = 'Decrypting vault...';
+                    const privateKey = await decryptWithPassword(data.ep, pwVal);
+                    const vaultWallet = new ethers.Wallet(privateKey, systemProvider);
+                    const vaultAddress = vaultWallet.address;
+                    const balance = await systemProvider.getBalance(vaultAddress);
+
+                    if (balance === 0n) {
+                        throw new Error('This gift has already been claimed or the vault is empty.');
+                    }
+
+                    redeemStatus.textContent = 'Claiming ' + parseFloat(ethers.formatEther(balance)).toFixed(4) + ' BOT...';
+
+                    const tx = await vaultWallet.sendTransaction({ to: claimerAddress, value: balance });
+                    const receipt = await tx.wait();
+
+                    if (receipt.status === 1) {
+                        const storage = getSecretGiftStorage();
+                        if (storage[vaultAddress.toLowerCase()]) {
+                            storage[vaultAddress.toLowerCase()].claimed = true;
+                            saveSecretGiftStorage(storage);
+                        }
+
+                        redeemStatus.textContent = '';
+                        redeemStatus.classList.add('hidden');
+                        redeemClaimBtn.disabled = false;
+                        document.getElementById('sgRedeemClaimText').textContent = 'Claim Gift';
+
+                        // Show success popup
+                        showSecretGiftClaimedPopup(data, balance, tx.hash);
+                        await updateRealBalance();
+                        if (typeof loadOnChainHistory === 'function') await loadOnChainHistory();
+                    }
+                } catch(err) {
+                    console.error('Secret Gift claim failed:', err);
+                    redeemStatus.textContent = err.message || 'Claim failed. Check password and try again.';
+                    redeemStatus.className = 'text-[11px] text-center text-red-400';
+                    redeemStatus.classList.remove('hidden');
+                    redeemClaimBtn.disabled = false;
+                    document.getElementById('sgRedeemClaimText').textContent = 'Claim Gift';
+                }
+            });
+
+            // === SEND FORM LOGIC ===
             if (toggleBtn) toggleBtn.addEventListener('click', () => {
                 passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
                 toggleBtn.textContent = passwordInput.type === 'password' ? '👁️' : '🙈';
@@ -7612,6 +7840,21 @@ window.convertSbtToBot = convertSbtToBot;
                     };
                     saveSecretGiftStorage(storage);
 
+                    // Save to vault_gifts for history display
+                    addGift({
+                        id: 'sg_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8),
+                        sender: realWalletAddress,
+                        senderName: senderName,
+                        recipient: recipient,
+                        amount: parseFloat(amount).toString(),
+                        style: 'secretGift',
+                        message: message,
+                        tokenId: mintedTokenId,
+                        txHash: tx.hash,
+                        timestamp: Date.now(),
+                        claimed: false
+                    });
+
                     document.getElementById('sgClaimLinkInput').value = claimUrl;
                     document.getElementById('sgSuccessPassword').textContent = password;
                     document.getElementById('sgSuccessAmount').textContent = parseFloat(amount).toFixed(4) + ' BOT';
@@ -7634,8 +7877,8 @@ window.convertSbtToBot = convertSbtToBot;
                     });
                     if (doneBtn) doneBtn.addEventListener('click', () => {
                         document.getElementById('secretGiftSuccessPanel').classList.add('hidden');
-                        document.getElementById('secretGiftFormPanel').classList.remove('hidden');
                         resetSecretGiftForm();
+                        choicePanel.classList.remove('hidden');
                         backToSpecialGrid();
                     });
 
@@ -7654,6 +7897,35 @@ window.convertSbtToBot = convertSbtToBot;
                 }
             });
         })();
+
+        function showSecretGiftClaimedPopup(data, balance, txHash) {
+            const overlay = document.createElement('div');
+            overlay.id = 'secretGiftClaimedPopup';
+            overlay.className = 'fixed inset-0 z-[80] flex items-center justify-center bg-zinc-950/90 backdrop-blur-md';
+            overlay.innerHTML = '<div class="glass-panel rounded-3xl p-8 max-w-md w-full mx-4 text-center space-y-5 relative overflow-hidden" style="border-color: rgba(16,185,129,0.3);">' +
+                '<div class="absolute inset-0 pointer-events-none">' +
+                    Array(25).fill(0).map((_, i) => {
+                        const c = ['#10b981','#34d399','#6ee7b7','#059669','#fbbf24'][Math.floor(Math.random()*5)];
+                        return '<div class="absolute rounded-full" style="width:'+(4+Math.random()*8)+'px;height:'+(4+Math.random()*8)+'px;background:'+c+';left:'+Math.random()*100+'%;top:'+Math.random()*100+'%;opacity:0;animation:confettiFall '+(1.5+Math.random())+'s ease-out '+Math.random()*0.5+'s forwards;"></div>';
+                    }).join('') +
+                '</div>' +
+                '<div class="relative z-10">' +
+                    '<div class="w-20 h-20 rounded-full bg-emerald-500/20 border-2 border-emerald-500/40 flex items-center justify-center mx-auto mb-4 claim-success-pop"><span class="text-4xl">🎉</span></div>' +
+                    '<h3 class="text-2xl font-bold text-zinc-100 mb-2">Gift Claimed!</h3>' +
+                    '<p class="text-lg font-bold text-emerald-400 font-mono">+' + parseFloat(ethers.formatEther(balance)).toFixed(4) + ' BOT</p>' +
+                    '<p class="text-xs text-zinc-400 mt-1">' + (data.msg || 'Secret Gift') + '</p>' +
+                    '<p class="text-[10px] text-zinc-500 mt-1">From: ' + (data.senderName || 'Anonymous') + '</p>' +
+                '</div>' +
+                '<div class="relative z-10 bg-zinc-950/60 rounded-2xl p-3 border border-zinc-700/30">' +
+                    '<p class="text-[10px] text-zinc-500 mb-1">Transaction Hash</p>' +
+                    '<p class="text-xs text-zinc-300 font-mono truncate">' + txHash + '</p>' +
+                '</div>' +
+                '<a href="https://scan.bohr.life/tx/' + txHash + '" target="_blank" class="relative z-10 text-[10px] text-emerald-400/80 hover:underline">View on Explorer →</a>' +
+                '<button id="sgClaimedCloseBtn" class="relative z-10 w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 py-3 rounded-xl font-bold text-sm transition cursor-pointer mt-2">Awesome!</button>' +
+            '</div>';
+            document.body.appendChild(overlay);
+            document.getElementById('sgClaimedCloseBtn').addEventListener('click', () => overlay.remove());
+        }
 
         function resetSecretGiftForm() {
             sgUploadedImageData = null;
@@ -7677,9 +7949,20 @@ window.convertSbtToBot = convertSbtToBot;
             document.getElementById('sgPreviewMessage').textContent = 'Your secret message here...';
             const check = document.getElementById('sgRecipientCheck');
             if (check) check.style.opacity = '0';
-            document.getElementById('secretGiftFormPanel').classList.remove('hidden');
+            document.getElementById('secretGiftChoicePanel').classList.remove('hidden');
+            document.getElementById('secretGiftFormPanel').classList.add('hidden');
             document.getElementById('secretGiftReviewPanel').classList.add('hidden');
             document.getElementById('secretGiftSuccessPanel').classList.add('hidden');
+            document.getElementById('secretGiftRedeemPanel').classList.add('hidden');
+            // Reset redeem panel
+            const redeemCode = document.getElementById('sgRedeemCode');
+            const redeemPw = document.getElementById('sgRedeemPassword');
+            const redeemPrev = document.getElementById('sgRedeemPreview');
+            const redeemStat = document.getElementById('sgRedeemStatus');
+            if (redeemCode) redeemCode.value = '';
+            if (redeemPw) redeemPw.value = '';
+            if (redeemPrev) redeemPrev.classList.add('hidden');
+            if (redeemStat) redeemStat.classList.add('hidden');
         }
 
         async function claimSecretGift(payload) {
@@ -8118,12 +8401,13 @@ window.convertSbtToBot = convertSbtToBot;
                 diamond: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#0891b2,#22d3ee);display:flex;align-items:center;justify-content:center;font-size:22px;">💎</div>',
                 dao: '<img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783197571/photo_5931304236568218967_y_j2irwa.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:14px;" alt="DAO">',
                 timelock: '<img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783197672/photo_5931304236568218965_y_fugghd.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:14px;" alt="Time-Locked">',
-                designer: '<img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783197536/photo_5931304236568218968_y_djl9s6.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:14px;" alt="Designer">'
+                designer: '<img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783197536/photo_5931304236568218968_y_djl9s6.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:14px;" alt="Designer">',
+                secretGift: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#7c2d12,#ea580c);display:flex;align-items:center;justify-content:center;font-size:22px;">🔐</div>'
             };
             return cardImages[s] || '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#059669,#34d399);display:flex;align-items:center;justify-content:center;font-size:22px;">🎁</div>';
         }
         function giftThemeColor(s) {
-            const map = { cryptoBro:['#059669','#10b981'], loveletter:['#be123c','#f43f5e'], birthday:['#1e3a8a','#6366f1'], heart:['#a21caf','#d946ef'], mystery:['#7c3aed','#a78bfa'], goldenticket:['#b45309','#f59e0b'], treasure:['#78350f','#b45309'], christmas:['#166534','#22c55e'], diamond:['#0891b2','#22d3ee'], dao:['#9333ea','#c084fc'], timelock:['#475569','#94a3b8'], designer:['#db2777','#f472b6'] };
+            const map = { cryptoBro:['#059669','#10b981'], loveletter:['#be123c','#f43f5e'], birthday:['#1e3a8a','#6366f1'], heart:['#a21caf','#d946ef'], mystery:['#7c3aed','#a78bfa'], goldenticket:['#b45309','#f59e0b'], treasure:['#78350f','#b45309'], christmas:['#166534','#22c55e'], diamond:['#0891b2','#22d3ee'], dao:['#9333ea','#c084fc'], timelock:['#475569','#94a3b8'], designer:['#db2777','#f472b6'], secretGift:['#7c2d12','#ea580c'] };
             return map[s] || ['#059669','#10b981'];
         }
 
