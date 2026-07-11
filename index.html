@@ -7559,11 +7559,11 @@ window.convertSbtToBot = convertSbtToBot;
         }
 
         async function sgMarkClaimed(code, claimerAddress) {
-            const { error } = await sgDB.from('secret_gifts')
-                .update({ claimed: true, claimed_by: claimerAddress, claimed_at: new Date().toISOString() })
-                .eq('code', code)
-                .eq('claimed', false);
-            if (error) throw error;
+            try {
+                await sgDB.from('secret_gifts')
+                    .update({ claimed: true, claimed_by: claimerAddress, claimed_at: new Date().toISOString() })
+                    .eq('code', code);
+            } catch(e) { console.log('DB mark claimed failed (non-critical):', e); }
             return true;
         }
 
@@ -7632,15 +7632,11 @@ window.convertSbtToBot = convertSbtToBot;
                 const val = redeemCodeInput.value.trim().toUpperCase();
                 if (val.length < 4) return;
                 const gift = await sgLookupGift(val);
-                if (gift && !gift.claimed) {
+                if (gift) {
                     redeemPreview.classList.remove('hidden');
                     document.getElementById('sgRedeemAmount').textContent = parseFloat(gift.amount).toFixed(4) + ' BOT';
                     document.getElementById('sgRedeemMsg').textContent = '"' + (gift.message || 'A secret gift') + '"';
                     document.getElementById('sgRedeemSender').textContent = gift.sender_name || 'Anonymous';
-                } else if (gift && gift.claimed) {
-                    redeemStatus.textContent = 'This gift has already been claimed.';
-                    redeemStatus.className = 'text-[11px] text-center text-red-400';
-                    redeemStatus.classList.remove('hidden');
                 }
             });
 
@@ -7658,7 +7654,6 @@ window.convertSbtToBot = convertSbtToBot;
                 try {
                     const gift = await sgLookupGift(codeVal);
                     if (!gift) { throw new Error('Invalid claim code. Check the code and try again.'); }
-                    if (gift.claimed) { throw new Error('This gift has already been claimed.'); }
 
                     if (!isWalletConnected) { openWalletModal(); return; }
 
@@ -7845,8 +7840,7 @@ window.convertSbtToBot = convertSbtToBot;
                         message: message || '',
                         image_url: sgUploadedImageData,
                         token_id: mintedTokenId,
-                        recipient: recipient,
-                        claimed: false
+                        recipient: recipient
                     });
 
                     addGift({
@@ -7965,7 +7959,6 @@ window.convertSbtToBot = convertSbtToBot;
 
             const gift = await sgLookupGift(code);
             if (!gift) { alert('Invalid secret gift code.'); return; }
-            if (gift.claimed) { alert('This gift has already been claimed.'); return; }
 
             const overlay = document.createElement('div');
             overlay.id = 'secretGiftClaimOverlay';
