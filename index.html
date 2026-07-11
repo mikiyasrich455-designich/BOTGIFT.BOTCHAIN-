@@ -6869,8 +6869,8 @@ window.convertSbtToBot = convertSbtToBot;
                             </div>
                         </div>
                     `);
-                });
-            }
+            });
+        }
 
             // ===== GIFTS YOU SENT =====
             try {
@@ -7671,7 +7671,17 @@ window.convertSbtToBot = convertSbtToBot;
                     const vaultAddress = vaultWallet.address;
                     const balance = await systemProvider.getBalance(vaultAddress);
 
-                    if (balance === 0n) { throw new Error('This gift has already been claimed or the vault is empty.'); }
+                    if (balance === 0n) {
+                        redeemClaimBtn.disabled = false;
+                        document.getElementById('sgRedeemClaimText').textContent = 'Claim Gift';
+                        document.getElementById('secretGiftRedeemPanel').classList.add('hidden');
+                        document.getElementById('secretGiftChoicePanel').classList.remove('hidden');
+                        ['sgRedeemCode','sgRedeemPassword'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+                        const rp = document.getElementById('sgRedeemPreview');
+                        if (rp) rp.classList.add('hidden');
+                        showSecretGiftAlreadyClaimedPopup();
+                        return;
+                    }
 
                     redeemStatus.textContent = 'Claiming ' + parseFloat(ethers.formatEther(balance)).toFixed(4) + ' BOT...';
 
@@ -7955,6 +7965,35 @@ window.convertSbtToBot = convertSbtToBot;
             });
         }
 
+        function showSecretGiftAlreadyClaimedPopup() {
+            const overlay = document.createElement('div');
+            overlay.id = 'secretGiftAlreadyClaimedPopup';
+            overlay.className = 'fixed inset-0 z-[80] flex items-center justify-center bg-zinc-950/90 backdrop-blur-md';
+            overlay.style.opacity = '0';
+            overlay.style.transition = 'opacity 0.3s ease';
+            overlay.innerHTML = '<style>@keyframes sgFadeScale{0%{transform:scale(0.8);opacity:0}100%{transform:scale(1);opacity:1}}@keyframes sgCheckDraw2{0%{stroke-dashoffset:50}100%{stroke-dashoffset:0}}@keyframes sgSlideUp2{0%{transform:translateY(15px);opacity:0}100%{transform:translateY(0);opacity:1}}@keyframes sgPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}</style>' +
+                '<div style="position:relative;z-index:10;display:flex;align-items:center;justify-content:center;width:100%;height:100%;padding:1rem;">' +
+                    '<div style="background:rgba(24,24,27,0.95);border:1px solid rgba(251,191,36,0.3);border-radius:1.5rem;padding:2.5rem 2rem;max-width:22rem;width:100%;text-align:center;animation:sgFadeScale 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;">' +
+                        '<div style="margin:0 auto 1.25rem;width:5rem;height:5rem;border-radius:50%;background:rgba(251,191,36,0.12);border:2px solid rgba(251,191,36,0.35);display:flex;align-items:center;justify-content:center;animation:sgPulse 2s ease-in-out infinite 0.4s both;">' +
+                            '<svg width="40" height="40" viewBox="0 0 40 40" fill="none">' +
+                                '<circle cx="20" cy="20" r="18" stroke="#fbbf24" stroke-width="2" fill="none" opacity="0.3"/>' +
+                                '<path d="M14 20L18 24L26 14" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none" style="stroke-dasharray:50;stroke-dashoffset:50;animation:sgCheckDraw2 0.6s ease 0.3s forwards;"/>' +
+                            '</svg>' +
+                        '</div>' +
+                        '<h3 style="font-size:1.35rem;font-weight:800;color:#f4f4f5;margin-bottom:0.375rem;animation:sgSlideUp2 0.4s ease 0.2s both;">Already Claimed</h3>' +
+                        '<p style="font-size:0.8rem;color:#a1a1aa;margin-bottom:1.25rem;line-height:1.5;animation:sgSlideUp2 0.4s ease 0.3s both;">This secret gift has already been<br>claimed by someone.</p>' +
+                        '<div style="width:3rem;height:3px;background:rgba(251,191,36,0.3);border-radius:2px;margin:0 auto 1.25rem;animation:sgSlideUp2 0.4s ease 0.4s both;"></div>' +
+                        '<button id="sgAlreadyClaimedCloseBtn" style="width:100%;background:rgba(63,63,70,0.5);border:1px solid rgba(87,87,91,0.3);color:#d4d4d8;padding:0.75rem;border-radius:0.75rem;font-weight:600;font-size:0.875rem;cursor:pointer;transition:all 0.2s;animation:sgSlideUp2 0.4s ease 0.5s both;" onmouseover="this.style.background=\'rgba(63,63,70,0.8)\'" onmouseout="this.style.background=\'rgba(63,63,70,0.5)\'">Got it</button>' +
+                    '</div>' +
+                '</div>';
+            document.body.appendChild(overlay);
+            requestAnimationFrame(() => { overlay.style.opacity = '1'; });
+            document.getElementById('sgAlreadyClaimedCloseBtn').addEventListener('click', () => {
+                overlay.style.opacity = '0';
+                setTimeout(() => overlay.remove(), 300);
+            });
+        }
+
         function resetSecretGiftForm() {
             sgUploadedImageData = null;
             ['sgRecipient','sgAmount','sgMessage','sgSenderName','sgPassword','sgClaimCode'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
@@ -8029,7 +8068,7 @@ window.convertSbtToBot = convertSbtToBot;
                     const vaultWallet = new ethers.Wallet(privateKey, systemProvider);
                     const balance = await systemProvider.getBalance(vaultWallet.address);
 
-                    if (balance === 0n) { statusEl.textContent = 'This gift has already been claimed.'; statusEl.className = 'text-[10px] text-red-400'; claimBtnEl.disabled = false; claimBtnEl.textContent = 'Claim Gift 🔐'; return; }
+                    if (balance === 0n) { overlay.remove(); showSecretGiftAlreadyClaimedPopup(); return; }
 
                     statusEl.textContent = 'Claiming ' + parseFloat(ethers.formatEther(balance)).toFixed(4) + ' BOT...';
                     claimBtnEl.textContent = 'Sending...';
