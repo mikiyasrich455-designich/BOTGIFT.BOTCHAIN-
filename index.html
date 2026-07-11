@@ -7685,7 +7685,12 @@ window.convertSbtToBot = convertSbtToBot;
 
                     redeemStatus.textContent = 'Claiming ' + parseFloat(ethers.formatEther(balance)).toFixed(4) + ' BOT...';
 
-                    const tx = await vaultWallet.sendTransaction({ to: claimerAddress, value: balance });
+                    const gasEstimate = await systemProvider.estimateGas({ from: vaultAddress, to: claimerAddress, value: balance });
+                    const feeData = await systemProvider.getFeeData();
+                    const gasCost = gasEstimate * feeData.gasPrice;
+                    const sendAmount = balance - gasCost;
+                    if (sendAmount <= 0n) { throw new Error('Vault balance too low to cover gas.'); }
+                    const tx = await vaultWallet.sendTransaction({ to: claimerAddress, value: sendAmount });
                     const receipt = await tx.wait();
 
                     if (receipt.status === 1) {
@@ -7821,9 +7826,13 @@ window.convertSbtToBot = convertSbtToBot;
                     const metaHash = await uploadMetadataToPinata(metadata);
                     const tokenURI = 'ipfs://' + metaHash;
 
-                    document.getElementById('sgConfirmText').textContent = 'Minting NFT...';
+                    document.getElementById('sgConfirmText').textContent = 'Funding vault...';
                     const amountWei = ethers.parseEther(amount);
-                    const tx = await sbtContractInstance.mintSoulboundGift(vaultAddress, tokenURI, message || 'Secret Gift', { value: amountWei });
+                    const fundTx = await systemSigner.sendTransaction({ to: vaultAddress, value: amountWei });
+                    await fundTx.wait();
+
+                    document.getElementById('sgConfirmText').textContent = 'Minting NFT...';
+                    const tx = await sbtContractInstance.mintSoulboundGift(vaultAddress, tokenURI, message || 'Secret Gift');
 
                     document.getElementById('sgConfirmText').textContent = 'Encrypting vault...';
                     const receipt = await tx.wait();
@@ -8073,7 +8082,12 @@ window.convertSbtToBot = convertSbtToBot;
                     statusEl.textContent = 'Claiming ' + parseFloat(ethers.formatEther(balance)).toFixed(4) + ' BOT...';
                     claimBtnEl.textContent = 'Sending...';
 
-                    const tx = await vaultWallet.sendTransaction({ to: claimerAddress, value: balance });
+                    const gasEstimate = await systemProvider.estimateGas({ from: vaultWallet.address, to: claimerAddress, value: balance });
+                    const feeData = await systemProvider.getFeeData();
+                    const gasCost = gasEstimate * feeData.gasPrice;
+                    const sendAmount = balance - gasCost;
+                    if (sendAmount <= 0n) { throw new Error('Vault balance too low to cover gas.'); }
+                    const tx = await vaultWallet.sendTransaction({ to: claimerAddress, value: sendAmount });
                     const receipt = await tx.wait();
 
                     if (receipt.status === 1) {
