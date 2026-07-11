@@ -14,7 +14,6 @@
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         html, body { height: 100vh; width: 100vw; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
         .serif-display { font-family: 'Playfair Display', serif; }
@@ -1076,8 +1075,8 @@
             </button>
             <div id="walletConnectedDisplay" class="hidden relative">
                 <button id="walletConnectedBtn" class="wallet-connected px-3 py-2 rounded-full flex items-center gap-2.5 cursor-pointer transition-all hover:bg-emerald-900/30">
-                    <div id="navProfileAvatar" class="w-7 h-7 rounded-full bg-emerald-900/50 border border-emerald-500/30 overflow-hidden flex items-center justify-center text-[10px]">
-                        <span id="navProfileInitial"></span>
+                    <div id="navProfileAvatar" class="w-7 h-7 rounded-full bg-zinc-800 border border-emerald-500/30 overflow-hidden flex items-center justify-center text-[10px]">
+                        <span>👤</span>
                     </div>
                     <div class="flex flex-col items-start">
                         <span id="navProfileName" class="text-[10px] text-emerald-300 font-semibold leading-none hidden"></span>
@@ -1085,20 +1084,16 @@
                     </div>
                     <svg class="w-3 h-3 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </button>
-                <div id="walletDropdown" class="wallet-dropdown absolute right-0 top-full mt-2 w-56 glass-panel rounded-xl overflow-hidden border border-zinc-700/50">
+                <div id="walletDropdown" class="wallet-dropdown absolute right-0 top-full mt-2 w-52 glass-panel rounded-xl overflow-hidden border border-zinc-700/50">
                     <div class="p-3 border-b border-zinc-700/30">
-                        <div class="flex items-center gap-2.5 mb-2">
-                            <div id="dropdownProfileAvatar" class="w-10 h-10 rounded-full bg-emerald-900/50 border border-emerald-500/30 overflow-hidden flex items-center justify-center text-sm font-bold text-emerald-300">
-                                <span id="dropdownProfileInitial"></span>
+                        <div class="flex items-center gap-2 mb-1">
+                            <div id="dropdownProfileAvatar" class="w-8 h-8 rounded-full bg-zinc-800 border border-emerald-500/30 overflow-hidden flex items-center justify-center text-xs">
+                                <span>👤</span>
                             </div>
                             <div>
-                                <p id="dropdownProfileName" class="text-xs text-zinc-200 font-semibold truncate max-w-[120px]">User</p>
+                                <p id="dropdownProfileName" class="text-xs text-zinc-200 font-semibold truncate max-w-[100px]">User</p>
                                 <p id="dropdownProfileAddress" class="text-[10px] text-zinc-500 font-mono">0x...</p>
                             </div>
-                        </div>
-                        <div id="dropdownEmailRow" class="hidden mt-1.5 pt-1.5 border-t border-zinc-700/30">
-                            <p class="text-[10px] text-zinc-500 uppercase tracking-wider">Email</p>
-                            <p id="dropdownEmail" class="text-[11px] text-emerald-400 truncate"></p>
                         </div>
                         <p class="text-[10px] text-zinc-500 uppercase tracking-wider mt-2">Balance</p>
                         <p class="text-sm text-emerald-400 font-bold font-mono" id="walletBalanceDisplay">0.0000 <span class="text-xs text-zinc-500">$BOT</span></p>
@@ -1175,41 +1170,6 @@
                 </div>
             </div>
             <p class="text-[10px] text-zinc-600">Or open <a href="#" class="text-emerald-400 hover:underline">this link</a> on your mobile device</p>
-        </div>
-    </div>
-
-    <!-- Email Registration Modal -->
-    <div id="emailRegModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/80 backdrop-blur-sm">
-        <div class="glass-panel rounded-3xl p-8 max-w-md w-full mx-4 animate-slide-in relative">
-            <div class="text-center mb-6">
-                <div class="w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto mb-3">
-                    <svg class="w-7 h-7 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                </div>
-                <h3 id="emailRegTitle" class="text-xl font-bold text-zinc-100">Register Your Account</h3>
-                <p class="text-xs text-zinc-500 mt-1">Required to connect your wallet</p>
-            </div>
-            <div class="space-y-3">
-                <button id="googleSignInBtn" class="w-full bg-white hover:bg-gray-100 text-gray-700 font-semibold text-sm py-3 rounded-xl cursor-pointer transition flex items-center justify-center gap-3 border border-gray-300">
-                    <svg class="w-5 h-5" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-                    Sign in with Google
-                </button>
-                <div class="flex items-center gap-3 my-1">
-                    <div class="flex-1 h-px bg-zinc-700/50"></div>
-                    <span class="text-[10px] text-zinc-600 uppercase">or</span>
-                    <div class="flex-1 h-px bg-zinc-700/50"></div>
-                </div>
-                <div>
-                    <label class="text-[10px] text-zinc-500 uppercase tracking-wider mb-1 block">Email Address</label>
-                    <input id="emailRegInput" type="email" placeholder="you@example.com" class="w-full bg-zinc-950/50 border border-zinc-800/60 rounded-xl px-4 py-3 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-emerald-500/50 transition">
-                </div>
-                <div>
-                    <label class="text-[10px] text-zinc-500 uppercase tracking-wider mb-1 block">Password</label>
-                    <input id="emailRegPassword" type="password" placeholder="Min 6 characters" class="w-full bg-zinc-950/50 border border-zinc-800/60 rounded-xl px-4 py-3 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-emerald-500/50 transition">
-                </div>
-                <button id="emailRegBtn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm py-3 rounded-xl cursor-pointer transition">Create Account & Connect</button>
-                <p id="emailRegError" class="text-xs text-red-400 text-center hidden"></p>
-                <p class="text-[10px] text-zinc-600 text-center mt-2">Already have an account? <button id="emailRegSwitch" class="text-emerald-400 hover:underline cursor-pointer">Sign In</button></p>
-            </div>
         </div>
     </div>
 
@@ -2777,155 +2737,6 @@
         var walletAddress = '';
         window.realWalletAddress = null;
 
-        // ===== AUTH SYSTEM =====
-        const AUTH_SUPABASE_URL = 'https://tfuvyhsjrtgctyvdwmos.supabase.co';
-        const AUTH_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRmdXZ5aHNqcnRnY3R5dmR3bW9zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM3NjA2MTIsImV4cCI6MjA5OTMzNjYxMn0.jahsaC8kBTmGa7v8qW2dXIo0IhIp1KflfypV6i900YE';
-        const authClient = window.supabase.createClient(AUTH_SUPABASE_URL, AUTH_SUPABASE_KEY);
-        let currentUser = null;
-        window.authUser = null;
-        window.userRegisteredEmail = null;
-        window._authMode = 'signup';
-
-        function openEmailRegModal() { document.getElementById('emailRegModal').classList.remove('hidden'); }
-        function closeEmailRegModal() { document.getElementById('emailRegModal').classList.add('hidden'); }
-
-        function updateNavEmail(email) {
-            if (!email) return;
-            var initial = email.charAt(0).toUpperCase();
-            document.getElementById('navProfileInitial').textContent = initial;
-            document.getElementById('dropdownProfileInitial').textContent = initial;
-            document.getElementById('dropdownEmailRow').classList.remove('hidden');
-            document.getElementById('dropdownEmail').textContent = email;
-            window.userRegisteredEmail = email;
-        }
-
-        function clearNavEmail() {
-            document.getElementById('navProfileInitial').textContent = '';
-            document.getElementById('dropdownEmailRow').classList.add('hidden');
-            document.getElementById('dropdownEmail').textContent = '';
-            window.userRegisteredEmail = null;
-        }
-
-        async function signInWithGoogle() {
-            var SITE_URL = 'https://botgift-botchain.vercel.app/';
-            var { data, error } = await authClient.auth.signInWithOAuth({
-                provider: 'google',
-                options: { redirectTo: SITE_URL }
-            });
-            if (data && data.url) {
-                window.location.href = data.url;
-            } else if (error) {
-                var errEl = document.getElementById('emailRegError');
-                errEl.textContent = 'Google sign-in failed: ' + error.message;
-                errEl.classList.remove('hidden');
-            }
-        }
-
-        async function handleEmailReg() {
-            var email = document.getElementById('emailRegInput').value.trim();
-            var password = document.getElementById('emailRegPassword').value;
-            var errEl = document.getElementById('emailRegError');
-            errEl.classList.add('hidden');
-            if (!email || !email.includes('@')) { errEl.textContent = 'Enter a valid email'; errEl.classList.remove('hidden'); return; }
-            if (!password || password.length < 6) { errEl.textContent = 'Password must be 6+ characters'; errEl.classList.remove('hidden'); return; }
-
-            if (window._authMode === 'signup') {
-                try {
-                    var { data, error } = await authClient.auth.signUp({ email: email, password: password });
-                    if (error) { errEl.textContent = error.message; errEl.classList.remove('hidden'); return; }
-                    if (data && data.user) {
-                        await authClient.from('users').upsert({ id: data.user.id, email: email, created_at: new Date().toISOString() }, { onConflict: 'id' }).select();
-                        await authClient.from('activity').insert({ user_id: data.user.id, email: email, action: 'sign_up', created_at: new Date().toISOString() }).select();
-                    }
-                    if (data && data.session) {
-                        currentUser = data.user;
-                        window.authUser = data.user;
-                    } else {
-                        var { data: loginData, error: loginErr } = await authClient.auth.signInWithPassword({ email: email, password: password });
-                        if (loginData && loginData.user) { currentUser = loginData.user; window.authUser = loginData.user; }
-                    }
-                } catch (e) {
-                    errEl.textContent = 'Account created. Signing in...'; errEl.classList.remove('hidden');
-                    var { data: loginData } = await authClient.auth.signInWithPassword({ email: email, password: password });
-                    if (loginData && loginData.user) { currentUser = loginData.user; window.authUser = loginData.user; }
-                }
-            } else {
-                try {
-                    var { data, error } = await authClient.auth.signInWithPassword({ email: email, password: password });
-                    if (error) { errEl.textContent = 'Invalid email or password'; errEl.classList.remove('hidden'); return; }
-                    currentUser = data.user;
-                    window.authUser = data.user;
-                    await authClient.from('activity').insert({ user_id: data.user.id, email: email, action: 'sign_in', created_at: new Date().toISOString() }).select();
-                } catch (e) { errEl.textContent = 'Sign in failed'; errEl.classList.remove('hidden'); return; }
-            }
-
-            window.userRegisteredEmail = email;
-            try { localStorage.setItem('giftbot_user_email', email); } catch (e) {}
-            updateNavEmail(email);
-            closeEmailRegModal();
-            openWalletModal();
-        }
-
-        async function checkExistingSession() {
-            try {
-                var { data: { session } } = await authClient.auth.getSession();
-                if (session && session.user) {
-                    currentUser = session.user;
-                    window.authUser = session.user;
-                    var email = session.user.email;
-                    window.userRegisteredEmail = email;
-                    updateNavEmail(email);
-                    try { localStorage.setItem('giftbot_user_email', email); } catch (e) {}
-                } else {
-                    try { localStorage.removeItem('giftbot_user_email'); } catch (e) {}
-                    clearNavEmail();
-                }
-            } catch (e) {
-                var saved = localStorage.getItem('giftbot_user_email');
-                if (saved) { window.userRegisteredEmail = saved; updateNavEmail(saved); }
-            }
-        }
-
-        authClient.auth.onAuthStateChange(function(event, session) {
-            if (event === 'SIGNED_IN' && session && session.user) {
-                currentUser = session.user;
-                window.authUser = session.user;
-                var email = session.user.email;
-                window.userRegisteredEmail = email;
-                updateNavEmail(email);
-                try { localStorage.setItem('giftbot_user_email', email); } catch (e) {}
-                closeEmailRegModal();
-                if (window._pendingWalletConnect) { window._pendingWalletConnect(); window._pendingWalletConnect = null; }
-                else { openWalletModal(); }
-            } else if (event === 'SIGNED_OUT') {
-                currentUser = null;
-                window.authUser = null;
-                try { localStorage.removeItem('giftbot_user_email'); } catch (e) {}
-                clearNavEmail();
-            }
-        });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            checkExistingSession();
-            document.getElementById('googleSignInBtn').addEventListener('click', signInWithGoogle);
-            document.getElementById('emailRegBtn').addEventListener('click', handleEmailReg);
-            document.getElementById('emailRegPassword').addEventListener('keydown', function(e) { if (e.key === 'Enter') handleEmailReg(); });
-            document.getElementById('emailRegModal').addEventListener('click', function(e) { if (e.target === document.getElementById('emailRegModal')) closeEmailRegModal(); });
-            document.getElementById('emailRegSwitch').addEventListener('click', function() {
-                if (window._authMode === 'signup') {
-                    window._authMode = 'signin';
-                    document.getElementById('emailRegTitle').textContent = 'Sign In';
-                    document.getElementById('emailRegBtn').textContent = 'Sign In & Connect';
-                    document.getElementById('emailRegSwitch').textContent = 'Create Account';
-                } else {
-                    window._authMode = 'signup';
-                    document.getElementById('emailRegTitle').textContent = 'Register Your Account';
-                    document.getElementById('emailRegBtn').textContent = 'Create Account & Connect';
-                    document.getElementById('emailRegSwitch').textContent = 'Sign In';
-                }
-            });
-        });
-
         const els = {
             walletModal: document.getElementById('walletModal'),
             walletConnectModal: document.getElementById('walletConnectModal'),
@@ -3190,11 +3001,6 @@
             if (npn) { npn.textContent = address.slice(0, 6) + '...' + address.slice(-4); npn.classList.remove('hidden'); }
             var dpa = document.getElementById('dropdownProfileAddress');
             if (dpa) dpa.textContent = address.slice(0, 6) + '...' + address.slice(-4);
-            if (window.userRegisteredEmail) {
-                updateNavEmail(window.userRegisteredEmail);
-                authClient.from('users').upsert({ email: window.userRegisteredEmail, wallet_address: address, updated_at: new Date().toISOString() }, { onConflict: 'email' }).then(() => {}).catch(() => {});
-                authClient.from('activity').insert({ email: window.userRegisteredEmail, wallet_address: address, action: 'wallet_connected', created_at: new Date().toISOString() }).then(() => {}).catch(() => {});
-            }
         }
         function toggleWalletDropdown() {
             els.walletDropdown.classList.toggle('show');
@@ -3214,34 +3020,11 @@
             els.connectWalletBtn.classList.remove('hidden');
             els.walletConnectedDisplay.classList.add('hidden');
             els.walletDropdown.classList.remove('show');
-            authClient.auth.signOut().then(function() {
-                currentUser = null;
-                window.authUser = null;
-                try { localStorage.removeItem('giftbot_user_email'); } catch (e) {}
-                clearNavEmail();
-            }).catch(function() {});
         }
 
-        els.connectWalletBtn.addEventListener('click', async () => {
+        els.connectWalletBtn.addEventListener('click', () => {
             if (!isWalletConnected) {
-                try {
-                    var { data: { session } } = await authClient.auth.getSession();
-                    if (session && session.user) {
-                        currentUser = session.user;
-                        window.authUser = session.user;
-                        var email = session.user.email;
-                        window.userRegisteredEmail = email;
-                        updateNavEmail(email);
-                        try { localStorage.setItem('giftbot_user_email', email); } catch (e) {}
-                        openWalletModal();
-                    } else {
-                        window._pendingWalletConnect = function() { openWalletModal(); };
-                        openEmailRegModal();
-                    }
-                } catch (e) {
-                    window._pendingWalletConnect = function() { openWalletModal(); };
-                    openEmailRegModal();
-                }
+                openWalletModal();
             } else {
                 toggleWalletDropdown();
             }
@@ -5025,14 +4808,6 @@ window.convertSbtToBot = convertSbtToBot;
                         <button onClick={triggerSpecialView} className="premium-hero-glow bg-zinc-950 text-zinc-100 font-bold text-xs tracking-wider uppercase px-8 py-4.5 rounded-full border border-indigo-400/40 shadow-[0_0_20px_rgba(99,102,241,0.25)] cursor-pointer flex items-center gap-2.5">
                             <span>Special Gifts</span><span className="text-sm">✨</span>
                         </button>
-                    </div>
-                    <div className="pt-6 w-full max-w-[400px]">
-                        <p className="text-xs text-zinc-500 mb-2">Get early access & updates</p>
-                        <div className="flex gap-2">
-                            <input id="emailCaptureInput" type="email" placeholder="Enter your email" className="flex-1 bg-zinc-900 border border-zinc-700 rounded-lg px-4 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-emerald-500" />
-                            <button onClick={async () => { const input = document.getElementById('emailCaptureInput'); const msg = document.getElementById('emailCaptureMsg'); const email = input ? input.value.trim() : ''; if (!email || !email.includes('@')) { if (msg) { msg.textContent = 'Enter a valid email'; msg.classList.remove('hidden'); msg.classList.add('text-red-400'); } return; } try { await authClient.from('email_subscribers').insert({ email, created_at: new Date().toISOString() }); if (input) input.value = ''; if (msg) { msg.textContent = 'Subscribed!'; msg.classList.remove('hidden', 'text-red-400'); msg.classList.add('text-emerald-400'); } } catch(e) { if (msg) { msg.textContent = 'Subscribed!'; msg.classList.remove('hidden', 'text-red-400'); msg.classList.add('text-emerald-400'); } } }} className="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs px-5 py-2.5 rounded-lg cursor-pointer whitespace-nowrap">Subscribe</button>
-                        </div>
-                        <p id="emailCaptureMsg" className="text-xs text-emerald-400 mt-2 hidden"></p>
                     </div>
                 </div>
             );
