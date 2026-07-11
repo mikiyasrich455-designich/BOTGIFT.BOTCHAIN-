@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GIFT — Web3 Gifting Platform</title>
-    <meta name="description" content="Send on-chain Soulbound NFT gifts. 10 gift types, mystery boxes, DAO batch gifting, time-locked vaults, gasless claiming.">
-    <meta property="og:title" content="GIFT — Web3 Gifting Platform">
-    <meta property="og:description" content="Send on-chain Soulbound NFT gifts. Multi-chain gifting platform.">
+    <title>GIFT BOT — Web3 Gifting on BOT Chain</title>
+    <meta name="description" content="Send on-chain Soulbound NFT gifts with GIFT BOT. Built natively on BOT Chain — 0.75s finality, near-zero fees. 10 gift types, mystery boxes, DAO batch gifting, time-locked vaults, gasless claiming.">
+    <meta property="og:title" content="GIFT BOT — Web3 Gifting on BOT Chain">
+    <meta property="og:description" content="Send on-chain Soulbound NFT gifts. Built natively on BOT Chain.">
     <meta property="og:type" content="website">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
@@ -14,7 +14,6 @@
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         html, body { height: 100vh; width: 100vw; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
         .serif-display { font-family: 'Playfair Display', serif; }
@@ -1036,21 +1035,6 @@
         /* ===== ABOUT PAGE ===== */
         @keyframes staggerAbout { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
         .stagger-about { opacity: 0; animation: staggerAbout 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-
-        /* ===== AI AGENT PAGE ===== */
-        .glass-panel-premium { background: rgba(24, 24, 27, 0.7); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(63, 63, 70, 0.4); }
-        .text-gradient-emerald { background: linear-gradient(135deg, #a7f3d0 0%, #10b981 50%, #047857 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .focus-glow:focus { box-shadow: 0 0 20px rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.4); }
-        .botagent-card { transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-        .botagent-card:hover { transform: translateY(-4px); }
-        .botagent-card[data-category="image"]:hover { border-color: rgba(16, 185, 129, 0.3); }
-        .botagent-card[data-category="video"]:hover { border-color: rgba(168, 85, 247, 0.3); }
-        .botagent-card[data-category="audio"]:hover { border-color: rgba(245, 158, 11, 0.3); }
-        .botagent-card[data-category="theme"]:hover { border-color: rgba(34, 211, 238, 0.3); }
-        .mode-btn { transition: all 0.2s ease; }
-        .mode-btn:hover { transform: scale(1.02); }
-        .filter-btn { transition: all 0.2s ease; }
-
         .hover-glow-card { transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; }
         .hover-glow-card:hover { transform: translateY(-4px) scale(1.01); box-shadow: 0 0 30px rgba(16,185,129,0.15); border-color: rgba(16,185,129,0.3); }
         @keyframes typewriter { from { width: 0; } to { width: 100%; } }
@@ -1079,7 +1063,6 @@
             <button id="navSpecialBtn" class="premium-nav-pill text-zinc-400 text-[13px] font-medium tracking-wide px-6 py-2 rounded-full border border-transparent cursor-pointer">Special Gifts</button>
             <button id="navHistoryBtn" class="premium-nav-pill text-zinc-400 text-[13px] font-medium tracking-wide px-6 py-2 rounded-full border border-transparent cursor-pointer">Gifts History</button>
             <button id="navAboutBtn" class="premium-nav-pill text-zinc-400 text-[13px] font-medium tracking-wide px-6 py-2 rounded-full border border-transparent cursor-pointer">About</button>
-            <button id="navAgentBtn" class="premium-nav-pill text-zinc-400 text-[13px] font-medium tracking-wide px-6 py-2 rounded-full border border-transparent cursor-pointer">AI Agent</button>
         </div>
         <div class="flex items-center relative gap-2">
             <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-950/40 border border-emerald-500/20 text-[10px] text-emerald-400 font-medium">
@@ -1366,7 +1349,7 @@
                             <svg class="w-3.5 h-3.5 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                             <span class="text-[11px] text-zinc-400">Network Fee</span>
                         </div>
-                        <span class="text-[11px] text-zinc-400 font-mono" id="networkFeeMain">~0.0000 ${CHAIN_CONFIG.nativeCurrency.symbol}</span>
+                        <span class="text-[11px] text-zinc-400 font-mono" id="networkFeeMain">~0.0000 BOT</span>
                     </div>
                     <button id="continueStep2" class="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 py-4 rounded-xl font-semibold text-sm tracking-wide transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_30px_rgba(16,185,129,0.2)] hover:shadow-[0_0_40px_rgba(16,185,129,0.35)] hover:scale-[1.02]" disabled>
                         Review Gift <span class="text-lg">👀</span>
@@ -1481,7 +1464,7 @@
                             <svg class="w-3.5 h-3.5 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                             <span class="text-[11px] text-zinc-400">Network Fee</span>
                         </div>
-                        <span class="text-[11px] text-zinc-400 font-mono" id="networkFeeCrypto">~0.0000 ${CHAIN_CONFIG.nativeCurrency.symbol}</span>
+                        <span class="text-[11px] text-zinc-400 font-mono" id="networkFeeCrypto">~0.0000 BOT</span>
                     </div>
 
                     <button id="continueCryptoStep2" class="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 py-4 rounded-xl font-semibold text-sm tracking-wide transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_30px_rgba(16,185,129,0.2)] hover:shadow-[0_0_40px_rgba(16,185,129,0.35)] hover:scale-[1.02]" disabled>
@@ -1511,11 +1494,11 @@
                         </div>
                         <div class="flex justify-between items-center">
                             <span class="text-xs text-zinc-500">Amount</span>
-                            <span id="finalAmount" class="text-sm text-emerald-400 font-bold font-mono">0.0 ${CHAIN_CONFIG.tokenSymbol}</span>
+                            <span id="finalAmount" class="text-sm text-emerald-400 font-bold font-mono">0.0 $BOT</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <span class="text-xs text-zinc-500">Network Fee</span>
-                            <span class="text-xs text-zinc-400 font-mono" id="finalNetworkFee">0.0000 ${CHAIN_CONFIG.nativeCurrency.symbol}</span>
+                            <span class="text-xs text-zinc-400 font-mono" id="finalNetworkFee">0.0000 BOT</span>
                         </div>
                         <div class="border-t border-zinc-700/30 pt-3">
                             <span class="text-xs text-zinc-500 block mb-1">Message</span>
@@ -1524,7 +1507,7 @@
                     </div>
                     <div class="mt-6 flex items-center gap-2 bg-emerald-950/20 border border-emerald-900/30 rounded-xl p-3">
                         <svg class="w-4 h-4 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                        <span class="text-[11px] text-emerald-400/80">This transaction will be recorded permanently on the <span class="config-chain-name">BOT CHAIN</span> blockchain.</span>
+                        <span class="text-[11px] text-emerald-400/80">This transaction will be recorded permanently on the BOT CHAIN blockchain.</span>
                     </div>
                 </div>
                 <button id="sendFinalBtn" class="w-full bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-zinc-950 py-4 rounded-xl font-bold text-sm tracking-wide transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:shadow-[0_0_50px_rgba(16,185,129,0.5)] hover:scale-[1.02]">
@@ -1757,7 +1740,7 @@
                     <div class="text-6xl mb-3 float-anim relative z-10">🔒</div>
                 </div>
                 <h2 class="text-3xl font-bold text-zinc-100 mb-2 tracking-tight">Soulbound Gift</h2>
-                <p class="text-sm text-zinc-400 max-w-md mx-auto leading-relaxed">Mint an NFT they can never sell or transfer. Upload your own image, add tokens, and inscribe a permanent message on-chain.</p>
+                <p class="text-sm text-zinc-400 max-w-md mx-auto leading-relaxed">Mint an NFT they can never sell or transfer. Upload your own image, add $BOT, and inscribe a permanent message on-chain.</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -1892,7 +1875,7 @@
                         <div class="flex items-center justify-between">
                             <label class="soulbound-label text-[11px] tracking-wide text-zinc-400 font-medium block uppercase flex items-center gap-1.5">
                                 <svg class="w-3 h-3 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                Amount (${CHAIN_CONFIG.tokenSymbol})
+                                Amount ($BOT)
                             </label>
                             <button id="sbtMaxAmountBtn" class="text-[10px] text-emerald-400 hover:text-emerald-300 font-medium transition cursor-pointer flex items-center gap-1">
                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
@@ -1953,7 +1936,7 @@
                             <svg class="w-3.5 h-3.5 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                             <span class="text-[11px] text-zinc-400">Network Fee</span>
                         </div>
-                        <span class="text-[11px] text-zinc-400 font-mono" id="sbtNetworkFee">~0.0000 ${CHAIN_CONFIG.nativeCurrency.symbol}</span>
+                        <span class="text-[11px] text-zinc-400 font-mono" id="sbtNetworkFee">~0.0000 BOT</span>
                     </div>
 
                     <!-- Mint Button -->
@@ -2020,11 +2003,11 @@
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-xs text-zinc-500">Amount</span>
-                                <span id="soulboundFinalAmountDetail" class="text-sm text-emerald-400 font-bold font-mono">0.0 ${CHAIN_CONFIG.tokenSymbol}</span>
+                                <span id="soulboundFinalAmountDetail" class="text-sm text-emerald-400 font-bold font-mono">0.0 $BOT</span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-xs text-zinc-500">Network Fee</span>
-                                <span class="text-xs text-zinc-400 font-mono" id="soulboundFinalFee">~0.0000 ${CHAIN_CONFIG.nativeCurrency.symbol}</span>
+                                <span class="text-xs text-zinc-400 font-mono" id="soulboundFinalFee">~0.0000 BOT</span>
                             </div>
                         </div>
 
@@ -2109,7 +2092,7 @@
                     <input type="text" id="gaslessRecipient" placeholder="0x..." class="w-full bg-zinc-950/80 border border-zinc-700/50 rounded-xl p-3.5 text-xs text-zinc-100 focus:outline-none focus:border-emerald-500/50 input-glow transition font-mono">
                 </div>
                 <div class="space-y-2">
-                    <label class="text-[11px] tracking-wide text-zinc-400 font-medium block uppercase">Amount (${CHAIN_CONFIG.tokenSymbol})</label>
+                    <label class="text-[11px] tracking-wide text-zinc-400 font-medium block uppercase">Amount ($BOT)</label>
                     <input type="number" id="gaslessAmount" placeholder="0.0" step="0.001" class="w-full bg-zinc-950/80 border border-zinc-700/50 rounded-xl p-3.5 text-xs text-zinc-100 focus:outline-none focus:border-emerald-500/50 input-glow transition font-mono text-lg">
                 </div>
                 <div class="space-y-2">
@@ -2174,7 +2157,7 @@
                 <div id="mysteryRevealPanel" class="hidden bg-zinc-950/50 rounded-2xl p-6 border border-zinc-700/30 text-center mb-6">
                     <div class="text-[10px] text-amber-400/60 uppercase tracking-widest mb-2">VRF Randomness Verified</div>
                     <div id="mysteryResultAmount" class="text-4xl font-bold text-amber-400 font-mono mb-1">0.00</div>
-                    <div class="text-xs text-zinc-400 mb-3">${CHAIN_CONFIG.tokenSymbol} + <span id="mysteryResultGift" class="text-white font-medium">Diamond Hands</span> NFT</div>
+                    <div class="text-xs text-zinc-400 mb-3">$BOT + <span id="mysteryResultGift" class="text-white font-medium">Diamond Hands</span> NFT</div>
                     <div class="text-[10px] text-zinc-600 font-mono break-all" id="mysteryVrfProof">0x...</div>
                 </div>
 
@@ -2345,7 +2328,7 @@
                 </div>
                 <!-- Amount -->
                 <div class="space-y-2">
-                    <label class="text-[11px] tracking-wide text-zinc-400 font-medium block uppercase">Amount (${CHAIN_CONFIG.tokenSymbol})</label>
+                    <label class="text-[11px] tracking-wide text-zinc-400 font-medium block uppercase">Amount ($BOT)</label>
                     <input type="number" id="timeAmount" placeholder="0.0" step="0.001" class="w-full bg-zinc-950/80 border border-zinc-700/50 rounded-xl p-3.5 text-xs text-zinc-100 focus:outline-none focus:border-slate-500/50 input-glow transition font-mono text-lg">
                 </div>
 
@@ -2626,191 +2609,10 @@
                     <span class="glass-panel px-4 py-2 rounded-full text-xs text-zinc-300 border border-zinc-700/30">Ethers.js</span>
                     <span class="glass-panel px-4 py-2 rounded-full text-xs text-zinc-300 border border-zinc-700/30">MetaMask</span>
                     <span class="glass-panel px-4 py-2 rounded-full text-xs text-zinc-300 border border-zinc-700/30">Cloudinary</span>
-                    <span class="glass-panel px-4 py-2 rounded-full text-xs text-zinc-300 border border-zinc-700/30">${CHAIN_CONFIG.chainName}</span>
+                    <span class="glass-panel px-4 py-2 rounded-full text-xs text-zinc-300 border border-zinc-700/30">BOT Chain</span>
                 </div>
             </div>
         </div>
-
-        <!-- AI AGENT VIEW -->
-        <div id="aiAgentView" class="w-full max-w-6xl mx-auto view-panel-transition hidden pb-12 relative z-10 overflow-y-auto max-h-[calc(100vh-120px)] custom-scrollbar">
-            <div class="text-center mb-12 animate-slide-in">
-                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 mb-6">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span class="text-xs font-semibold text-emerald-400 uppercase tracking-wider">Neural Creative Suite</span>
-                </div>
-                <h2 class="text-4xl sm:text-5xl font-bold text-gradient-emerald mb-4 tracking-tight">Bot Agent Dashboard</h2>
-                <p class="text-sm sm:text-base text-zinc-400 max-w-lg mx-auto leading-relaxed">AI-powered creative engines that craft unique visual experiences for your gifts. Mint memories, not just tokens.</p>
-            </div>
-
-            <div class="max-w-3xl mx-auto mb-14">
-                <div class="glass-panel-premium rounded-3xl p-6 border border-zinc-800 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
-                    <div class="flex gap-2 mb-4 overflow-x-auto pb-2 custom-scrollbar">
-                        <button onclick="switchMode(this, 'image')" class="mode-btn flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 whitespace-nowrap">&#127912; Image</button>
-                        <button onclick="switchMode(this, 'video')" class="mode-btn flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer bg-zinc-900/60 border border-zinc-800 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 whitespace-nowrap">&#127916; 3D Video</button>
-                        <button onclick="switchMode(this, 'audio')" class="mode-btn flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer bg-zinc-900/60 border border-zinc-800 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 whitespace-nowrap">&#127925; Audio</button>
-                        <button onclick="switchMode(this, 'theme')" class="mode-btn flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer bg-zinc-900/60 border border-zinc-800 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 whitespace-nowrap">&#10024; Theme</button>
-                    </div>
-                    <textarea id="botAgentPrompt" placeholder="Describe your gift vision... e.g., 'A golden 3D gift box floating in a nebula with BOT Chain logo, cinematic lighting, 8k'" rows="3" class="w-full bg-zinc-950/80 border border-zinc-800 rounded-xl p-4 text-sm text-zinc-100 focus:outline-none focus:border-emerald-500/50 focus-glow transition-all duration-300 resize-none font-light leading-relaxed"></textarea>
-                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mt-4 pt-4 border-t border-zinc-800/60">
-                        <div class="flex items-center gap-2">
-                            <button class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-zinc-900/60 border border-zinc-800 text-[11px] text-zinc-400 hover:text-zinc-200 transition cursor-pointer">
-                                Aspect Ratio (16:9)
-                            </button>
-                            <button class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-zinc-900/60 border border-zinc-800 text-[11px] text-zinc-400 hover:text-zinc-200 transition cursor-pointer">
-                                Mode: Fast
-                            </button>
-                        </div>
-                        <button id="botAgentGenerateBtn" onclick="simulateGeneration()" class="bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-zinc-950 px-6 py-2.5 rounded-xl font-bold text-sm tracking-wide transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 shadow-[0_0_30px_rgba(16,185,129,0.2)] hover:shadow-[0_0_40px_rgba(16,185,129,0.4)] active:scale-[0.98]">
-                            Generate Gift Art
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mb-14">
-                <div class="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 mb-6">
-                    <div>
-                        <h3 class="text-xl font-bold text-zinc-100 mb-1">Creative Agents Workspace</h3>
-                        <p class="text-xs text-zinc-500">Specialized high-performance models ready to fulfill your request</p>
-                    </div>
-                    <div class="flex items-center gap-1.5 bg-zinc-900/80 border border-zinc-800 p-1 rounded-full">
-                        <button onclick="filterAgents(this, 'all')" class="filter-btn text-[11px] px-4 py-1.5 rounded-full font-medium cursor-pointer transition-all bg-zinc-800 text-emerald-400 border border-emerald-500/20 shadow-sm">All Agents</button>
-                        <button onclick="filterAgents(this, 'image')" class="filter-btn text-[11px] px-4 py-1.5 rounded-full font-medium cursor-pointer transition-all text-zinc-400 hover:text-zinc-200">Image</button>
-                        <button onclick="filterAgents(this, 'video')" class="filter-btn text-[11px] px-4 py-1.5 rounded-full font-medium cursor-pointer transition-all text-zinc-400 hover:text-zinc-200">Video</button>
-                        <button onclick="filterAgents(this, 'audio')" class="filter-btn text-[11px] px-4 py-1.5 rounded-full font-medium cursor-pointer transition-all text-zinc-400 hover:text-zinc-200">Audio</button>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" id="botAgentGrid">
-                    <div class="botagent-card glass-panel-premium rounded-2xl p-6 relative overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:border-emerald-500/30 flex flex-col justify-between group" data-category="image">
-                        <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent"></div>
-                        <div>
-                            <div class="flex justify-between items-start mb-4">
-                                <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300">&#127912;</div>
-                                <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span><span class="text-[9px] font-bold text-emerald-400 uppercase tracking-wider">Online</span></div>
-                            </div>
-                            <h4 class="text-lg font-bold text-zinc-100 mb-1">VisionCraft</h4>
-                            <p class="text-xs text-zinc-400 leading-relaxed mb-4">Generates stunning gift artwork and NFT visuals. From photorealistic renders to abstract digital art bound to the blockchain.</p>
-                            <div class="flex flex-wrap gap-1.5 mb-6"><span class="px-2 py-0.5 rounded-md bg-zinc-900/80 border border-zinc-800 text-[10px] text-zinc-400">DALL-E 3</span><span class="px-2 py-0.5 rounded-md bg-zinc-900/80 border border-zinc-800 text-[10px] text-zinc-400">Midjourney V6</span><span class="px-2 py-0.5 rounded-md bg-zinc-900/80 border border-zinc-800 text-[10px] text-zinc-400">SDXL</span></div>
-                        </div>
-                        <div class="flex gap-2 pt-4 border-t border-zinc-800/60"><button onclick="selectAgent('VisionCraft')" class="flex-1 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 text-emerald-400 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer">Launch Agent</button></div>
-                    </div>
-
-                    <div class="botagent-card glass-panel-premium rounded-2xl p-6 relative overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:border-purple-500/30 flex flex-col justify-between group" data-category="video">
-                        <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/30 to-transparent"></div>
-                        <div>
-                            <div class="flex justify-between items-start mb-4">
-                                <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300">&#127916;</div>
-                                <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-purple-500/10 border border-purple-500/20"><span class="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse"></span><span class="text-[9px] font-bold text-purple-400 uppercase tracking-wider">Online</span></div>
-                            </div>
-                            <h4 class="text-lg font-bold text-zinc-100 mb-1">MotionBox</h4>
-                            <p class="text-xs text-zinc-400 leading-relaxed mb-4">Creates cinematic 3D gift animations and immersive video loops. Perfect for mystery box reveals and premium digital dynamic gifting.</p>
-                            <div class="flex flex-wrap gap-1.5 mb-6"><span class="px-2 py-0.5 rounded-md bg-zinc-900/80 border border-zinc-800 text-[10px] text-zinc-400">Sora Gen-3</span><span class="px-2 py-0.5 rounded-md bg-zinc-900/80 border border-zinc-800 text-[10px] text-zinc-400">Runway Gen-2</span></div>
-                        </div>
-                        <div class="flex gap-2 pt-4 border-t border-zinc-800/60"><button onclick="selectAgent('MotionBox')" class="flex-1 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 text-purple-400 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer">Launch Agent</button></div>
-                    </div>
-
-                    <div class="botagent-card glass-panel-premium rounded-2xl p-6 relative overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:border-amber-500/30 flex flex-col justify-between group" data-category="audio">
-                        <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/30 to-transparent"></div>
-                        <div>
-                            <div class="flex justify-between items-start mb-4">
-                                <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300">&#127925;</div>
-                                <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/20"><span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span><span class="text-[9px] font-bold text-amber-400 uppercase tracking-wider">Online</span></div>
-                            </div>
-                            <h4 class="text-lg font-bold text-zinc-100 mb-1">VoiceWrap</h4>
-                            <p class="text-xs text-zinc-400 leading-relaxed mb-4">Composes personalized custom voice greetings, cinematic audio messages, and generative smart background music loops.</p>
-                            <div class="flex flex-wrap gap-1.5 mb-6"><span class="px-2 py-0.5 rounded-md bg-zinc-900/80 border border-zinc-800 text-[10px] text-zinc-400">ElevenLabs V2</span><span class="px-2 py-0.5 rounded-md bg-zinc-900/80 border border-zinc-800 text-[10px] text-zinc-400">Suno AI</span></div>
-                        </div>
-                        <div class="flex gap-2 pt-4 border-t border-zinc-800/60"><button onclick="selectAgent('VoiceWrap')" class="flex-1 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 text-amber-400 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer">Launch Agent</button></div>
-                    </div>
-
-                    <div class="botagent-card glass-panel-premium rounded-2xl p-6 relative overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:border-cyan-500/30 flex flex-col justify-between group" data-category="theme">
-                        <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent"></div>
-                        <div>
-                            <div class="flex justify-between items-start mb-4">
-                                <div class="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300">&#10024;</div>
-                                <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span><span class="text-[9px] font-bold text-cyan-400 uppercase tracking-wider">Online</span></div>
-                            </div>
-                            <h4 class="text-lg font-bold text-zinc-100 mb-1">StyleGen</h4>
-                            <p class="text-xs text-zinc-400 leading-relaxed mb-4">Generates complete visual gift ecosystems and structural UI patterns. Custom color parameters, layouts, and typography systems.</p>
-                            <div class="flex flex-wrap gap-1.5 mb-6"><span class="px-2 py-0.5 rounded-md bg-zinc-900/80 border border-zinc-800 text-[10px] text-zinc-400">Claude 3.5 Sonnet</span><span class="px-2 py-0.5 rounded-md bg-zinc-900/80 border border-zinc-800 text-[10px] text-zinc-400">GPT-4o</span></div>
-                        </div>
-                        <div class="flex gap-2 pt-4 border-t border-zinc-800/60"><button onclick="selectAgent('StyleGen')" class="flex-1 bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/20 text-cyan-400 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer">Launch Agent</button></div>
-                    </div>
-
-                    <div class="botagent-card glass-panel-premium rounded-2xl p-6 relative overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:border-yellow-500/30 flex flex-col justify-between group" data-category="theme">
-                        <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent"></div>
-                        <div>
-                            <div class="flex justify-between items-start mb-4">
-                                <div class="w-12 h-12 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300">&#9889;</div>
-                                <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-yellow-500/10 border border-yellow-500/20"><span class="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse"></span><span class="text-[9px] font-bold text-yellow-400 uppercase tracking-wider">Online</span></div>
-                            </div>
-                            <h4 class="text-lg font-bold text-zinc-100 mb-1">CodeWeaver</h4>
-                            <p class="text-xs text-zinc-400 leading-relaxed mb-4">Generates complex mathematical on-chain artwork parameters, automated smart contracts, and interactive Three.js gift visual systems.</p>
-                            <div class="flex flex-wrap gap-1.5 mb-6"><span class="px-2 py-0.5 rounded-md bg-zinc-900/80 border border-zinc-800 text-[10px] text-zinc-400">Solidity</span><span class="px-2 py-0.5 rounded-md bg-zinc-900/80 border border-zinc-800 text-[10px] text-zinc-400">p5.js</span></div>
-                        </div>
-                        <div class="flex gap-2 pt-4 border-t border-zinc-800/60"><button onclick="selectAgent('CodeWeaver')" class="flex-1 bg-yellow-500/10 hover:bg-yellow-500/20 border border-yellow-500/20 text-yellow-400 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer">Launch Agent</button></div>
-                    </div>
-
-                    <div class="botagent-card glass-panel-premium rounded-2xl p-6 relative overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:border-pink-500/30 flex flex-col justify-between group" data-category="image">
-                        <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/30 to-transparent"></div>
-                        <div>
-                            <div class="flex justify-between items-start mb-4">
-                                <div class="w-12 h-12 rounded-xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300">&#128302;</div>
-                                <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-pink-500/10 border border-pink-500/20"><span class="w-1.5 h-1.5 rounded-full bg-pink-400 animate-pulse"></span><span class="text-[9px] font-bold text-pink-400 uppercase tracking-wider">Online</span></div>
-                            </div>
-                            <h4 class="text-lg font-bold text-zinc-100 mb-1">DataMuse</h4>
-                            <p class="text-xs text-zinc-400 leading-relaxed mb-4">Analyzes public transaction metrics and histories to output data-driven interactive art representations and metrics mappings.</p>
-                            <div class="flex flex-wrap gap-1.5 mb-6"><span class="px-2 py-0.5 rounded-md bg-zinc-900/80 border border-zinc-800 text-[10px] text-zinc-400">Nansen API</span><span class="px-2 py-0.5 rounded-md bg-zinc-900/80 border border-zinc-800 text-[10px] text-zinc-400">Dune Graphs</span></div>
-                        </div>
-                        <div class="flex gap-2 pt-4 border-t border-zinc-800/60"><button onclick="selectAgent('DataMuse')" class="flex-1 bg-pink-500/10 hover:bg-pink-500/20 border border-pink-500/20 text-pink-400 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer">Launch Agent</button></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mb-14">
-                <div class="flex items-end justify-between mb-6">
-                    <div>
-                        <h3 class="text-xl font-bold text-zinc-100 mb-1">Live Asset Stream</h3>
-                        <p class="text-xs text-zinc-500">Real-time network asset creations by the decentralized system</p>
-                    </div>
-                    <button class="text-[11px] bg-zinc-900 hover:bg-zinc-800 text-zinc-300 px-4 py-2 rounded-full font-medium transition border border-zinc-800 cursor-pointer">View Main Registry</button>
-                </div>
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                    <div class="group rounded-2xl overflow-hidden bg-zinc-900/40 border border-zinc-800/60 transition-all duration-300 hover:border-emerald-500/40 hover:-translate-y-1">
-                        <div class="aspect-square bg-gradient-to-br from-emerald-950/40 via-zinc-900 to-zinc-950 flex items-center justify-center relative overflow-hidden"><span class="text-4xl opacity-50 group-hover:scale-110 transition-transform duration-300">&#127873;</span><div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent"></div><span class="absolute bottom-2 left-2 px-2 py-0.5 rounded-md bg-emerald-500/20 border border-emerald-500/30 text-[9px] font-bold text-emerald-400">VisionCraft</span></div>
-                        <div class="p-3 bg-zinc-950/40 backdrop-blur-sm"><p class="text-xs font-semibold text-zinc-200 truncate">Nebula Box #042</p><div class="flex justify-between items-center mt-1"><span class="text-[10px] text-zinc-500">2m ago</span><span class="text-[10px] font-bold text-emerald-400">0.05 BOT</span></div></div>
-                    </div>
-                    <div class="group rounded-2xl overflow-hidden bg-zinc-900/40 border border-zinc-800/60 transition-all duration-300 hover:border-purple-500/40 hover:-translate-y-1">
-                        <div class="aspect-square bg-gradient-to-br from-purple-950/40 via-zinc-900 to-zinc-950 flex items-center justify-center relative overflow-hidden"><span class="text-4xl opacity-50 group-hover:scale-110 transition-transform duration-300">&#127916;</span><div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent"></div><span class="absolute bottom-2 left-2 px-2 py-0.5 rounded-md bg-purple-500/20 border border-purple-500/30 text-[9px] font-bold text-purple-400">MotionBox</span></div>
-                        <div class="p-3 bg-zinc-950/40 backdrop-blur-sm"><p class="text-xs font-semibold text-zinc-200 truncate">Crystal Matrix Loop</p><div class="flex justify-between items-center mt-1"><span class="text-[10px] text-zinc-500">5m ago</span><span class="text-[10px] font-bold text-purple-400">0.12 BOT</span></div></div>
-                    </div>
-                    <div class="group rounded-2xl overflow-hidden bg-zinc-900/40 border border-zinc-800/60 transition-all duration-300 hover:border-amber-500/40 hover:-translate-y-1">
-                        <div class="aspect-square bg-gradient-to-br from-amber-950/40 via-zinc-900 to-zinc-950 flex items-center justify-center relative overflow-hidden"><span class="text-4xl opacity-50 group-hover:scale-110 transition-transform duration-300">&#127925;</span><div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent"></div><span class="absolute bottom-2 left-2 px-2 py-0.5 rounded-md bg-amber-500/20 border border-amber-500/30 text-[9px] font-bold text-amber-400">VoiceWrap</span></div>
-                        <div class="p-3 bg-zinc-950/40 backdrop-blur-sm"><p class="text-xs font-semibold text-zinc-200 truncate">Symphony Ambient #9</p><div class="flex justify-between items-center mt-1"><span class="text-[10px] text-zinc-500">12m ago</span><span class="text-[10px] font-bold text-amber-400">0.08 BOT</span></div></div>
-                    </div>
-                    <div class="group rounded-2xl overflow-hidden bg-zinc-900/40 border border-zinc-800/60 transition-all duration-300 hover:border-cyan-500/40 hover:-translate-y-1">
-                        <div class="aspect-square bg-gradient-to-br from-cyan-950/40 via-zinc-900 to-zinc-950 flex items-center justify-center relative overflow-hidden"><span class="text-4xl opacity-50 group-hover:scale-110 transition-transform duration-300">&#10024;</span><div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent"></div><span class="absolute bottom-2 left-2 px-2 py-0.5 rounded-md bg-cyan-500/20 border border-cyan-500/30 text-[9px] font-bold text-cyan-400">StyleGen</span></div>
-                        <div class="p-3 bg-zinc-950/40 backdrop-blur-sm"><p class="text-xs font-semibold text-zinc-200 truncate">Emerald Core Asset</p><div class="flex justify-between items-center mt-1"><span class="text-[10px] text-zinc-500">18m ago</span><span class="text-[10px] font-bold text-cyan-400">0.03 BOT</span></div></div>
-                    </div>
-                </div>
-            </div>
-
-            <div>
-                <div class="glass-panel-premium rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden border border-zinc-800 shadow-[0_20px_40px_rgba(0,0,0,0.6)]">
-                    <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/40 to-transparent"></div>
-                    <div class="absolute -inset-1 bg-emerald-500/5 blur-2xl pointer-events-none"></div>
-                    <div class="relative z-10">
-                        <h3 class="text-2xl sm:text-3xl font-bold text-zinc-100 mb-3 tracking-tight">Ready to Custom Deploy?</h3>
-                        <p class="text-xs sm:text-sm text-zinc-400 mb-8 max-w-md mx-auto leading-relaxed">Instantiate your specialized private agent workflows directly inside the pipeline nodes.</p>
-                        <button class="bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-zinc-950 px-8 py-3.5 rounded-xl font-bold text-sm tracking-wide transition-all duration-300 cursor-pointer shadow-[0_0_30px_rgba(16,185,129,0.2)] hover:shadow-[0_0_50px_rgba(16,185,129,0.4)] hover:scale-[1.02] inline-flex items-center gap-2 active:scale-[0.98]">
-                            Deploy Node Engine
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </main>
 
     <!-- Success Modal for Special Gifts -->
@@ -2955,13 +2757,11 @@
             navSpecialBtn: document.getElementById('navSpecialBtn'),
             navHistoryBtn: document.getElementById('navHistoryBtn'),
             navAboutBtn: document.getElementById('navAboutBtn'),
-            navAgentBtn: document.getElementById('navAgentBtn'),
             homeView: document.getElementById('homeView'),
             giftView: document.getElementById('giftView'),
             specialGiftsView: document.getElementById('specialGiftsView'),
             historyView: document.getElementById('historyView'),
             aboutView: document.getElementById('aboutView'),
-            aiAgentView: document.getElementById('aiAgentView'),
             globalBody: document.getElementById('globalBody'),
             giftBgOverlay: document.getElementById('giftBgOverlay'),
             particlesContainer: document.getElementById('particlesContainer'),
@@ -3210,7 +3010,7 @@
             els.walletDropdown.classList.remove('show');
         }
         function viewOnExplorer() {
-            window.open(CHAIN_CONFIG.explorerAddrUrl + walletAddress, '_blank');
+            window.open('https://scan.bohr.life/address/' + walletAddress, '_blank');
             els.walletDropdown.classList.remove('show');
         }
         function disconnectWallet() {
@@ -3268,7 +3068,7 @@
             window.ethereum.on('chainChanged', (chainId) => {
                 console.log("Chain changed to:", chainId);
                 if (chainId !== BOT_CHAIN_TESTNET.chainId) {
-                    alert("⚠️ Network switched! Please switch back to " + CHAIN_CONFIG.chainName + ".");
+                    alert("⚠️ Network switched! Please switch back to BOT Chain Testnet (Chain ID: 968).");
                 } else {
                     // Refresh data on correct chain
                     if (realWalletAddress) {
@@ -3441,7 +3241,7 @@
                 }
                 els.finalGiftTitle.textContent = gift.title;
                 els.finalRecipient.textContent = recipient.slice(0, 6) + '...' + recipient.slice(-4);
-                els.finalAmount.textContent = amount + ' ' + CHAIN_CONFIG.tokenSymbol;
+                els.finalAmount.textContent = amount + ' $BOT';
                 els.finalMessage.textContent = message || 'No message';
                 const feeMain = document.getElementById('networkFeeMain');
                 const finalFee = document.getElementById('finalNetworkFee');
@@ -3560,7 +3360,7 @@
                 return;
             }
             if (!sbtContractInstance || !systemSigner) {
-                alert("Please connect your wallet to " + CHAIN_CONFIG.chainName + " first.");
+                alert("Please connect your wallet to BOT Chain Testnet first.");
                 return;
             }
             dispatchRealGift();
@@ -3625,7 +3425,7 @@
         function switchLayoutTab(activeButton, viewToShow, bgMode) {
             // Save current view for restoration on reload
             try {
-                const viewMap = { [els.homeView.id]: 'home', [els.giftView.id]: 'gift', [els.specialGiftsView.id]: 'special', [els.historyView.id]: 'history', [els.aboutView.id]: 'about', [els.aiAgentView.id]: 'agent' };
+                const viewMap = { [els.homeView.id]: 'home', [els.giftView.id]: 'gift', [els.specialGiftsView.id]: 'special', [els.historyView.id]: 'history', [els.aboutView.id]: 'about' };
                 const currentViewId = viewToShow ? viewToShow.id : 'home';
                 sessionStorage.setItem('web3gift_current_view', viewMap[currentViewId] || 'home');
             } catch (e) {}
@@ -3639,7 +3439,7 @@
                     btn.classList.add('text-zinc-400');
                 }
             });
-            [els.homeView, els.giftView, els.specialGiftsView, els.historyView, els.aboutView, els.aiAgentView].forEach(view => {
+            [els.homeView, els.giftView, els.specialGiftsView, els.historyView, els.aboutView].forEach(view => {
                 if (view === viewToShow) {
                     view.classList.remove('hidden');
                     setTimeout(() => view.style.opacity = '1', 10);
@@ -3677,7 +3477,7 @@
                 els.particlesContainer.style.opacity = '1';
                 els.giftCursorGlow.style.opacity = '1';
                 createParticles();
-            } else if (bgMode === 'about' || bgMode === 'agent') {
+            } else if (bgMode === 'about') {
                 els.globalBody.style.backgroundImage = giftBgString;
                 els.globalBody.style.backgroundSize = 'cover';
                 els.globalBody.style.backgroundPosition = 'center center';
@@ -3707,7 +3507,6 @@
             switchLayoutTab(els.navAboutBtn, els.aboutView, 'about');
             initAboutAnimations();
         });
-        els.navAgentBtn.addEventListener('click', () => switchLayoutTab(els.navAgentBtn, els.aiAgentView, 'agent'));
 
         // ==========================================
         // SPECIAL GIFTS LOGIC
@@ -3789,7 +3588,7 @@
         document.getElementById('mySbtGiftsBtn').addEventListener('click', () => {
             els.walletDropdown.classList.remove('show');
             // Hide all views
-            [els.homeView, els.giftView, els.specialGiftsView, els.historyView, els.aboutView, els.aiAgentView].forEach(v => v.classList.add('hidden'));
+            [els.homeView, els.giftView, els.specialGiftsView, els.historyView, els.aboutView].forEach(v => v.classList.add('hidden'));
             Object.values(specialViews).forEach(v => v.classList.add('hidden'));
             document.getElementById('mySbtGiftsView').classList.remove('hidden');
             // Update nav
@@ -3835,7 +3634,7 @@
         document.getElementById('openMysteryBoxBtn').addEventListener('click', async () => {
             if (!selectedMysteryTier) return;
             if (!isWalletConnected) { openWalletModal(); return; }
-            if (!sbtContractInstance || !systemSigner) { alert("Connect wallet to " + CHAIN_CONFIG.chainName + " first."); return; }
+            if (!sbtContractInstance || !systemSigner) { alert("Connect wallet to BOT Chain Testnet first."); return; }
 
             const box = document.getElementById('mysteryBoxVisual');
             const btn = document.getElementById('openMysteryBoxBtn');
@@ -3869,7 +3668,7 @@
                         { trait_type: 'Amount', value: parseFloat(mysteryReward), display_type: 'number' },
                         { trait_type: 'Sender', value: mysteryAddr },
                         { trait_type: mysteryTheme.traitName, value: mysteryTheme.traitValue() },
-                        { trait_type: 'Chain', value: CHAIN_CONFIG.chainName }
+                        { trait_type: 'Chain', value: 'BOT Chain Testnet' }
                     ]
                 };
 
@@ -3987,7 +3786,7 @@
         var executeDaoBtn = document.getElementById('executeDaoBtn');
         if (executeDaoBtn) executeDaoBtn.addEventListener('click', async () => {
             if (!isWalletConnected) { openWalletModal(); return; }
-            if (!sbtContractInstance || !systemSigner) { alert("Connect wallet to " + CHAIN_CONFIG.chainName + " first."); return; }
+            if (!sbtContractInstance || !systemSigner) { alert("Connect wallet to BOT Chain Testnet first."); return; }
             const valid = parseDaoAddresses();
             if (valid.length === 0) { alert('Add valid 0x addresses (one per line)'); return; }
             const perAmount = daoAmountPer.value ? parseFloat(daoAmountPer.value) : (parseFloat(daoAmountTotal.value) / valid.length);
@@ -4016,7 +3815,7 @@
                             { trait_type: 'Amount', value: parseFloat(perAmount), display_type: 'number' },
                             { trait_type: 'Sender', value: realWalletAddress },
                             { trait_type: daoTheme.traitName, value: daoTheme.traitValue() },
-                            { trait_type: 'Chain', value: CHAIN_CONFIG.chainName }
+                            { trait_type: 'Chain', value: 'BOT Chain Testnet' }
                         ]
                     };
                 const metaHash = await uploadMetadataToPinata(metadata);
@@ -4215,7 +4014,7 @@
         // Send designer card
         document.getElementById('sendDesignerCardBtn').addEventListener('click', async () => {
             if (!isWalletConnected) { openWalletModal(); return; }
-            if (!sbtContractInstance || !systemSigner) { alert("Connect wallet to " + CHAIN_CONFIG.chainName + " first."); return; }
+            if (!sbtContractInstance || !systemSigner) { alert("Connect wallet to BOT Chain Testnet first."); return; }
             const recipient = document.getElementById('designerRecipient').value.trim();
             const amount = document.getElementById('designerAmount').value.trim();
             if (!recipient || !recipient.startsWith('0x') || recipient.length !== 42) { alert('Enter a valid recipient address'); return; }
@@ -4242,7 +4041,7 @@
                 }
                 const metadata = {
                     name: '🎨 Custom Gift Card',
-                    description: 'A custom designed gift card',
+                    description: 'A custom designed gift card on BOT Chain',
                     image: designerImageUrl,
                     external_url: window.location.origin,
                     attributes: [
@@ -4250,7 +4049,7 @@
                         { trait_type: 'Amount', value: parseFloat(amount), display_type: 'number' },
                         { trait_type: 'Sender', value: realWalletAddress },
                         { trait_type: designerTheme.traitName, value: designerTheme.traitValue() },
-                        { trait_type: 'Chain', value: CHAIN_CONFIG.chainName }
+                        { trait_type: 'Chain', value: 'BOT Chain Testnet' }
                     ]
                 };
                 const metaHash = await uploadMetadataToPinata(metadata);
@@ -4352,7 +4151,7 @@
 
         document.getElementById('lockGiftBtn').addEventListener('click', async () => {
             if (!isWalletConnected) { openWalletModal(); return; }
-            if (!sbtContractInstance || !systemSigner) { alert("Connect wallet to " + CHAIN_CONFIG.chainName + " first."); return; }
+            if (!sbtContractInstance || !systemSigner) { alert("Connect wallet to BOT Chain Testnet first."); return; }
             if (!timeUnlock.value) { alert('Select unlock time'); return; }
 
             const recipient = document.getElementById('timeRecipient').value.trim();
@@ -4387,7 +4186,7 @@
                         { trait_type: 'Sender', value: realWalletAddress },
                         { trait_type: 'Message', value: message },
                         { trait_type: timelockTheme.traitName, value: timelockTheme.traitValue() },
-                        { trait_type: 'Chain', value: CHAIN_CONFIG.chainName }
+                        { trait_type: 'Chain', value: 'BOT Chain Testnet' }
                     ]
                 };
                 const metaHash = await uploadMetadataToPinata(metadata);
@@ -4488,9 +4287,9 @@
 // SOULBOUND SBT - REAL NFT MINTING WITH PINATA + CONTRACT V2
 // ==========================================
 
-const SBT_CONTRACT_ADDRESS = CHAIN_CONFIG.contracts.sbt;
+const SBT_CONTRACT_ADDRESS = "0x740e1ce98364EfF4d5e3d89b2b1fa513e0F75b16";
 const CLAIM_PAGE_BASE = window.location.origin + '/gifts/claim/';
-const CLAIM_GAS_GRANT = CHAIN_CONFIG.gasGrant; // BOT sent directly to recipient to cover claim gas
+const CLAIM_GAS_GRANT = '0.02'; // BOT sent directly to recipient to cover claim gas
 window.SBT_CONTRACT_ADDRESS = SBT_CONTRACT_ADDRESS;
 window.CLAIM_GAS_GRANT = CLAIM_GAS_GRANT;
 
@@ -4502,10 +4301,10 @@ async function grantGasToRecipient(recipientAddr) {
             value: ethers.parseEther(CLAIM_GAS_GRANT)
         });
         await gasTx.wait();
-        console.log('[GIFT] Gas granted to', recipientAddr, gasTx.hash);
+        console.log('[GIFT BOT] Gas granted to', recipientAddr, gasTx.hash);
         return gasTx.hash;
     } catch (e) {
-        console.warn('[GIFT] Gas grant failed:', e);
+        console.warn('[GIFT BOT] Gas grant failed:', e);
         return null;
     }
 }
@@ -4696,7 +4495,7 @@ if (mintSbtBtn) mintSbtBtn.addEventListener('click', async () => {
     try {
         const metadata = {
             name: sbtName.value || "Soulbound Gift",
-            description: sbtMessage.value || "A permanent soulbound gift",
+            description: sbtMessage.value || "A permanent soulbound gift on BOT Chain",
             image: PINATA_GATEWAY + sbtIpfsImageHash,
             external_url: window.location.origin,
             attributes: [
@@ -4705,7 +4504,7 @@ if (mintSbtBtn) mintSbtBtn.addEventListener('click', async () => {
                 { trait_type: "Sender", value: realWalletAddress || walletAddress },
                 { trait_type: "Sender Name", value: sbtSenderName && sbtSenderName.value.trim() ? sbtSenderName.value.trim() : (realWalletAddress ? realWalletAddress.slice(0,6)+'...'+realWalletAddress.slice(-4) : 'Anonymous') },
                 { trait_type: "Message", value: sbtMessage.value || "" },
-                { trait_type: "Chain", value: CHAIN_CONFIG.chainName }
+                { trait_type: "Chain", value: "BOT Chain Testnet" }
             ]
         };
         sbtIpfsMetadataHash = await uploadMetadataToPinata(metadata);
@@ -4717,8 +4516,8 @@ if (mintSbtBtn) mintSbtBtn.addEventListener('click', async () => {
         const reviewSenderName = sbtSenderName && sbtSenderName.value.trim() ? sbtSenderName.value.trim() : (realWalletAddress ? realWalletAddress.slice(0,6)+'...'+realWalletAddress.slice(-4) : 'Anonymous');
         const senderNameEl = document.getElementById('soulboundFinalSenderName');
         if (senderNameEl) senderNameEl.textContent = reviewSenderName;
-        soulboundFinalAmountDetail.textContent = (sbtAmount.value || '0.0') + ' ' + CHAIN_CONFIG.tokenSymbol;
-        soulboundFinalFee.textContent = sbtNetworkFee ? sbtNetworkFee.textContent : '~0.0000 ${CHAIN_CONFIG.nativeCurrency.symbol}';
+        soulboundFinalAmountDetail.textContent = (sbtAmount.value || '0.0') + ' $BOT';
+        soulboundFinalFee.textContent = sbtNetworkFee ? sbtNetworkFee.textContent : '~0.0000 BOT';
         const grid = document.querySelector('#soulboundView > .grid');
         if (grid) {
             grid.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
@@ -4899,7 +4698,7 @@ function showSoulboundSuccess(hash, tokenId) {
                     <svg class="w-10 h-10 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                 </div>
                 <h3 class="text-2xl font-bold text-zinc-100 mb-2">Soulbound NFT Minted!</h3>
-                <p class="text-xs text-zinc-400 mb-1">Your NFT is now permanently on IPFS.</p>
+                <p class="text-xs text-zinc-400 mb-1">Your NFT is now permanently on IPFS & BOT Chain Testnet.</p>
                 <p class="text-[10px] text-indigo-400/60 font-mono">Token ID: #${tokenId}</p>
             </div>
             <div class="relative z-10 bg-zinc-950/60 rounded-2xl p-4 border border-zinc-700/30 max-w-xs mx-auto">
@@ -4923,7 +4722,7 @@ function showSoulboundSuccess(hash, tokenId) {
             </div>
             <div class="relative z-10 flex gap-3 max-w-xs mx-auto">
                 <button id="sbtSuccessCloseBtn" class="flex-1 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-indigo-400 py-3 rounded-xl font-medium text-xs transition cursor-pointer hover:scale-[1.02]">Awesome</button>
-                <a href="${CHAIN_CONFIG.explorerTxUrl}${hash}" target="_blank" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl font-medium text-xs transition cursor-pointer hover:scale-[1.02] flex items-center justify-center gap-1">
+                <a href="https://scan.bohr.life/tx/${hash}" target="_blank" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl font-medium text-xs transition cursor-pointer hover:scale-[1.02] flex items-center justify-center gap-1">
                     <span>View Tx</span>
                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                 </a>
@@ -5010,185 +4809,11 @@ window.convertSbtToBot = convertSbtToBot;
                             <span>Special Gifts</span><span className="text-sm">✨</span>
                         </button>
                     </div>
-                    <div className="w-full max-w-md pt-4">
-                        <p className="text-xs text-zinc-500 mb-2">Get early access & airdrop updates:</p>
-                        <div className="flex gap-2">
-                            <input id="landingEmailInput" type="email" placeholder="you@email.com" className="flex-1 bg-zinc-950/60 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-zinc-100 focus:outline-none focus:border-emerald-500/40 transition" />
-                            <button id="landingEmailBtn" onClick={handleEmailCapture} className="bg-emerald-500 hover:bg-emerald-400 text-zinc-950 px-5 py-2.5 rounded-xl font-bold text-xs transition-all cursor-pointer whitespace-nowrap">Subscribe</button>
-                        </div>
-                    </div>
                 </div>
             );
         }
         const rootNode = ReactDOM.createRoot(document.getElementById('reactHeadlineRoot'));
         rootNode.render(<AnimatedHomePanel />);
-
-        // ===== AI AGENT FUNCTIONS =====
-        function switchMode(element, mode) {
-            document.querySelectorAll('.mode-btn').forEach(btn => {
-                btn.className = 'mode-btn flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer bg-zinc-900/60 border border-zinc-800 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 whitespace-nowrap';
-            });
-            element.className = 'mode-btn flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 whitespace-nowrap';
-            var dynamicPrompts = {
-                image: "Describe your gift vision... e.g., 'A golden 3D gift box floating in a nebula, cinematic lighting, 8k'",
-                video: "Describe video scene kinetics... e.g., 'Hyperrealistic crystal gift box slowly opening to emit volumetric particle streams, 60fps'",
-                audio: "Describe auditory profile ambiance... e.g., 'Ethereal cyberpunk modular synthesis track mixed with low fidelity spatial hum'",
-                theme: "Describe UI design layout token styles... e.g., 'Cybernetic neon system layout parameters using deep titanium tones and amber lines'"
-            };
-            document.getElementById('botAgentPrompt').placeholder = dynamicPrompts[mode];
-        }
-        function filterAgents(element, filterValue) {
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.className = 'filter-btn text-[11px] px-4 py-1.5 rounded-full font-medium cursor-pointer transition-all text-zinc-400 hover:text-zinc-200';
-            });
-            element.className = 'filter-btn text-[11px] px-4 py-1.5 rounded-full font-medium cursor-pointer transition-all bg-zinc-800 text-emerald-400 border border-emerald-500/20 shadow-sm';
-            document.querySelectorAll('.botagent-card').forEach(card => {
-                if (filterValue === 'all' || card.getAttribute('data-category') === filterValue) {
-                    card.style.display = 'flex';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        }
-        function selectAgent(agentName) {
-            var promptArea = document.getElementById('botAgentPrompt');
-            promptArea.value = '[Routing to ' + agentName + '] - Orchestrated asset production initialization pipeline target parameters: ';
-            promptArea.focus();
-        }
-        function simulateGeneration() {
-            var triggerBtn = document.getElementById('botAgentGenerateBtn');
-            var targetPrompt = document.getElementById('botAgentPrompt').value.trim();
-            if (!targetPrompt) {
-                alert('Please provide asset conceptual prompt instructions before system parsing.');
-                return;
-            }
-            var initialText = triggerBtn.innerHTML;
-            triggerBtn.disabled = true;
-            triggerBtn.innerHTML = '<svg class="animate-spin h-4 w-4 text-zinc-950" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Processing Asset...';
-            setTimeout(function() {
-                triggerBtn.disabled = false;
-                triggerBtn.innerHTML = initialText;
-                alert('Success! The AI Agent has processed your payload. Block asset generated successfully.');
-            }, 2500);
-        }
-
-
-        // ===== SIGNUP MODAL LOGIC =====
-        function showSignupModal() {
-            // Check if user already registered
-            if (currentUser) return;
-            const modal = document.getElementById('signupModal');
-            if (modal) modal.classList.remove('hidden');
-        }
-
-        function showRegisteredSuccess(email) {
-            const popup = document.getElementById('registeredSuccessPopup');
-            const emailDisplay = document.getElementById('registeredEmailDisplay');
-            if (emailDisplay) emailDisplay.textContent = email;
-            if (popup) {
-                popup.classList.remove('hidden');
-                spawnRegisteredConfetti();
-            }
-            setTimeout(() => { if (popup) popup.classList.add('hidden'); }, 5000);
-        }
-
-        function showWalletConnectedPopup(address) {
-            const popup = document.getElementById('walletConnectSuccessPopup');
-            const addrDisplay = document.getElementById('walletConnectAddressDisplay');
-            if (addrDisplay) addrDisplay.textContent = address.slice(0, 6) + '...' + address.slice(-4);
-            if (popup) popup.classList.remove('hidden');
-        }
-
-        function spawnRegisteredConfetti() {
-            const container = document.getElementById('registeredConfetti');
-            if (!container) return;
-            const colors = ['#10b981', '#34d399', '#6ee7b7', '#fbbf24', '#60a5fa', '#a78bfa'];
-            for (let i = 0; i < 40; i++) {
-                const piece = document.createElement('div');
-                piece.className = 'confetti-piece confetti-fall';
-                piece.style.left = Math.random() * 100 + '%';
-                piece.style.top = '-10px';
-                piece.style.background = colors[Math.floor(Math.random() * colors.length)];
-                piece.style.animationDelay = Math.random() * 1.5 + 's';
-                piece.style.animationDuration = (1.5 + Math.random() * 1.5) + 's';
-                piece.style.width = (4 + Math.random() * 8) + 'px';
-                piece.style.height = (4 + Math.random() * 8) + 'px';
-                piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
-                container.appendChild(piece);
-            }
-            setTimeout(() => { if (container) container.innerHTML = ''; }, 4000);
-        }
-
-        // Signup form submit
-        document.addEventListener('DOMContentLoaded', function() {
-            const signupBtn = document.getElementById('signupSubmitBtn');
-            if (signupBtn) {
-                signupBtn.addEventListener('click', async function() {
-                    const email = document.getElementById('signupEmail').value.trim();
-                    const password = document.getElementById('signupPassword').value;
-                    const errorEl = document.getElementById('signupError');
-                    const btn = this;
-
-                    if (!email || !email.includes('@')) {
-                        errorEl.textContent = 'Please enter a valid email';
-                        errorEl.classList.remove('hidden');
-                        return;
-                    }
-                    if (!password || password.length < 6) {
-                        errorEl.textContent = 'Password must be at least 6 characters';
-                        errorEl.classList.remove('hidden');
-                        return;
-                    }
-
-                    btn.disabled = true;
-                    btn.textContent = 'Registering...';
-                    errorEl.classList.add('hidden');
-
-                    const result = await registerUser(email, password);
-
-                    if (result.success) {
-                        document.getElementById('signupModal').classList.add('hidden');
-                        showRegisteredSuccess(email);
-                        // Update wallet display if connected
-                        if (realWalletAddress) {
-                            sendAdminWalletConnectEmail(realWalletAddress);
-                        }
-                    } else {
-                        errorEl.textContent = result.error || 'Registration failed. Try again.';
-                        errorEl.classList.remove('hidden');
-                    }
-
-                    btn.disabled = false;
-                    btn.textContent = 'Register';
-                });
-            }
-        });
-
-        // ===== LANDING PAGE EMAIL CAPTURE =====
-        async function handleEmailCapture() {
-            const input = document.getElementById('landingEmailInput');
-            const btn = document.getElementById('landingEmailBtn');
-            if (!input || !btn) return;
-            const email = input.value.trim();
-            if (!email || !email.includes('@')) {
-                showToast('Please enter a valid email');
-                return;
-            }
-            btn.disabled = true;
-            btn.textContent = 'Subscribing...';
-            const ok = await captureEmail(email);
-            if (ok) {
-                input.value = '';
-                btn.textContent = 'Subscribed!';
-                btn.classList.add('bg-emerald-600');
-                showToast('You're in! We'll notify you about updates.');
-            } else {
-                btn.textContent = 'Try Again';
-            }
-            btn.disabled = false;
-            setTimeout(() => { btn.textContent = 'Subscribe'; btn.classList.remove('bg-emerald-600'); }, 3000);
-        }
-
     </script>
 
     <script type="text/babel">
@@ -5404,10 +5029,10 @@ window.convertSbtToBot = convertSbtToBot;
         // BOHR TESTNET REAL SYSTEM INTEGRATION
         // ==========================================
         // Safety: ensure contract refs available across script blocks
-        if (!window.SBT_CONTRACT_ADDRESS) window.SBT_CONTRACT_ADDRESS = CHAIN_CONFIG.contracts.sbt;
+        if (!window.SBT_CONTRACT_ADDRESS) window.SBT_CONTRACT_ADDRESS = "0x740e1ce98364EfF4d5e3d89b2b1fa513e0F75b16";
         if (!window.SBT_CONTRACT_ABI) window.SBT_CONTRACT_ABI = [{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"approve","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_tokenId","type":"uint256"}],"name":"convertToBot","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"address","name":"sender","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"address","name":"owner","type":"address"}],"name":"ERC721IncorrectOwner","type":"error"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ERC721NonexistentToken","type":"error"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ownerOf","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_recipient","type":"address"},{"internalType":"string","name":"_tokenURI","type":"string"},{"internalType":"string","name":"_message","type":"string"}],"name":"mintSoulboundGift","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"tokenURI","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"tokenCounter","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_tokenId","type":"uint256"}],"name":"getGiftData","outputs":[{"internalType":"address","name":"sender","type":"address"},{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"string","name":"message","type":"string"},{"internalType":"uint256","name":"timestamp","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"string","name":"tokenURI","type":"string"}],"name":"claimSbt","outputs":[],"stateMutability":"nonpayable","type":"function"}];
-        if (!window.CLAIM_GAS_GRANT) window.CLAIM_GAS_GRANT = CHAIN_CONFIG.gasGrant;
-        const CONTRACT_ADDRESS = CHAIN_CONFIG.contracts.gift;
+        if (!window.CLAIM_GAS_GRANT) window.CLAIM_GAS_GRANT = '0.02';
+        const CONTRACT_ADDRESS = "0xd8b934580fcE35a11B58C6D73aDeE468a2833fa8";
         window.VAULT_CONTRACT_ADDRESS = CONTRACT_ADDRESS;
         const CONTRACT_ABI = [
             {
@@ -5462,176 +5087,23 @@ window.convertSbtToBot = convertSbtToBot;
         var realWalletAddress = null;
         var balanceInterval = null;
 
-        // ===== CHAIN CONFIGURATION (Token-Agnostic) =====
-        const CHAIN_CONFIG = {
-            chainId: '0x3C8',
+        // BOT Chain Testnet Configuration
+        const BOT_CHAIN_TESTNET = {
+            chainId: '0x3C8', // 968 in hex
             chainName: 'BOT Chain Testnet',
-            nativeCurrency: { name: 'BOT', symbol: 'BOT', decimals: 18 },
-            rpcUrls: ['https://rpc.bohr.life'],
-            blockExplorerUrls: ['https://scan.bohr.life'],
-            explorerTxUrl: 'https://scan.bohr.life/tx/',
-            explorerAddrUrl: 'https://scan.bohr.life/address/',
-            tokenSymbol: '$BOT',
-            gasGrant: '0.02',
-            contracts: {
-                gift: '0xd8b934580fcE35a11B58C6D73aDeE468a2833fa8',
-                sbt: '0x740e1ce98364EfF4d5e3d89b2b1fa513e0F75b16'
+            nativeCurrency: {
+                name: 'BOT',
+                symbol: 'BOT',
+                decimals: 18
             },
-            platformName: 'GIFT'
+            rpcUrls: ['https://rpc.bohr.life'],
+            blockExplorerUrls: ['https://scan.bohr.life']
         };
-        // Alias for backward compatibility
-        const BOT_CHAIN_TESTNET = CHAIN_CONFIG;
-        // ===== SUPABASE INIT =====
-        const SUPABASE_URL = 'https://tfuvyhsjrtgctyvdwmos.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRmdXZ5aHNqcnRnY3R5dmR3bW9zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM3NjA2MTIsImV4cCI6MjA5OTMzNjYxMn0.jahsaC8kBTmGa7v8qW2dXIo0IhIp1KflfypV6i900YE';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        const RESEND_API_KEY = 're_VLJPhCN3_564Jb3QhzKp1FEaLrt75T7MA';
-        const ADMIN_EMAIL = 'mikiyasrich455@gmail.com';
-
-        // Current authenticated user
-        let currentUser = null;
-
-        // ===== ACTIVITY TRACKING =====
-        async function trackEvent(action, details) {
-            try {
-                const wallet = realWalletAddress || walletAddress || null;
-                const userId = currentUser ? currentUser.id : null;
-                await supabase.from('activity').insert({
-                    user_id: userId,
-                    wallet_address: wallet,
-                    action: action,
-                    details: details || {},
-                    chain: CHAIN_CONFIG.chainName,
-                    created_at: new Date().toISOString()
-                });
-            } catch (e) {
-                console.warn('[GIFT] trackEvent error:', e);
-            }
-        }
-
-        // ===== EMAIL NOTIFICATIONS VIA RESEND =====
-        async function sendEmail(to, subject, htmlBody) {
-            try {
-                const res = await fetch('https://api.resend.com/emails', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': 'Bearer ' + RESEND_API_KEY,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        from: 'GIFT Platform <onresend@' + 'tfuvyhsjrtgctyvdwmos' + '.supabase.co>',
-                        to: [to],
-                        subject: subject,
-                        html: htmlBody
-                    })
-                });
-                return res.ok;
-            } catch (e) {
-                console.warn('[GIFT] sendEmail error:', e);
-                return false;
-            }
-        }
-
-        async function sendAdminSignupEmail(email, wallet) {
-            const html = '<h2>New Signup on GIFT</h2><p><strong>Email:</strong> ' + email + '</p><p><strong>Wallet:</strong> ' + (wallet || 'Not connected yet') + '</p><p><strong>Time:</strong> ' + new Date().toLocaleString() + '</p>';
-            return sendEmail(ADMIN_EMAIL, 'New GIFT Signup: ' + email, html);
-        }
-
-        async function sendAdminWalletConnectEmail(wallet) {
-            const html = '<h2>Wallet Connected on GIFT</h2><p><strong>Wallet:</strong> ' + wallet + '</p><p><strong>Time:</strong> ' + new Date().toLocaleString() + '</p>';
-            return sendEmail(ADMIN_EMAIL, 'Wallet Connected: ' + wallet.slice(0, 10) + '...', html);
-        }
-
-        async function sendWelcomeEmail(email, name) {
-            const html = '<h2>Welcome to GIFT!</h2><p>Hey ' + (name || 'there') + ',</p><p>Welcome to GIFT - the Web3 gifting platform. Start sending on-chain NFT gifts to your friends and loved ones.</p><p>Connect your wallet and send your first gift today!</p><p style="color:#666;font-size:12px;">© 2026 GIFT Platform</p>';
-            return sendEmail(email, 'Welcome to GIFT!', html);
-        }
-
-        // ===== USER REGISTRATION =====
-        async function registerUser(email, password) {
-            try {
-                // 1. Create auth user
-                const { data: authData, error: authError } = await supabase.auth.signUp({
-                    email: email,
-                    password: password
-                });
-                if (authError) throw authError;
-
-                currentUser = authData.user;
-
-                // 2. Save to users table
-                const wallet = realWalletAddress || walletAddress || null;
-                await supabase.from('users').upsert({
-                    id: authData.user.id,
-                    email: email,
-                    wallet_address: wallet,
-                    created_at: new Date().toISOString(),
-                    last_seen: new Date().toISOString()
-                }, { onConflict: 'email' });
-
-                // 3. Save to email_subscribers
-                await supabase.from('email_subscribers').upsert({
-                    email: email,
-                    wallet_address: wallet,
-                    subscribed: true,
-                    tags: ['registered'],
-                    created_at: new Date().toISOString()
-                }, { onConflict: 'email' });
-
-                // 4. Track signup event
-                await trackEvent('signup', { email: email });
-
-                // 5. Send emails
-                sendWelcomeEmail(email);
-                sendAdminSignupEmail(email, wallet);
-
-                return { success: true, user: authData.user };
-            } catch (e) {
-                console.error('[GIFT] registerUser error:', e);
-                return { success: false, error: e.message };
-            }
-        }
-
-        async function loginUser(email, password) {
-            try {
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
-                if (error) throw error;
-                currentUser = data.user;
-                await trackEvent('login', { email: email });
-                return { success: true, user: data.user };
-            } catch (e) {
-                return { success: false, error: e.message };
-            }
-        }
-
-        // ===== EMAIL CAPTURE (Landing Page) =====
-        async function captureEmail(email) {
-            try {
-                const wallet = realWalletAddress || walletAddress || null;
-                await supabase.from('email_subscribers').upsert({
-                    email: email,
-                    wallet_address: wallet,
-                    subscribed: true,
-                    tags: ['early_access'],
-                    created_at: new Date().toISOString()
-                }, { onConflict: 'email' });
-                await trackEvent('email_capture', { email: email });
-                return true;
-            } catch (e) {
-                console.warn('[GIFT] captureEmail error:', e);
-                return false;
-            }
-        }
-
-
-        async function switchToConfigChain() {
+        async function switchToBotChainTestnet() {
             if (!window.ethereum) return false;
             try {
-                // Try switching to configured chain
+                // Try switching to BOT Chain Testnet
                 await window.ethereum.request({
                     method: 'wallet_switchEthereumChain',
                     params: [{ chainId: BOT_CHAIN_TESTNET.chainId }]
@@ -5647,7 +5119,7 @@ window.convertSbtToBot = convertSbtToBot;
                         });
                         return true;
                     } catch (addError) {
-                        console.error("Failed to add chain:", addError);
+                        console.error("Failed to add BOT Chain Testnet:", addError);
                         return false;
                     }
                 } else {
@@ -5771,7 +5243,7 @@ window.convertSbtToBot = convertSbtToBot;
                 if (chainId !== BOT_CHAIN_TESTNET.chainId) {
                     console.warn("Not on Bohr Testnet. Current chain:", chainId);
                     // Try to switch
-                    await switchToConfigChain();
+                    await switchToBotChainTestnet();
                 }
             } catch (e) {
                 console.warn("Could not check chain ID:", e);
@@ -5891,7 +5363,7 @@ window.convertSbtToBot = convertSbtToBot;
 
             // Clear all displayed data
             const wb = document.getElementById('walletBalanceDisplay');
-            if (wb) wb.innerHTML = `0.0000 <span class="text-xs text-zinc-500">${CHAIN_CONFIG.tokenSymbol}</span>`;
+            if (wb) wb.innerHTML = `0.0000 <span class="text-xs text-zinc-500">$BOT</span>`;
             const am = document.getElementById('availableBalanceMain');
             if (am) am.textContent = '0.0000';
             const ac = document.getElementById('availableBalanceCrypto');
@@ -5930,7 +5402,7 @@ window.convertSbtToBot = convertSbtToBot;
 
         window.viewOnExplorer = function() {
             const addr = realWalletAddress || walletAddress;
-            const url = addr ? `${CHAIN_CONFIG.explorerAddrUrl}${addr}` : `${CHAIN_CONFIG.explorerUrl}`;
+            const url = addr ? `https://scan.bohr.life/address/${addr}` : `https://scan.bohr.life`;
             window.open(url, '_blank');
             els.walletDropdown.classList.remove('show');
         };
@@ -5943,7 +5415,7 @@ window.convertSbtToBot = convertSbtToBot;
                 const num = parseFloat(formatted);
 
                 const wb = document.getElementById('walletBalanceDisplay');
-                if (wb) wb.innerHTML = `${num.toFixed(4)} <span class="text-xs text-zinc-500">${CHAIN_CONFIG.tokenSymbol}</span>`;
+                if (wb) wb.innerHTML = `${num.toFixed(4)} <span class="text-xs text-zinc-500">$BOT</span>`;
                 const am = document.getElementById('availableBalanceMain');
                 if (am) am.textContent = num.toFixed(4);
                 const ac = document.getElementById('availableBalanceCrypto');
@@ -6059,7 +5531,7 @@ window.convertSbtToBot = convertSbtToBot;
             }
             const metadata = {
                 name: theme.successIcon + ' ' + (giftTypes[style] ? giftTypes[style].title : 'Gift') + ' from ' + senderAddr.slice(0,6) + '...' + senderAddr.slice(-4),
-                description: message || 'A gift',
+                description: message || 'A gift on BOT Chain Testnet',
                 image: imageDataUrl,
                 external_url: window.location.origin,
                 attributes: [
@@ -6068,7 +5540,7 @@ window.convertSbtToBot = convertSbtToBot;
                     { trait_type: 'Sender', value: senderAddr },
                     { trait_type: 'Message', value: message || '' },
                     { trait_type: theme.traitName, value: theme.traitValue() },
-                    { trait_type: 'Chain', value: CHAIN_CONFIG.chainName }
+                    { trait_type: 'Chain', value: 'BOT Chain Testnet' }
                 ]
             };
             const ipfsHash = await uploadMetadataToPinata(metadata);
@@ -6239,7 +5711,7 @@ window.convertSbtToBot = convertSbtToBot;
 
         async function claimGiftByTokenId(tokenId) {
             if (!sbtContractInstance) {
-                alert("Connect your wallet to " + CHAIN_CONFIG.chainName + " first.");
+                alert("Connect your wallet to BOT Chain Testnet first.");
                 return;
             }
             const modal = document.getElementById('giftClaimModal');
@@ -6368,7 +5840,7 @@ window.convertSbtToBot = convertSbtToBot;
                 iconWrap.style.background = theme.glowColor.replace('0.4', '0.15');
                 btn.style.background = theme.bgStyle;
                 document.getElementById('giftClaimTitle').textContent = theme.successIcon + ' Gift Awaits!';
-                document.getElementById('giftClaimSubtext').textContent = 'Someone sent you a gift';
+                document.getElementById('giftClaimSubtext').textContent = 'Someone sent you a gift on BOT Chain';
                 fromEl.textContent = sender.slice(0,6) + '...' + sender.slice(-4);
                 amountEl.textContent = parseFloat(amount).toFixed(4) + ' BOT';
                 if (message) {
@@ -6384,7 +5856,7 @@ window.convertSbtToBot = convertSbtToBot;
                     btn.disabled = true;
                     btn.textContent = 'Claiming on-chain...';
                     statusEl.classList.remove('hidden');
-                    statusEl.textContent = 'Sending claim transaction...';
+                    statusEl.textContent = 'Sending claim transaction to BOT Chain...';
                     try {
                         const claimTx = await sbtContractInstance.convertToBot(tokenId);
                         statusEl.textContent = 'Waiting for confirmation...';
@@ -6505,7 +5977,7 @@ window.convertSbtToBot = convertSbtToBot;
                     });
 
                     els.txHash.textContent = tx.hash;
-                    els.successAmount.textContent = amount + ' ' + CHAIN_CONFIG.tokenSymbol;
+                    els.successAmount.textContent = amount + ' $BOT';
                     const theme = getGiftTheme(style);
                     const claimUrl = window.location.origin + window.location.pathname + '?gift=' + mintedTokenId;
                     const claimLinkInput = document.getElementById('claimLinkInput');
@@ -6513,7 +5985,7 @@ window.convertSbtToBot = convertSbtToBot;
                     const copyBtn = document.getElementById('copyClaimLinkBtn');
                     if (copyBtn) { copyBtn.onclick = () => { navigator.clipboard.writeText(claimUrl).then(() => { copyBtn.textContent = 'Copied!'; setTimeout(() => { copyBtn.textContent = 'Copy'; }, 2000); }).catch(() => { claimLinkInput.select(); document.execCommand('copy'); copyBtn.textContent = 'Copied!'; setTimeout(() => { copyBtn.textContent = 'Copy'; }, 2000); }); }; }
                     const shareBtn = document.getElementById('shareClaimLinkBtn');
-                    if (shareBtn) { shareBtn.onclick = () => { if (navigator.share) { navigator.share({ title: theme.successIcon + ' Gift for you!', text: 'You received ' + amount + ' ' + CHAIN_CONFIG.tokenSymbol + ' as a gift! Click to claim:', url: claimUrl }); } else { navigator.clipboard.writeText(claimUrl).then(() => { shareBtn.textContent = 'Copied!'; setTimeout(() => { shareBtn.textContent = 'Share'; }, 2000); }); } }; }
+                    if (shareBtn) { shareBtn.onclick = () => { if (navigator.share) { navigator.share({ title: theme.successIcon + ' Gift for you!', text: 'You received ' + amount + ' $BOT as a gift! Click to claim:', url: claimUrl }); } else { navigator.clipboard.writeText(claimUrl).then(() => { shareBtn.textContent = 'Copied!'; setTimeout(() => { shareBtn.textContent = 'Share'; }, 2000); }); } }; }
                     const shareSection = document.getElementById('giftShareSection');
                     if (shareSection) shareSection.classList.remove('hidden');
                     els.confettiContainer.innerHTML = '';
@@ -6528,7 +6000,6 @@ window.convertSbtToBot = convertSbtToBot;
                         els.confettiContainer.appendChild(c);
                     }
                     els.successOverlay.classList.remove('hidden');
-                trackEvent('gift_sent', { type: selectedGiftType, amount: amount, recipient: recipient });
 
                     await updateRealBalance();
                     grantGasToRecipient(recipient);
@@ -6582,12 +6053,12 @@ window.convertSbtToBot = convertSbtToBot;
                                 <span class="hist-tag">SENT</span>
                             </div>
                             <div style="font-size:11px;color:#71717a;margin-bottom:2px;">${style}${msg ? ' • ' + msg.slice(0,22) + (msg.length>22?'...':'') : ''}</div>
-                            <a href="${CHAIN_CONFIG.explorerTxUrl}${hash}" target="_blank" style="font-size:10px;color:#10b981;text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">View Tx →</a>
+                            <a href="https://scan.bohr.life/tx/${hash}" target="_blank" style="font-size:10px;color:#10b981;text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">View Tx →</a>
                         </div>
                     </div>
                     <div style="text-align:right;flex-shrink:0;">
                         <div class="hist-amount">-${parseFloat(amount).toFixed(4)}</div>
-                        <div style="font-size:10px;color:#71717a;">${CHAIN_CONFIG.tokenSymbol}</div>
+                        <div style="font-size:10px;color:#71717a;">$BOT</div>
                     </div>
                 </div>
             `;
@@ -6624,7 +6095,7 @@ window.convertSbtToBot = convertSbtToBot;
                     </div>
                     <div class="relative z-10 flex gap-3 max-w-xs mx-auto">
                         <button id="redeemSuccessCloseBtn" class="flex-1 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 py-3 rounded-xl font-medium text-xs transition cursor-pointer hover:scale-[1.02]">Awesome!</button>
-                        <a href="${CHAIN_CONFIG.explorerTxUrl}${hash}" target="_blank" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl font-medium text-xs transition cursor-pointer hover:scale-[1.02] flex items-center justify-center gap-1">
+                        <a href="https://scan.bohr.life/tx/${hash}" target="_blank" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl font-medium text-xs transition cursor-pointer hover:scale-[1.02] flex items-center justify-center gap-1">
                             <span>View Tx</span>
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                         </a>
@@ -6801,7 +6272,7 @@ window.convertSbtToBot = convertSbtToBot;
             let onChainSentGifts = [];
             let onChainTokenIds = new Set();
             try {
-                const sbtAddr = window.SBT_CONTRACT_ADDRESS || CHAIN_CONFIG.contracts.sbt;
+                const sbtAddr = window.SBT_CONTRACT_ADDRESS || '0x740e1ce98364EfF4d5e3d89b2b1fa513e0F75b16';
                 const sbtAbi = window.SBT_CONTRACT_ABI;
                 if (sbtAddr && sbtAbi && systemProvider) {
                     const sbtRead = new ethers.Contract(sbtAddr, sbtAbi, systemProvider);
@@ -7036,14 +6507,14 @@ window.convertSbtToBot = convertSbtToBot;
                                     <div style="font-size:10px;color:#71717a;margin-bottom:2px;">Sent ${timeAgo(gift.timestamp * (gift.timestamp < 1e12 ? 1000 : 1))}</div>
                                     ${gift.message ? '<div style="font-size:11px;color:#d4d4d8;font-style:italic;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:4px;padding:6px 10px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid rgba(255,255,255,0.05);">"' + gift.message.slice(0,60) + (gift.message.length>60?'...':'') + '"</div>' : ''}
                                     ${extraInfo}
-                                    ${gift.txHash ? '<a href="${CHAIN_CONFIG.explorerTxUrl} + gift.txHash + '" target="_blank" style="font-size:10px;color:#10b981;text-decoration:none;margin-top:3px;display:inline-block;">View Tx →</a>' : ''}
+                                    ${gift.txHash ? '<a href="https://scan.bohr.life/tx/' + gift.txHash + '" target="_blank" style="font-size:10px;color:#10b981;text-decoration:none;margin-top:3px;display:inline-block;">View Tx →</a>' : ''}
                                     ${gift.tokenId && gift.tokenId !== '---' ? '<div style="font-size:10px;color:#52525b;font-family:monospace;margin-top:3px;">Token #' + gift.tokenId + '</div>' : ''}
                                     ${makeClaimLink(gift.tokenId, true)}
                                 </div>
                             </div>
                             <div data-action-wrap style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0;">
                                 <div class="hist-amount">${parseFloat(gift.amount).toFixed(4)}</div>
-                                <div style="font-size:10px;color:#71717a;">${CHAIN_CONFIG.tokenSymbol}</div>
+                                <div style="font-size:10px;color:#71717a;">$BOT</div>
                                 ${actionHtml}
                             </div>
                         </div>
@@ -7082,13 +6553,13 @@ window.convertSbtToBot = convertSbtToBot;
                                     ${gift.message ? '<div style="font-size:11px;color:#d4d4d8;font-style:italic;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:4px;padding:6px 10px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid rgba(255,255,255,0.05);">"' + gift.message.slice(0,60) + (gift.message.length>60?'...':'') + '"</div>' : ''}
                                     ${gift.tokenId ? '<div style="font-size:10px;color:#52525b;font-family:monospace;margin-top:3px;">Token #' + gift.tokenId + '</div>' : ''}
                                     ${sentExtra}
-                                    ${gift.txHash ? '<a href="${CHAIN_CONFIG.explorerTxUrl} + gift.txHash + '" target="_blank" style="font-size:10px;color:#10b981;text-decoration:none;margin-top:3px;display:inline-block;">View Tx →</a>' : ''}
+                                    ${gift.txHash ? '<a href="https://scan.bohr.life/tx/' + gift.txHash + '" target="_blank" style="font-size:10px;color:#10b981;text-decoration:none;margin-top:3px;display:inline-block;">View Tx →</a>' : ''}
                                     ${makeClaimLink(gift.tokenId, !isClaimed)}
                                 </div>
                             </div>
                             <div style="text-align:right;flex-shrink:0;">
                                 <div class="hist-amount">-${parseFloat(gift.amount).toFixed(4)}</div>
-                                <div style="font-size:10px;color:#71717a;">${CHAIN_CONFIG.tokenSymbol}</div>
+                                <div style="font-size:10px;color:#71717a;">$BOT</div>
                             </div>
                         </div>
                     `);
@@ -7111,13 +6582,13 @@ window.convertSbtToBot = convertSbtToBot;
                                     </div>
                                     <div style="font-size:12px;color:#a1a1aa;margin-bottom:2px;font-weight:500;text-transform:capitalize;">${gift.style || 'Gift'} • ${timeAgo(gift.timestamp * (gift.timestamp < 1e12 ? 1000 : 1))}</div>
                                     ${gift.message ? '<div style="font-size:11px;color:#a1a1aa;font-style:italic;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:4px;padding:6px 10px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid rgba(255,255,255,0.05);">"' + gift.message.slice(0,60) + (gift.message.length>60?'...':'') + '"</div>' : ''}
-                                    ${gift.txHash ? '<a href="${CHAIN_CONFIG.explorerTxUrl} + gift.txHash + '" target="_blank" style="font-size:10px;color:#10b981;text-decoration:none;margin-top:3px;display:inline-block;">View Tx →</a>' : ''}
+                                    ${gift.txHash ? '<a href="https://scan.bohr.life/tx/' + gift.txHash + '" target="_blank" style="font-size:10px;color:#10b981;text-decoration:none;margin-top:3px;display:inline-block;">View Tx →</a>' : ''}
                                     ${makeClaimLink(gift.tokenId, false)}
                                 </div>
                             </div>
                             <div style="text-align:right;flex-shrink:0;">
                                 <div class="hist-amount">+${parseFloat(gift.amount).toFixed(4)}</div>
-                                <div style="font-size:10px;color:#71717a;">${CHAIN_CONFIG.tokenSymbol} claimed</div>
+                                <div style="font-size:10px;color:#71717a;">$BOT claimed</div>
                             </div>
                         </div>
                     `);
@@ -7171,7 +6642,7 @@ window.convertSbtToBot = convertSbtToBot;
                         if (actionWrap) {
                             const tokenId = el.dataset.tokenId;
                             if (tokenId) {
-                                actionWrap.innerHTML = '<div class="hist-amount">' + (card.querySelector('.hist-amount') ? card.querySelector('.hist-amount').textContent : '') + '</div><div style="font-size:10px;color:#71717a;">' + CHAIN_CONFIG.tokenSymbol + '</div><button onclick="claimGiftByTokenId(' + tokenId + ')" class="hist-claim-btn">Claim Now</button>';
+                                actionWrap.innerHTML = '<div class="hist-amount">' + (card.querySelector('.hist-amount') ? card.querySelector('.hist-amount').textContent : '') + '</div><div style="font-size:10px;color:#71717a;">$BOT</div><button onclick="claimGiftByTokenId(' + tokenId + ')" class="hist-claim-btn">Claim Now 🎉</button>';
                             }
                         }
                         el.textContent = '🔓 Unlocked!';
@@ -7268,8 +6739,7 @@ window.convertSbtToBot = convertSbtToBot;
                             'gift': els.navGiftBtn,
                             'special': els.navSpecialBtn,
                             'history': els.navHistoryBtn,
-                            'about': els.navAboutBtn,
-                            'agent': els.navAgentBtn
+                            'about': els.navAboutBtn
                         };
                         const btn = viewBtnMap[savedView];
                         if (btn) {
@@ -7278,8 +6748,7 @@ window.convertSbtToBot = convertSbtToBot;
                                 'gift': [els.giftView, 'gift'],
                                 'special': [els.specialGiftsView, 'special'],
                                 'history': [els.historyView, 'gift'],
-                                'about': [els.aboutView, 'about'],
-                                'agent': [els.aiAgentView, 'agent']
+                                'about': [els.aboutView, 'about']
                             };
                             const v = viewMap[savedView];
                             if (v) switchLayoutTab(btn, v[0], v[1]);
@@ -7507,7 +6976,7 @@ window.convertSbtToBot = convertSbtToBot;
 
         async function createGiveaway() {
             if (!isWalletConnected) { openWalletModal(); return; }
-            if (!systemProvider || !systemSigner) { alert("Connect wallet to " + CHAIN_CONFIG.chainName + " first."); return; }
+            if (!systemProvider || !systemSigner) { alert("Connect wallet to BOT Chain Testnet first."); return; }
 
             const amount = prompt('Enter BOT amount for the giveaway:');
             if (!amount || parseFloat(amount) <= 0) return;
@@ -7584,7 +7053,7 @@ window.convertSbtToBot = convertSbtToBot;
 
         async function claimGiveaway(code) {
             if (!isWalletConnected) { openWalletModal(); return; }
-            if (!systemProvider || !systemSigner) { alert("Connect wallet to " + CHAIN_CONFIG.chainName + " first."); return; }
+            if (!systemProvider || !systemSigner) { alert("Connect wallet to BOT Chain Testnet first."); return; }
 
             let data;
             try {
@@ -7644,7 +7113,7 @@ window.convertSbtToBot = convertSbtToBot;
                             '<p class="text-[10px] text-zinc-500 mb-1">Transaction Hash</p>' +
                             '<p class="text-xs text-zinc-300 font-mono truncate">' + tx.hash + '</p>' +
                         '</div>' +
-                        '<a href="${CHAIN_CONFIG.explorerTxUrl} + tx.hash + '" target="_blank" class="text-[10px] text-emerald-400/80 hover:underline">View on Explorer →</a>' +
+                        '<a href="https://scan.bohr.life/tx/' + tx.hash + '" target="_blank" class="text-[10px] text-emerald-400/80 hover:underline">View on Explorer →</a>' +
                         '<button id="giveawayClaimClose" class="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 py-3 rounded-xl font-bold text-sm transition cursor-pointer mt-2">Awesome!</button>' +
                     '</div>';
                     document.body.appendChild(overlay);
@@ -7731,7 +7200,7 @@ window.convertSbtToBot = convertSbtToBot;
             const titleEl = document.querySelector('.about-typewriter-text');
             if (titleEl && !titleEl.dataset.typed) {
                 titleEl.dataset.typed = '1';
-                const fullText = 'GIFT';
+                const fullText = 'GIFT BOT';
                 let i = 0;
                 function typeChar() {
                     if (i < fullText.length) {
@@ -7773,7 +7242,7 @@ window.convertSbtToBot = convertSbtToBot;
         var aiChatHistory = [];
         var aiChatSource = 'gifts';
 
-        var AI_SYSTEM_PROMPT = 'You are GIFT AI, a fun, creative gift advisor for GIFT BOT on BOT Chain Testnet. ' +
+        var AI_SYSTEM_PROMPT = 'You are Botchain AI, a fun, creative gift advisor for GIFT BOT on BOT Chain Testnet. ' +
         'Your personality: Enthusiastic, uses emojis, speaks like a cool friend who is obsessed with gifts. ' +
         'You ONLY help with: Gift recommendations (which type, how much, for what occasion), ' +
         'Writing gift messages (sweet, funny, heartfelt), ' +
@@ -7864,7 +7333,7 @@ window.convertSbtToBot = convertSbtToBot;
 
             if (aiChatHistory.length === 0) {
                 aiChatHistory.push({ role: 'system', content: AI_SYSTEM_PROMPT });
-                aiChatHistory.push({ role: 'assistant', content: 'Got it! I am GIFT AI, the gift expert for GIFT BOT. I only talk about gifts, rewards, and gifting ideas. Let me help you find the perfect gift! \uD83C\uDF81' });
+                aiChatHistory.push({ role: 'assistant', content: 'Got it! I am Botchain AI, the gift expert for GIFT BOT. I only talk about gifts, rewards, and gifting ideas. Let me help you find the perfect gift! \uD83C\uDF81' });
             }
             aiChatHistory.push({ role: 'user', content: msg });
 
@@ -7949,8 +7418,14 @@ window.convertSbtToBot = convertSbtToBot;
             window.history.replaceState({}, '', window.location.pathname);
         });
 
-        // Chain config (claim page scope)
-        const CLAIM_BOT_CHAIN = CHAIN_CONFIG;
+        // BOT Chain config (duplicated here for claim page scope)
+        const CLAIM_BOT_CHAIN = {
+            chainId: '0x3C8',
+            chainName: 'BOT Chain Testnet',
+            nativeCurrency: { name: 'BOT', symbol: 'BOT', decimals: 18 },
+            rpcUrls: ['https://rpc.bohr.life'],
+            blockExplorerUrls: ['https://scan.bohr.life']
+        };
 
         function giftIconFor(s) {
             var cardImages = {
@@ -8382,9 +7857,9 @@ window.convertSbtToBot = convertSbtToBot;
 
                 (async function() {
                     try {
-                        const provider = new ethers.JsonRpcProvider(CHAIN_CONFIG.rpcUrls[0]);
+                        const provider = new ethers.JsonRpcProvider('https://rpc.bohr.life');
                         const abi = window.SBT_CONTRACT_ABI || [];
-                        const addr = window.SBT_CONTRACT_ADDRESS || CHAIN_CONFIG.contracts.sbt;
+                        const addr = window.SBT_CONTRACT_ADDRESS || '0x740e1ce98364EfF4d5e3d89b2b1fa513e0F75b16';
                         if (!addr || abi.length === 0) throw new Error('Contract not configured');
                         const contract = new ethers.Contract(addr, abi, provider);
                         const data = await contract.getGiftData(tokenId);
@@ -8467,7 +7942,7 @@ window.convertSbtToBot = convertSbtToBot;
             const colors = giftThemeColor(gift.style);
             document.getElementById('claimGiftTypeIcon').textContent = icon;
             document.getElementById('claimFromAddr').textContent = gift.sender.slice(0,6) + '...' + gift.sender.slice(-4);
-            document.getElementById('claimAmountDisplay').textContent = parseFloat(gift.amount).toFixed(4) + ' ' + CHAIN_CONFIG.tokenSymbol;
+            document.getElementById('claimAmountDisplay').textContent = parseFloat(gift.amount).toFixed(4) + ' $BOT';
             document.getElementById('claimGiftTypeText').textContent = 'A ' + (gift.style || 'gift') + ' gift is waiting for you.';
             document.getElementById('claimBg').style.background = 'radial-gradient(ellipse at center, ' + colors[0] + '15 0%, rgba(9,9,11,0.97) 70%)';
 
@@ -8494,7 +7969,7 @@ window.convertSbtToBot = convertSbtToBot;
                     if (gift.style === 'goldenticket') {
                         setTimeout(() => {
                             const amt = document.getElementById('claimTicketAmount');
-                            if (amt) amt.textContent = parseFloat(gift.amount).toFixed(4) + ' ' + CHAIN_CONFIG.tokenSymbol;
+                            if (amt) amt.textContent = parseFloat(gift.amount).toFixed(4) + ' $BOT';
                         }, 100);
                     }
                 } else {
@@ -8654,7 +8129,7 @@ window.convertSbtToBot = convertSbtToBot;
                             window.realWalletAddress = connectedAddress;
                         }
 
-                        // Switch to configured chain if needed
+                        // Switch to BOT Chain if needed
                         try {
                             const chainId = await provider.request({ method: 'eth_chainId' });
                             if (chainId !== CLAIM_BOT_CHAIN.chainId) {
@@ -8763,7 +8238,7 @@ window.convertSbtToBot = convertSbtToBot;
             // Step 3: Claim
             dot3.classList.add('active');
             document.getElementById('claimStep2Title').textContent = 'Claiming your gift...';
-            document.getElementById('claimStep2Desc').textContent = 'Converting NFT to tokens.';
+            document.getElementById('claimStep2Desc').textContent = 'Converting NFT to BOT tokens on BOT Chain.';
 
             try {
                 if (!window.sbtContractInstance) {
@@ -8771,10 +8246,10 @@ window.convertSbtToBot = convertSbtToBot;
                     return;
                 }
 
-                document.getElementById('claimStep2Desc').textContent = 'Sending claim transaction...';
+                document.getElementById('claimStep2Desc').textContent = 'Sending claim transaction to BOT Chain...';
 
                 const claimTx = await window.sbtContractInstance.convertToBot(gift.tokenId);
-                document.getElementById('claimStep2Desc').textContent = 'Waiting for confirmation...';
+                document.getElementById('claimStep2Desc').textContent = 'Waiting for confirmation on BOT Chain...';
                 const claimReceipt = await claimTx.wait();
                 if (claimReceipt.status !== 1) throw new Error('Claim transaction failed on-chain');
 
@@ -8799,8 +8274,8 @@ window.convertSbtToBot = convertSbtToBot;
                 setTimeout(() => {
                     step2.classList.add('hidden');
                     step3.classList.remove('hidden');
-                    document.getElementById('claimSuccessAmount').textContent = parseFloat(gift.amount).toFixed(4) + ' ' + CHAIN_CONFIG.tokenSymbol;
-                    document.getElementById('claimSuccessTx').href = CHAIN_CONFIG.explorerTxUrl + claimTx.hash;
+                    document.getElementById('claimSuccessAmount').textContent = parseFloat(gift.amount).toFixed(4) + ' $BOT';
+                    document.getElementById('claimSuccessTx').href = 'https://scan.bohr.life/tx/' + claimTx.hash;
                     document.getElementById('claimSuccessTx').textContent = 'View Claim Tx ' + claimTx.hash.slice(0, 10) + '...';
 
                         const colors = giftThemeColor(gift.style);
@@ -8883,71 +8358,6 @@ window.convertSbtToBot = convertSbtToBot;
         </div>
     </div>
 
-
-    <!-- SIGNUP MODAL (Triggers after wallet connect) -->
-    <div id="signupModal" class="hidden fixed inset-0 z-[110] flex items-center justify-center bg-zinc-950/80 backdrop-blur-sm">
-        <div class="glass-panel rounded-3xl p-8 max-w-[420px] w-full mx-4 relative animate-slide-in">
-            <div class="text-center mb-6">
-                <div class="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto mb-4">
-                    <span class="text-3xl">&#128233;</span>
-                </div>
-                <h2 class="text-xl font-bold text-zinc-100">Register Your Account</h2>
-                <p class="text-xs text-zinc-500 mt-1">Enter your email to track your gifts and activity</p>
-            </div>
-            <div class="space-y-4">
-                <div class="space-y-1.5">
-                    <label class="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">Email Address</label>
-                    <input type="email" id="signupEmail" placeholder="you@email.com" class="w-full bg-zinc-950/60 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:outline-none focus:border-emerald-500/40 transition">
-                </div>
-                <div class="space-y-1.5">
-                    <label class="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">Password</label>
-                    <input type="password" id="signupPassword" placeholder="Min 6 characters" class="w-full bg-zinc-950/60 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:outline-none focus:border-emerald-500/40 transition">
-                </div>
-                <div id="signupError" class="text-xs text-red-400 hidden"></div>
-                <button id="signupSubmitBtn" class="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 py-3.5 rounded-xl font-bold text-sm tracking-wide transition-all duration-300 cursor-pointer">
-                    Register
-                </button>
-                <button onclick="document.getElementById('signupModal').classList.add('hidden')" class="w-full text-zinc-500 hover:text-zinc-300 py-2 text-xs transition cursor-pointer">
-                    Skip for now
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- REGISTERED SUCCESS POPUP -->
-    <div id="registeredSuccessPopup" class="hidden fixed inset-0 z-[120] flex items-center justify-center bg-zinc-950/80 backdrop-blur-sm">
-        <div class="glass-panel rounded-3xl p-8 max-w-[380px] w-full mx-4 text-center relative overflow-hidden animate-slide-in">
-            <div id="registeredConfetti" class="absolute inset-0 pointer-events-none"></div>
-            <div class="relative z-10">
-                <div class="w-20 h-20 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center mx-auto mb-4 pulse-glow success-pop">
-                    <svg class="w-10 h-10 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
-                </div>
-                <h2 class="text-2xl font-bold text-zinc-100 mb-2">Registered!</h2>
-                <p class="text-sm text-zinc-400 mb-1">Your account has been created successfully.</p>
-                <p id="registeredEmailDisplay" class="text-xs text-emerald-400 font-mono mb-6"></p>
-                <button onclick="document.getElementById('registeredSuccessPopup').classList.add('hidden')" class="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 py-3 rounded-xl font-bold text-sm transition-all cursor-pointer">
-                    Start Gifting
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- WALLET CONNECTED SUCCESS POPUP -->
-    <div id="walletConnectSuccessPopup" class="hidden fixed inset-0 z-[115] flex items-center justify-center bg-zinc-950/80 backdrop-blur-sm">
-        <div class="glass-panel rounded-3xl p-8 max-w-[380px] w-full mx-4 text-center relative overflow-hidden animate-slide-in">
-            <div class="relative z-10">
-                <div class="w-20 h-20 rounded-full bg-blue-500/20 border border-blue-500/40 flex items-center justify-center mx-auto mb-4 success-pop">
-                    <span class="text-4xl">&#128274;</span>
-                </div>
-                <h2 class="text-2xl font-bold text-zinc-100 mb-2">Wallet Connected!</h2>
-                <p id="walletConnectAddressDisplay" class="text-xs text-blue-400 font-mono mb-6"></p>
-                <button onclick="document.getElementById('walletConnectSuccessPopup').classList.add('hidden'); showSignupModal();" class="w-full bg-blue-500 hover:bg-blue-400 text-zinc-950 py-3 rounded-xl font-bold text-sm transition-all cursor-pointer">
-                    Continue
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- GIFT CLAIM MODAL (Shareable Link) -->
     <div id="giftClaimModal" class="hidden fixed inset-0 z-[70] flex items-center justify-center bg-zinc-950/90 backdrop-blur-md">
         <div class="glass-panel rounded-3xl p-8 max-w-md w-full mx-4 text-center space-y-5 relative overflow-hidden" id="giftClaimPanel">
@@ -8957,7 +8367,7 @@ window.convertSbtToBot = convertSbtToBot;
                     <span id="giftClaimIcon" class="text-4xl">🎁</span>
                 </div>
                 <h3 id="giftClaimTitle" class="text-2xl font-bold text-zinc-100 mb-1">Gift Awaits!</h3>
-                <p id="giftClaimSubtext" class="text-xs text-zinc-400 mb-3">Someone sent you a gift</p>
+                <p id="giftClaimSubtext" class="text-xs text-zinc-400 mb-3">Someone sent you a gift on BOT Chain</p>
             </div>
             <div id="giftClaimDetails" class="relative z-10 space-y-3">
                 <div class="bg-zinc-950/50 rounded-xl p-3 border border-zinc-700/30 text-left space-y-2">
@@ -9011,7 +8421,7 @@ window.convertSbtToBot = convertSbtToBot;
                     </div>
                     <div class="flex items-center justify-between">
                         <span class="text-[11px] text-zinc-500 uppercase tracking-wider">Amount</span>
-                        <span id="claimAmountDisplay" class="text-lg font-bold text-emerald-400 font-mono">0 ${CHAIN_CONFIG.tokenSymbol}</span>
+                        <span id="claimAmountDisplay" class="text-lg font-bold text-emerald-400 font-mono">0 $BOT</span>
                     </div>
                     <div class="flex items-center justify-between">
                         <span class="text-[11px] text-zinc-500 uppercase tracking-wider">Claim Fee</span>
@@ -9066,14 +8476,14 @@ window.convertSbtToBot = convertSbtToBot;
                 <div class="glass-panel rounded-2xl p-5 w-full space-y-3 text-left">
                     <div class="flex items-center justify-between">
                         <span class="text-[11px] text-zinc-500 uppercase tracking-wider">Received</span>
-                        <span id="claimSuccessAmount" class="text-lg font-bold text-emerald-400 font-mono">0 ${CHAIN_CONFIG.tokenSymbol}</span>
+                        <span id="claimSuccessAmount" class="text-lg font-bold text-emerald-400 font-mono">0 $BOT</span>
                     </div>
                     <div class="flex items-center justify-between">
                         <span class="text-[11px] text-zinc-500 uppercase tracking-wider">Transaction</span>
                         <a id="claimSuccessTx" href="#" target="_blank" class="text-xs text-emerald-400 font-mono hover:underline">View →</a>
                     </div>
                 </div>
-                <button onclick="document.getElementById('giftClaimOverlay').classList.add('hidden');window.location.href=window.location.pathname;" class="claim-action-btn mt-6" style="background: linear-gradient(135deg, #6366f1, #4f46e5);">Back to GIFT 🏠</button>
+                <button onclick="document.getElementById('giftClaimOverlay').classList.add('hidden');window.location.href=window.location.pathname;" class="claim-action-btn mt-6" style="background: linear-gradient(135deg, #6366f1, #4f46e5);">Back to GIFT BOT 🏠</button>
             </div>
         </div>
     </div>
