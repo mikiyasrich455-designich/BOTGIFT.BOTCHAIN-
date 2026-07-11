@@ -1588,6 +1588,30 @@
                     <div class="absolute -inset-0.5 rounded-2xl bg-indigo-500/20 blur-lg opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
                 </div>
 
+                <!-- 2. Secret Gift (Password-Locked) -->
+                <div class="special-gift-card stagger-card rounded-2xl overflow-hidden flex flex-col relative" 
+                     style="animation-delay: 60ms;" 
+                     data-special="secretGift">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783788304/Gemini_Generated_Image_l1g1u8l1g1u8l1g1_ggyihp.png" 
+                             class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" 
+                             alt="Secret Gift"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#7c2d12] via-[#7c2d12]/60 to-transparent"></div>
+                        <div class="absolute inset-0 bg-[#7c2d12]/40 backdrop-blur-[2px] hidden items-center justify-center text-4xl">🔐</div>
+                    </div>
+                    <div class="relative z-10 p-5 -mt-8 flex flex-col flex-1" style="background: linear-gradient(180deg, transparent 0%, #7c2d12 20%);">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-2 h-2 rounded-full bg-orange-400 animate-pulse"></div>
+                            <h3 class="text-lg font-bold text-white">Secret Gift</h3>
+                        </div>
+                        <p class="text-xs text-white/70 leading-relaxed flex-1">Password-locked gift. Custom image, custom password. Only the one who knows the code can claim.</p>
+                        <div class="mt-3 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-[10px] text-white/80 font-medium inline-block self-start">🔐 Password Locked</div>
+                    </div>
+                    <div class="absolute inset-0 rounded-2xl border border-orange-500/20 pointer-events-none"></div>
+                    <div class="absolute -inset-0.5 rounded-2xl bg-orange-500/20 blur-lg opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                </div>
+
                 <!-- 3. Mystery Box -->
                 <div class="relative pointer-events-none opacity-60" 
                      style="animation-delay: 120ms;">
@@ -2051,7 +2075,212 @@
             </div>
         </div>
 
-</div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- SPECIAL GIFT: SECRET GIFT (Password-Locked) -->
+        <!-- ========================================== -->
+        <div id="secretGiftView" class="w-full max-w-4xl mx-auto view-panel-transition hidden pb-8 relative z-10 overflow-y-auto max-h-[calc(100vh-100px)] custom-scrollbar">
+            <div class="flex items-center gap-2 mb-6 animate-slide-in">
+                <button id="backFromSecretGift" class="text-zinc-400 hover:text-zinc-200 transition text-sm flex items-center gap-1 cursor-pointer glass-panel px-3 py-1.5 rounded-full">← Special Gifts</button>
+            </div>
+            <div class="text-center mb-6 animate-slide-in">
+                <div class="relative inline-block">
+                    <div class="absolute -inset-4 bg-orange-500/20 rounded-full blur-2xl animate-pulse"></div>
+                    <div class="text-5xl mb-3 float-anim relative z-10">🔐</div>
+                </div>
+                <h2 class="text-2xl font-bold text-zinc-100 mb-1">Secret Gift</h2>
+                <p class="text-sm text-zinc-400">Password-locked gift. Only the one who knows the code can claim it.</p>
+            </div>
+
+            <!-- Main Form Panel -->
+            <div id="secretGiftFormPanel">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Left: Card Preview -->
+                    <div class="relative">
+                        <div class="glass-panel rounded-3xl overflow-hidden border border-orange-500/20" style="background: linear-gradient(180deg, #431407 0%, #7c2d12 40%, #431407 100%);">
+                            <div class="relative h-64 overflow-hidden flex items-center justify-center">
+                                <img id="secretGiftPreviewImage" class="absolute inset-0 w-full h-full object-cover hidden" alt="Secret Gift Image">
+                                <div id="secretGiftUploadArea" class="soulbound-upload-area relative rounded-2xl border-2 border-dashed border-orange-500/30 bg-orange-950/30 flex flex-col items-center justify-center cursor-pointer transition-all duration-300 overflow-hidden group" style="min-height: 220px; width: calc(100% - 2rem); margin: 1rem;">
+                                    <div class="flex flex-col items-center gap-3 p-6 text-center">
+                                        <div class="w-14 h-14 rounded-full bg-orange-500/10 border border-orange-500/30 flex items-center justify-center soulbound-spark-icon">
+                                            <span class="text-2xl">📸</span>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-semibold text-orange-300">Upload Gift Image</p>
+                                            <p class="text-[10px] text-orange-400/50 mt-1">PNG, JPG, GIF — Your custom gift art</p>
+                                        </div>
+                                    </div>
+                                    <img id="secretGiftPreviewImg" class="absolute inset-0 w-full h-full object-cover hidden" alt="Secret Gift NFT">
+                                    <div id="uploadChangeOverlay" class="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center opacity-0 transition-opacity duration-300 pointer-events-none">
+                                        <span class="text-xs text-white font-medium">Change Image</span>
+                                    </div>
+                                    <input type="file" id="secretGiftFileInput" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer z-20">
+                                </div>
+                            </div>
+                            <div class="px-6 pb-6 -mt-4 relative z-10">
+                                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-black/40 border border-orange-500/20 backdrop-blur-sm mb-3">
+                                    <span class="text-xs text-orange-300 font-medium">Amount</span>
+                                    <span id="sgPreviewAmount" class="text-xl font-bold text-orange-400 font-mono tracking-tight">0.0</span>
+                                    <span class="text-[10px] text-orange-400/60">$BOT</span>
+                                </div>
+                                <p id="sgPreviewMessage" class="text-white/80 text-xs font-medium leading-relaxed italic min-h-[1.5em]">Your secret message here...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Form -->
+                    <div class="space-y-4">
+                        <div class="space-y-2">
+                            <label class="text-[11px] tracking-wide text-zinc-400 font-medium block uppercase">Recipient Address</label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-sm">📬</span>
+                                <input type="text" id="sgRecipient" placeholder="0x..." class="w-full bg-zinc-950/80 border border-zinc-700/50 rounded-xl p-3.5 pl-10 text-xs text-zinc-100 focus:outline-none focus:border-orange-500/50 input-glow transition font-mono">
+                            </div>
+                            <div class="flex items-center gap-1.5 mt-1">
+                                <div id="sgRecipientCheck" class="w-1.5 h-1.5 rounded-full bg-zinc-600 transition-all duration-300" style="opacity: 0;"></div>
+                                <span id="sgRecipientStatus" class="text-[10px] text-zinc-500"></span>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[11px] tracking-wide text-zinc-400 font-medium block uppercase">Amount ($BOT)</label>
+                            <div class="relative">
+                                <input type="number" id="sgAmount" placeholder="0.0" step="0.001" class="w-full bg-zinc-950/80 border border-zinc-700/50 rounded-xl p-3.5 pr-16 text-xs text-zinc-100 focus:outline-none focus:border-orange-500/50 input-glow transition font-mono text-lg">
+                                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-zinc-500 font-medium">$BOT</span>
+                            </div>
+                            <p class="text-[10px] text-zinc-600">Est: <span id="sgUsdEstimate" class="text-zinc-500">$0.00</span></p>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[11px] tracking-wide text-zinc-400 font-medium block uppercase">Sender Name</label>
+                            <input type="text" id="sgSenderName" placeholder="e.g. Anonymous" class="w-full bg-zinc-950/80 border border-zinc-700/50 rounded-xl p-3 text-xs text-zinc-100 focus:outline-none focus:border-orange-500/50 input-glow transition">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[11px] tracking-wide text-zinc-400 font-medium block uppercase">Message</label>
+                            <textarea id="sgMessage" placeholder="A secret message for the lucky one..." rows="3" maxlength="140" class="w-full bg-zinc-950/80 border border-zinc-700/50 rounded-xl p-3.5 text-xs text-zinc-100 focus:outline-none focus:border-orange-500/50 input-glow transition resize-none"></textarea>
+                            <p class="text-[10px] text-zinc-600 text-right"><span id="sgCharCount">0</span>/140</p>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[11px] tracking-wide text-zinc-400 font-medium block uppercase flex items-center gap-1.5">
+                                <span>🔐</span> Secret Password
+                            </label>
+                            <div class="relative">
+                                <input type="password" id="sgPassword" placeholder="Set a password to lock this gift" class="w-full bg-zinc-950/80 border border-zinc-700/50 rounded-xl p-3.5 pr-10 text-xs text-zinc-100 focus:outline-none focus:border-orange-500/50 input-glow transition">
+                                <button type="button" id="sgTogglePassword" class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 transition text-sm cursor-pointer">👁️</button>
+                            </div>
+                            <p class="text-[10px] text-orange-400/60">Only people with this password can claim the gift</p>
+                        </div>
+
+                        <div class="glass-panel rounded-xl p-4 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[11px] text-zinc-500">Network</span>
+                                <span class="text-[11px] text-zinc-300 font-medium">BOT Chain Testnet</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-[11px] text-zinc-500">Type</span>
+                                <span class="text-[11px] text-orange-400 font-medium">🔐 Password-Locked Gift</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-[11px] text-zinc-500">Fee</span>
+                                <span class="text-[11px] text-zinc-400 font-mono">~0.0001 BOT gas</span>
+                            </div>
+                        </div>
+
+                        <button id="sgCreateBtn" class="w-full py-4 rounded-xl font-semibold text-sm tracking-wide transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 shadow-[0_0_30px_rgba(234,88,12,0.2)] hover:shadow-[0_0_40px_rgba(234,88,12,0.35)] hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100" style="background: linear-gradient(135deg, #ea580c, #f97316); color: white;">
+                            <span id="sgCreateBtnText">Create Secret Gift</span>
+                            <span id="sgCreateBtnIcon">🔐</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Review Panel (hidden by default) -->
+            <div id="secretGiftReviewPanel" class="hidden mt-8 animate-slide-in">
+                <div class="glass-panel rounded-3xl p-6 max-w-lg mx-auto">
+                    <h3 class="text-lg font-bold text-zinc-100 mb-4 text-center">Review Secret Gift</h3>
+                    <div class="rounded-2xl overflow-hidden border border-orange-500/30 shadow-[0_0_40px_rgba(234,88,12,0.15)] mb-6 relative" style="background: linear-gradient(180deg, #431407 0%, #7c2d12 40%, #431407 100%);">
+                        <div class="relative h-48 overflow-hidden flex items-center justify-center">
+                            <img id="sgFinalImage" class="w-full h-full object-cover" alt="Final Secret Gift">
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#431407] via-transparent to-transparent"></div>
+                            <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+                                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/50 border border-orange-500/20 backdrop-blur-sm">
+                                    <span class="text-sm font-bold text-orange-400 font-mono" id="sgFinalAmount">0.0</span>
+                                    <span class="text-[9px] text-orange-400/60">$BOT</span>
+                                </div>
+                                <span class="text-xs px-2.5 py-1 rounded-lg bg-orange-500/20 border border-orange-500/30 text-orange-300 font-medium">🔐 Password Locked</span>
+                            </div>
+                        </div>
+                        <div class="px-5 py-4">
+                            <p class="text-white/80 text-xs font-medium italic leading-relaxed" id="sgFinalMessage">"..."</p>
+                        </div>
+                    </div>
+                    <div class="space-y-2 mb-6">
+                        <div class="flex justify-between items-center py-1.5 border-b border-zinc-700/20">
+                            <span class="text-[11px] text-zinc-500">Recipient</span>
+                            <span class="text-xs text-zinc-200 font-mono" id="sgFinalRecipient">0x...</span>
+                        </div>
+                        <div class="flex justify-between items-center py-1.5 border-b border-zinc-700/20">
+                            <span class="text-[11px] text-zinc-500">Sender</span>
+                            <span class="text-xs text-zinc-200 font-medium" id="sgFinalSender">Anonymous</span>
+                        </div>
+                        <div class="flex justify-between items-center py-1.5 border-b border-zinc-700/20">
+                            <span class="text-[11px] text-zinc-500">Amount</span>
+                            <span class="text-sm text-orange-400 font-bold font-mono" id="sgFinalAmountDetail">0.0 $BOT</span>
+                        </div>
+                        <div class="flex justify-between items-center py-1.5 border-b border-zinc-700/20">
+                            <span class="text-[11px] text-zinc-500">Password</span>
+                            <span class="text-xs text-orange-300 font-mono" id="sgFinalPassword">••••••••</span>
+                        </div>
+                        <div class="flex justify-between items-center py-1.5">
+                            <span class="text-[11px] text-zinc-500">Est. Gas</span>
+                            <span class="text-[10px] text-zinc-400 font-mono">~0.0001 BOT</span>
+                        </div>
+                    </div>
+                    <div class="flex gap-3">
+                        <button id="sgBackBtn" class="flex-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 py-3 rounded-xl text-xs font-medium transition cursor-pointer">← Back</button>
+                        <button id="sgConfirmBtn" class="flex-1 py-3 rounded-xl font-bold text-sm text-white transition-all duration-300 cursor-pointer flex items-center justify-center gap-2" style="background: linear-gradient(135deg, #ea580c, #f97316);">
+                            <span id="sgConfirmText">Confirm & Create</span>
+                            <span id="sgConfirmIcon">🔐</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Success Panel (hidden by default) -->
+            <div id="secretGiftSuccessPanel" class="hidden mt-8 animate-slide-in">
+                <div class="glass-panel rounded-3xl p-8 max-w-md mx-auto text-center space-y-5">
+                    <div class="w-20 h-20 rounded-full bg-orange-500/20 border-2 border-orange-500/40 flex items-center justify-center mx-auto mb-4 gift-float-anim">
+                        <span class="text-4xl">🔐</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-zinc-100">Secret Gift Created!</h3>
+                    <p class="text-xs text-zinc-400">Share the link and password. First one to enter the password claims the gift!</p>
+                    <div class="bg-zinc-950/60 rounded-xl p-3 border border-zinc-700/30 text-left space-y-3">
+                        <div>
+                            <p class="text-[10px] text-zinc-500 mb-1">🔗 Claim Link</p>
+                            <div class="flex gap-1.5">
+                                <input type="text" id="sgClaimLinkInput" readonly value="" class="flex-1 bg-zinc-900/80 border border-zinc-700/50 rounded-lg px-2.5 py-1.5 text-[10px] text-orange-300 font-mono cursor-pointer min-w-0" onclick="this.select()">
+                                <button id="sgCopyLinkBtn" class="px-3 py-1.5 rounded-lg bg-orange-500/20 border border-orange-500/30 text-orange-300 text-[10px] font-medium transition hover:bg-orange-500/30 cursor-pointer whitespace-nowrap">Copy</button>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-zinc-500 mb-1">🔑 Password</p>
+                            <p class="text-xs text-orange-300 font-mono font-bold" id="sgSuccessPassword">••••••••</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-zinc-500 mb-1">Amount</p>
+                            <p class="text-sm text-orange-400 font-bold font-mono" id="sgSuccessAmount">0.0 BOT</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-zinc-500 mb-1">Transaction</p>
+                            <p class="text-[10px] text-zinc-300 font-mono truncate" id="sgSuccessTx">0x...</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-3">
+                        <button id="sgShareBtn" class="flex-1 bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/30 text-orange-400 py-3 rounded-xl font-medium text-xs transition cursor-pointer">Share</button>
+                        <button id="sgDoneBtn" class="flex-1 bg-orange-500 hover:bg-orange-400 text-white py-3 rounded-xl font-bold text-xs transition cursor-pointer">Done</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 
         <!-- ========================================== -->
@@ -2653,7 +2882,8 @@
             goldenticket: { icon: '🎫', title: 'Golden Ticket', desc: 'VIP access pass. Exclusive and golden.', cardImg: '' },
             treasure: { icon: '🏴‍☠️', title: 'Treasure Chest', desc: 'Pirate gold and gems. X marks the spot.', cardImg: '' },
             christmas: { icon: '🎄', title: 'Christmas', desc: 'Holiday spirit and cheer. Merry Christmas!', cardImg: '' },
-            diamond: { icon: '💎', title: 'Diamond Hands', desc: 'Rare and precious. Only for diamond hands.', cardImg: '' }
+            diamond: { icon: '💎', title: 'Diamond Hands', desc: 'Rare and precious. Only for diamond hands.', cardImg: '' },
+            secretGift: { icon: '🔐', title: 'Secret Gift', desc: 'Password-locked gift with custom image. Only the one who knows the code can claim.', cardImg: 'https://res.cloudinary.com/dguexkgjw/image/upload/v1783788304/Gemini_Generated_Image_l1g1u8l1g1u8l1g1_ggyihp.png' }
         };
         const GIFT_THEME = {
             cryptoBro: {
@@ -2727,6 +2957,14 @@
                 traitName: 'Diamond Grade', traitValue: () => ['Flawless VVS','Internally Clear','Rare Cut','Brilliant Shine'][Math.floor(Math.random()*4)],
                 successIcon: '💎', successTitle: 'Diamond Delivered!', claimIcon: '💎',
                 bgStyle: 'linear-gradient(135deg, #0891b2 0%, #22d3ee 100%)'
+            },
+            secretGift: {
+                gradient: ['#7c2d12','#ea580c'], glowColor: 'rgba(234,88,12,0.4)',
+                particles: ['🔐','🗝️','🔒','💎','✨'], confetti: ['#ea580c','#f97316','#fb923c','#fed7aa','#7c2d12'],
+                nftImageSvg: '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="%237c2d12"/><stop offset="100%" stop-color="%23ea580c"/></linearGradient></defs><rect width="400" height="400" rx="24" fill="url(%23bg)"/><text x="200" y="160" text-anchor="middle" font-size="80">🔐</text><text x="200" y="230" text-anchor="middle" font-family="monospace" font-size="26" fill="white" font-weight="bold">SECRET GIFT</text><text x="200" y="265" text-anchor="middle" font-family="sans-serif" font-size="14" fill="rgba(255,255,255,0.7)">Password Protected</text></svg>',
+                traitName: 'Secret Tier', traitValue: () => ['Legendary Lock','Epic Vault','Rare Cipher','Golden Key'][Math.floor(Math.random()*4)],
+                successIcon: '🔐', successTitle: 'Secret Gift Sealed!', claimIcon: '🔐',
+                bgStyle: 'linear-gradient(135deg, #7c2d12 0%, #ea580c 100%)'
             }
         };
         function getGiftTheme(style) { return GIFT_THEME[style] || GIFT_THEME.cryptoBro; }
@@ -2888,6 +3126,7 @@
         // Special Gift Views
         const specialViews = {
             soulbound: document.getElementById('soulboundView'),
+            secretGift: document.getElementById('secretGiftView'),
             gasless: document.getElementById('gaslessView'),
             mysteryBox: document.getElementById('mysteryBoxView'),
             dao: document.getElementById('daoView'),
@@ -3571,6 +3810,7 @@
 
         // Back buttons
         document.getElementById('backFromSoulbound').addEventListener('click', backToSpecialGrid);
+        document.getElementById('backFromSecretGift').addEventListener('click', backToSpecialGrid);
         document.getElementById('backFromGasless').addEventListener('click', backToSpecialGrid);
         document.getElementById('backFromMystery').addEventListener('click', backToSpecialGrid);
         document.getElementById('backFromDao').addEventListener('click', backToSpecialGrid);
@@ -6036,7 +6276,8 @@ window.convertSbtToBot = convertSbtToBot;
                     diamond: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#0891b2,#22d3ee);display:flex;align-items:center;justify-content:center;font-size:22px;">💎</div>',
                     dao: '<img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783197571/photo_5931304236568218967_y_j2irwa.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:14px;" alt="DAO">',
                     timelock: '<img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783197672/photo_5931304236568218965_y_fugghd.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:14px;" alt="Time-Locked">',
-                    designer: '<img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783197536/photo_5931304236568218968_y_djl9s6.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:14px;" alt="Designer">'
+                    designer: '<img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783197536/photo_5931304236568218968_y_djl9s6.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:14px;" alt="Designer">',
+                    secretGift: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#7c2d12,#ea580c);display:flex;align-items:center;justify-content:center;font-size:22px;">🔐</div>'
                 };
                 return cardImages[s] || '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#059669,#34d399);display:flex;align-items:center;justify-content:center;font-size:22px;">🎁</div>';
             }
@@ -6231,7 +6472,8 @@ window.convertSbtToBot = convertSbtToBot;
                     diamond: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#0891b2,#22d3ee);display:flex;align-items:center;justify-content:center;font-size:22px;">💎</div>',
                     dao: '<img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783197571/photo_5931304236568218967_y_j2irwa.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:14px;" alt="DAO">',
                     timelock: '<img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783197672/photo_5931304236568218965_y_fugghd.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:14px;" alt="Time-Locked">',
-                    designer: '<img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783197536/photo_5931304236568218968_y_djl9s6.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:14px;" alt="Designer">'
+                    designer: '<img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783197536/photo_5931304236568218968_y_djl9s6.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:14px;" alt="Designer">',
+                    secretGift: '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#7c2d12,#ea580c);display:flex;align-items:center;justify-content:center;font-size:22px;">🔐</div>'
                 };
                 return cardImages[s] || '<div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(135deg,#059669,#34d399);display:flex;align-items:center;justify-content:center;font-size:22px;">🎁</div>';
             }
@@ -7156,6 +7398,442 @@ window.convertSbtToBot = convertSbtToBot;
             }
         })();
 
+        // ==========================================
+        // 8b. SECRET GIFT (Password-Locked) BACKEND
+        // ==========================================
+        // Secret Gift: Creator funds a vault wallet + mints SBT NFT to vault,
+        // encrypts vault PK with password, generates shareable claim link.
+        // Claimer enters password → decrypts PK → sweeps vault funds.
+
+        async function encryptWithPassword(data, password) {
+            const enc = new TextEncoder();
+            const salt = crypto.getRandomValues(new Uint8Array(16));
+            const iv = crypto.getRandomValues(new Uint8Array(12));
+            const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
+            const key = await crypto.subtle.deriveKey({ name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' }, keyMaterial, { name: 'AES-GCM', length: 256 }, false, ['encrypt']);
+            const encrypted = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(data));
+            return btoa(String.fromCharCode(...salt, ...iv, ...new Uint8Array(encrypted)));
+        }
+
+        async function decryptWithPassword(encryptedB64, password) {
+            const enc = new TextEncoder();
+            const dec = new TextDecoder();
+            const raw = Uint8Array.from(atob(encryptedB64), c => c.charCodeAt(0));
+            const salt = raw.slice(0, 16);
+            const iv = raw.slice(16, 28);
+            const ciphertext = raw.slice(28);
+            const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
+            const key = await crypto.subtle.deriveKey({ name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' }, keyMaterial, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+            const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, ciphertext);
+            return dec.decode(decrypted);
+        }
+
+        function getSecretGiftStorage() {
+            try { return JSON.parse(localStorage.getItem('web3gift_secretgifts') || '{}'); } catch (e) { return {}; }
+        }
+        function saveSecretGiftStorage(data) {
+            try { localStorage.setItem('web3gift_secretgifts', JSON.stringify(data)); } catch (e) {}
+        }
+
+        let sgUploadedImageData = null;
+
+        (function initSecretGiftForm() {
+            const fileInput = document.getElementById('secretGiftFileInput');
+            const uploadArea = document.getElementById('secretGiftUploadArea');
+            const previewImg = document.getElementById('secretGiftPreviewImg');
+            const previewImage = document.getElementById('secretGiftPreviewImage');
+            const amountInput = document.getElementById('sgAmount');
+            const messageInput = document.getElementById('sgMessage');
+            const recipientInput = document.getElementById('sgRecipient');
+            const passwordInput = document.getElementById('sgPassword');
+            const toggleBtn = document.getElementById('sgTogglePassword');
+            const createBtn = document.getElementById('sgCreateBtn');
+            const backBtn = document.getElementById('sgBackBtn');
+            const confirmBtn = document.getElementById('sgConfirmBtn');
+            const doneBtn = document.getElementById('sgDoneBtn');
+            const shareBtn = document.getElementById('sgShareBtn');
+            const copyLinkBtn = document.getElementById('sgCopyLinkBtn');
+
+            if (toggleBtn) toggleBtn.addEventListener('click', () => {
+                passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
+                toggleBtn.textContent = passwordInput.type === 'password' ? '👁️' : '🙈';
+            });
+
+            if (fileInput) fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    sgUploadedImageData = ev.target.result;
+                    if (previewImg) { previewImg.src = sgUploadedImageData; previewImg.classList.remove('hidden'); }
+                    if (previewImage) { previewImage.src = sgUploadedImageData; previewImage.classList.remove('hidden'); }
+                    if (uploadArea) { uploadArea.classList.add('has-image'); uploadArea.style.minHeight = '0'; }
+                };
+                reader.readAsDataURL(file);
+            });
+
+            if (recipientInput) recipientInput.addEventListener('input', () => {
+                const check = document.getElementById('sgRecipientCheck');
+                const status = document.getElementById('sgRecipientStatus');
+                const val = recipientInput.value.trim();
+                if (val.startsWith('0x') && val.length === 42) {
+                    check.style.background = '#10b981'; check.style.opacity = '1'; status.textContent = 'Valid address'; status.className = 'text-[10px] text-emerald-400';
+                } else if (val.length > 0) {
+                    check.style.background = '#ef4444'; check.style.opacity = '1'; status.textContent = 'Invalid address'; status.className = 'text-[10px] text-red-400';
+                } else {
+                    check.style.opacity = '0'; status.textContent = '';
+                }
+                updateSgPreview();
+            });
+
+            if (amountInput) amountInput.addEventListener('input', updateSgPreview);
+            if (messageInput) messageInput.addEventListener('input', updateSgPreview);
+
+            function updateSgPreview() {
+                const amount = document.getElementById('sgAmount');
+                const message = document.getElementById('sgMessage');
+                const previewAmt = document.getElementById('sgPreviewAmount');
+                const previewMsg = document.getElementById('sgPreviewMessage');
+                if (amount && previewAmt) previewAmt.textContent = amount.value || '0.0';
+                if (message && previewMsg) previewMsg.textContent = message.value || 'Your secret message here...';
+            }
+
+            if (createBtn) createBtn.addEventListener('click', () => {
+                if (!isWalletConnected) { openWalletModal(); return; }
+                if (!systemSigner) { alert('Connect wallet to BOT Chain Testnet first.'); return; }
+                const recipient = recipientInput.value.trim();
+                const amount = amountInput.value.trim();
+                const message = messageInput.value.trim();
+                const password = passwordInput.value.trim();
+                const senderName = document.getElementById('sgSenderName').value.trim();
+
+                if (!recipient || !recipient.startsWith('0x') || recipient.length !== 42) { alert('Please enter a valid recipient address.'); return; }
+                if (!amount || parseFloat(amount) <= 0) { alert('Amount must be greater than 0.'); return; }
+                if (!sgUploadedImageData) { alert('Please upload an image for the gift card.'); return; }
+                if (!password || password.length < 4) { alert('Password must be at least 4 characters.'); return; }
+
+                document.getElementById('sgFinalImage').src = sgUploadedImageData;
+                document.getElementById('sgFinalAmount').textContent = parseFloat(amount).toFixed(4);
+                document.getElementById('sgFinalMessage').textContent = '"' + (message || 'A secret gift for you') + '"';
+                document.getElementById('sgFinalRecipient').textContent = recipient.slice(0, 6) + '...' + recipient.slice(-4);
+                document.getElementById('sgFinalSender').textContent = senderName || realWalletAddress.slice(0, 6) + '...' + realWalletAddress.slice(-4);
+                document.getElementById('sgFinalAmountDetail').textContent = parseFloat(amount).toFixed(4) + ' $BOT';
+                document.getElementById('sgFinalPassword').textContent = '•'.repeat(password.length);
+
+                document.getElementById('secretGiftFormPanel').classList.add('hidden');
+                document.getElementById('secretGiftReviewPanel').classList.remove('hidden');
+            });
+
+            if (backBtn) backBtn.addEventListener('click', () => {
+                document.getElementById('secretGiftReviewPanel').classList.add('hidden');
+                document.getElementById('secretGiftFormPanel').classList.remove('hidden');
+            });
+
+            if (confirmBtn) confirmBtn.addEventListener('click', async () => {
+                if (!sbtContractInstance || !systemSigner) { alert('Contract not initialized. Please reconnect wallet.'); return; }
+                confirmBtn.disabled = true;
+                document.getElementById('sgConfirmText').textContent = 'Creating...';
+                document.getElementById('sgConfirmIcon').textContent = '⏳';
+
+                try {
+                    const recipient = recipientInput.value.trim();
+                    const amount = amountInput.value.trim();
+                    const message = messageInput.value.trim();
+                    const password = passwordInput.value.trim();
+                    const senderName = document.getElementById('sgSenderName').value.trim() || realWalletAddress.slice(0, 6) + '...' + realWalletAddress.slice(-4);
+
+                    document.getElementById('sgConfirmText').textContent = 'Uploading to IPFS...';
+                    const vaultWallet = ethers.Wallet.createRandom();
+                    const vaultAddress = vaultWallet.address;
+
+                    const imgFile = dataUriToFile(sgUploadedImageData, 'secret-gift.png');
+                    const imgHash = await uploadImageToPinata(imgFile);
+                    const imageDataUrl = PINATA_GATEWAY + imgHash;
+
+                    document.getElementById('sgConfirmText').textContent = 'Creating metadata...';
+                    const metadata = {
+                        name: '🔐 Secret Gift from ' + senderName,
+                        description: message || 'A password-locked secret gift on BOT Chain',
+                        image: imageDataUrl,
+                        external_url: window.location.origin,
+                        attributes: [
+                            { trait_type: 'Gift Type', value: 'Secret Gift' },
+                            { trait_type: 'Amount', value: parseFloat(amount), display_type: 'number' },
+                            { trait_type: 'Sender', value: realWalletAddress },
+                            { trait_type: 'Sender Name', value: senderName },
+                            { trait_type: 'Message', value: message || '' },
+                            { trait_type: 'Chain', value: 'BOT Chain Testnet' }
+                        ]
+                    };
+                    const metaHash = await uploadMetadataToPinata(metadata);
+                    const tokenURI = 'ipfs://' + metaHash;
+
+                    document.getElementById('sgConfirmText').textContent = 'Minting NFT...';
+                    const amountWei = ethers.parseEther(amount);
+                    const tx = await sbtContractInstance.mintSoulboundGift(vaultAddress, tokenURI, message || 'Secret Gift', { value: amountWei });
+
+                    document.getElementById('sgConfirmText').textContent = 'Encrypting...';
+                    const receipt = await tx.wait();
+                    if (receipt.status !== 1) throw new Error('Transaction failed on-chain');
+
+                    let mintedTokenId = '---';
+                    const event = receipt.logs.find(log => {
+                        try { const parsed = sbtContractInstance.interface.parseLog(log); return parsed && parsed.name === 'SoulboundGiftMinted'; } catch (e) { return false; }
+                    });
+                    if (event) {
+                        const parsed = sbtContractInstance.interface.parseLog(event);
+                        mintedTokenId = parsed.args.tokenId.toString();
+                    }
+
+                    const encryptedPK = await encryptWithPassword(vaultWallet.privateKey, password);
+                    const claimPayload = btoa(JSON.stringify({
+                        ep: encryptedPK,
+                        amt: parseFloat(amount),
+                        msg: message || '',
+                        sender: realWalletAddress,
+                        senderName: senderName,
+                        tokenId: mintedTokenId,
+                        img: imageDataUrl,
+                        created: Date.now()
+                    }));
+                    const claimUrl = window.location.origin + window.location.pathname + '?secretGift=' + encodeURIComponent(claimPayload);
+
+                    const storage = getSecretGiftStorage();
+                    storage[vaultAddress.toLowerCase()] = {
+                        amount: parseFloat(amount),
+                        message: message,
+                        sender: realWalletAddress,
+                        senderName: senderName,
+                        vaultAddress: vaultAddress,
+                        tokenId: mintedTokenId,
+                        txHash: tx.hash,
+                        claimed: false,
+                        createdAt: Date.now()
+                    };
+                    saveSecretGiftStorage(storage);
+
+                    document.getElementById('sgClaimLinkInput').value = claimUrl;
+                    document.getElementById('sgSuccessPassword').textContent = password;
+                    document.getElementById('sgSuccessAmount').textContent = parseFloat(amount).toFixed(4) + ' BOT';
+                    document.getElementById('sgSuccessTx').textContent = tx.hash;
+
+                    if (copyLinkBtn) copyLinkBtn.addEventListener('click', () => {
+                        navigator.clipboard.writeText(claimUrl).then(() => {
+                            copyLinkBtn.textContent = 'Copied!'; setTimeout(() => { copyLinkBtn.textContent = 'Copy'; }, 2000);
+                        }).catch(() => {
+                            document.getElementById('sgClaimLinkInput').select(); document.execCommand('copy');
+                            copyLinkBtn.textContent = 'Copied!'; setTimeout(() => { copyLinkBtn.textContent = 'Copy'; }, 2000);
+                        });
+                    });
+                    if (shareBtn) shareBtn.addEventListener('click', () => {
+                        if (navigator.share) {
+                            navigator.share({ title: '🔐 Secret Gift for you!', text: 'You received a secret gift! Enter the password to claim:', url: claimUrl });
+                        } else {
+                            navigator.clipboard.writeText(claimUrl).then(() => { shareBtn.textContent = 'Copied!'; setTimeout(() => { shareBtn.textContent = 'Share'; }, 2000); });
+                        }
+                    });
+                    if (doneBtn) doneBtn.addEventListener('click', () => {
+                        document.getElementById('secretGiftSuccessPanel').classList.add('hidden');
+                        document.getElementById('secretGiftFormPanel').classList.remove('hidden');
+                        resetSecretGiftForm();
+                        backToSpecialGrid();
+                    });
+
+                    document.getElementById('secretGiftReviewPanel').classList.add('hidden');
+                    document.getElementById('secretGiftSuccessPanel').classList.remove('hidden');
+
+                    await updateRealBalance();
+                    if (typeof loadOnChainHistory === 'function') await loadOnChainHistory();
+                } catch (err) {
+                    console.error('Secret Gift creation failed:', err);
+                    alert('Failed to create Secret Gift: ' + (err.reason || err.message || 'Unknown error'));
+                    document.getElementById('sgConfirmText').textContent = 'Confirm & Create';
+                    document.getElementById('sgConfirmIcon').textContent = '🔐';
+                } finally {
+                    confirmBtn.disabled = false;
+                }
+            });
+        })();
+
+        function resetSecretGiftForm() {
+            sgUploadedImageData = null;
+            const recipientInput = document.getElementById('sgRecipient');
+            const amountInput = document.getElementById('sgAmount');
+            const messageInput = document.getElementById('sgMessage');
+            const senderNameInput = document.getElementById('sgSenderName');
+            const passwordInput = document.getElementById('sgPassword');
+            if (recipientInput) recipientInput.value = '';
+            if (amountInput) amountInput.value = '';
+            if (messageInput) messageInput.value = '';
+            if (senderNameInput) senderNameInput.value = '';
+            if (passwordInput) passwordInput.value = '';
+            const previewImg = document.getElementById('secretGiftPreviewImg');
+            const previewImage = document.getElementById('secretGiftPreviewImage');
+            const uploadArea = document.getElementById('secretGiftUploadArea');
+            if (previewImg) { previewImg.classList.add('hidden'); previewImg.src = ''; }
+            if (previewImage) { previewImage.classList.add('hidden'); previewImage.src = ''; }
+            if (uploadArea) { uploadArea.classList.remove('has-image'); uploadArea.style.minHeight = '220px'; }
+            document.getElementById('sgPreviewAmount').textContent = '0.0';
+            document.getElementById('sgPreviewMessage').textContent = 'Your secret message here...';
+            const check = document.getElementById('sgRecipientCheck');
+            if (check) check.style.opacity = '0';
+            document.getElementById('secretGiftFormPanel').classList.remove('hidden');
+            document.getElementById('secretGiftReviewPanel').classList.add('hidden');
+            document.getElementById('secretGiftSuccessPanel').classList.add('hidden');
+        }
+
+        async function claimSecretGift(payload) {
+            if (!isWalletConnected) { openWalletModal(); return; }
+            if (!systemProvider || !systemSigner) { alert('Connect wallet to BOT Chain Testnet first.'); return; }
+
+            let data;
+            try { data = JSON.parse(atob(payload)); } catch (e) { alert('Invalid secret gift code.'); return; }
+            if (!data.ep || !data.amt) { alert('Invalid secret gift format.'); return; }
+
+            const overlay = document.createElement('div');
+            overlay.id = 'secretGiftClaimOverlay';
+            overlay.className = 'fixed inset-0 z-[70] flex items-center justify-center bg-zinc-950/90 backdrop-blur-md';
+            overlay.innerHTML = '<div class="glass-panel rounded-3xl p-8 max-w-md w-full mx-4 text-center space-y-5 relative overflow-hidden" style="border-color: rgba(234,88,12,0.3);">' +
+                '<div class="w-20 h-20 rounded-full bg-orange-500/20 border-2 border-orange-500/40 flex items-center justify-center mx-auto mb-4 gift-float-anim"><span class="text-4xl">🔐</span></div>' +
+                '<h3 class="text-2xl font-bold text-zinc-100">Secret Gift</h3>' +
+                (data.img ? '<div class="rounded-xl overflow-hidden border border-orange-500/20 mx-auto max-w-[200px]"><img src="' + data.img + '" class="w-full h-auto" alt="Gift"></div>' : '') +
+                '<p class="text-xs text-zinc-400">' + (data.msg || 'A secret gift awaits!') + '</p>' +
+                '<p class="text-sm font-bold text-orange-400 font-mono">' + parseFloat(data.amt).toFixed(4) + ' BOT</p>' +
+                '<p class="text-[10px] text-zinc-500">From: ' + (data.senderName || (data.sender ? data.sender.slice(0,6)+'...'+data.sender.slice(-4) : 'Anonymous')) + '</p>' +
+                '<div class="space-y-2">' +
+                    '<label class="text-[11px] text-zinc-400 font-medium block uppercase">Enter Password to Claim</label>' +
+                    '<input type="password" id="sgClaimPassword" placeholder="Enter the secret password" class="w-full bg-zinc-950/80 border border-zinc-700/50 rounded-xl p-3.5 text-xs text-zinc-100 focus:outline-none focus:border-orange-500/50 input-glow transition font-mono">' +
+                '</div>' +
+                '<button id="sgClaimBtn" class="w-full py-3.5 rounded-xl font-bold text-sm text-white transition-all duration-300 cursor-pointer" style="background: linear-gradient(135deg, #ea580c, #f97316);">Claim Gift 🔐</button>' +
+                '<p id="sgClaimStatus" class="text-[10px] text-zinc-500 hidden"></p>' +
+                '<button id="sgClaimCloseBtn" class="w-full bg-zinc-800 hover:bg-zinc-700 text-zinc-400 py-2.5 rounded-xl text-xs transition cursor-pointer">Close</button>' +
+            '</div>';
+            document.body.appendChild(overlay);
+
+            document.getElementById('sgClaimCloseBtn').addEventListener('click', () => overlay.remove());
+            document.getElementById('sgClaimBtn').addEventListener('click', async () => {
+                const password = document.getElementById('sgClaimPassword').value.trim();
+                const statusEl = document.getElementById('sgClaimStatus');
+                const claimBtnEl = document.getElementById('sgClaimBtn');
+
+                if (!password) { statusEl.textContent = 'Please enter the password.'; statusEl.className = 'text-[10px] text-red-400'; return; }
+
+                claimBtnEl.disabled = true;
+                claimBtnEl.textContent = 'Decrypting...';
+                statusEl.className = 'text-[10px] text-orange-400';
+                statusEl.textContent = 'Decrypting vault key...';
+
+                try {
+                    const privateKey = await decryptWithPassword(data.ep, password);
+                    const vaultWallet = new ethers.Wallet(privateKey, systemProvider);
+                    const vaultAddress = vaultWallet.address;
+                    const balance = await systemProvider.getBalance(vaultAddress);
+
+                    if (balance === 0n) {
+                        statusEl.textContent = 'This gift has already been claimed or the vault is empty.';
+                        statusEl.className = 'text-[10px] text-red-400';
+                        claimBtnEl.disabled = false;
+                        claimBtnEl.textContent = 'Claim Gift 🔐';
+                        return;
+                    }
+
+                    statusEl.textContent = 'Claiming ' + parseFloat(ethers.formatEther(balance)).toFixed(4) + ' BOT...';
+                    claimBtnEl.textContent = 'Sending...';
+
+                    const claimerAddress = await systemSigner.getAddress();
+                    const tx = await vaultWallet.sendTransaction({ to: claimerAddress, value: balance });
+                    const receipt = await tx.wait();
+
+                    if (receipt.status === 1) {
+                        const storage = getSecretGiftStorage();
+                        if (storage[vaultAddress.toLowerCase()]) {
+                            storage[vaultAddress.toLowerCase()].claimed = true;
+                            saveSecretGiftStorage(storage);
+                        }
+
+                        overlay.remove();
+                        const successOverlay = document.createElement('div');
+                        successOverlay.className = 'fixed inset-0 z-[80] flex items-center justify-center bg-zinc-950/90 backdrop-blur-md';
+                        successOverlay.innerHTML = '<div class="glass-panel rounded-3xl p-8 max-w-md w-full mx-4 text-center space-y-5 relative overflow-hidden" style="border-color: rgba(234,88,12,0.3);">' +
+                            '<div class="absolute inset-0 pointer-events-none">' +
+                                Array(25).fill(0).map((_, i) => {
+                                    const c = ['#ea580c','#f97316','#fb923c','#fed7aa','#7c2d12'][Math.floor(Math.random()*5)];
+                                    return '<div class="absolute rounded-full" style="width:'+(4+Math.random()*8)+'px;height:'+(4+Math.random()*8)+'px;background:'+c+';left:'+Math.random()*100+'%;top:'+Math.random()*100+'%;opacity:0;animation:confettiFall '+(1.5+Math.random())+'s ease-out '+Math.random()*0.5+'s forwards;"></div>';
+                                }).join('') +
+                            '</div>' +
+                            '<div class="relative z-10">' +
+                                '<div class="w-20 h-20 rounded-full bg-orange-500/20 border-2 border-orange-500/40 flex items-center justify-center mx-auto mb-4 claim-success-pop"><span class="text-4xl">🎉</span></div>' +
+                                '<h3 class="text-2xl font-bold text-zinc-100 mb-2">Secret Gift Claimed!</h3>' +
+                                '<p class="text-lg font-bold text-orange-400 font-mono">+' + parseFloat(ethers.formatEther(balance)).toFixed(4) + ' BOT</p>' +
+                                '<p class="text-xs text-zinc-400 mt-1">' + (data.msg || '') + '</p>' +
+                            '</div>' +
+                            '<div class="relative z-10 bg-zinc-950/60 rounded-2xl p-3 border border-zinc-700/30">' +
+                                '<p class="text-[10px] text-zinc-500 mb-1">Transaction Hash</p>' +
+                                '<p class="text-xs text-zinc-300 font-mono truncate">' + tx.hash + '</p>' +
+                            '</div>' +
+                            '<a href="https://scan.bohr.life/tx/' + tx.hash + '" target="_blank" class="relative z-10 text-[10px] text-orange-400/80 hover:underline">View on Explorer →</a>' +
+                            '<button id="sgClaimSuccessClose" class="relative z-10 w-full bg-orange-500 hover:bg-orange-400 text-white py-3 rounded-xl font-bold text-sm transition cursor-pointer mt-2">Awesome!</button>' +
+                        '</div>';
+                        document.body.appendChild(successOverlay);
+                        document.getElementById('sgClaimSuccessClose').addEventListener('click', () => successOverlay.remove());
+
+                        await updateRealBalance();
+                        if (typeof loadOnChainHistory === 'function') await loadOnChainHistory();
+                    }
+                } catch (err) {
+                    console.error('Secret Gift claim failed:', err);
+                    if (err.message && err.message.includes('decrypt')) {
+                        statusEl.textContent = 'Wrong password. Try again.';
+                        statusEl.className = 'text-[10px] text-red-400';
+                    } else {
+                        statusEl.textContent = 'Claim failed: ' + (err.reason || err.message || 'Unknown error');
+                        statusEl.className = 'text-[10px] text-red-400';
+                    }
+                    claimBtnEl.disabled = false;
+                    claimBtnEl.textContent = 'Claim Gift 🔐';
+                }
+            });
+        }
+
+        window.claimSecretGift = claimSecretGift;
+
+        // Check URL for secret gift claim code on page load
+        (function checkSecretGiftUrl() {
+            const params = new URLSearchParams(window.location.search);
+            const payload = params.get('secretGift');
+            if (payload) {
+                window.addEventListener('load', () => {
+                    setTimeout(() => {
+                        if (isWalletConnected) {
+                            claimSecretGift(payload);
+                        } else {
+                            const claimBtn = document.createElement('button');
+                            claimBtn.id = 'secretGiftClaimBanner';
+                            claimBtn.className = 'fixed bottom-6 right-6 z-[80] text-white px-6 py-3 rounded-full font-bold text-sm shadow-lg transition cursor-pointer animate-fade-up';
+                            claimBtn.style.background = 'linear-gradient(135deg, #ea580c, #f97316)';
+                            claimBtn.style.boxShadow = '0 10px 25px rgba(234,88,12,0.3)';
+                            claimBtn.textContent = '🔐 Claim Secret Gift!';
+                            claimBtn.addEventListener('click', () => {
+                                claimBtn.remove();
+                                if (!isWalletConnected) {
+                                    openWalletModal();
+                                    const checkInterval = setInterval(() => {
+                                        if (isWalletConnected && systemSigner) {
+                                            clearInterval(checkInterval);
+                                            claimSecretGift(payload);
+                                        }
+                                    }, 500);
+                                } else {
+                                    claimSecretGift(payload);
+                                }
+                            });
+                            document.body.appendChild(claimBtn);
+                        }
+                    }, 1500);
+                });
+            }
+        })();
+
         (function checkGiftUrl() {
             const params = new URLSearchParams(window.location.search);
             const giftId = params.get('gift');
@@ -7249,7 +7927,7 @@ window.convertSbtToBot = convertSbtToBot;
         'Explaining gift features (SBT, Mystery Box, Card Designer, Time-Lock, DAO Treasury, etc.), ' +
         'Suggesting creative gift ideas, Gift amount advice based on relationship, ' +
         'How to send or claim gifts on the site, NFT soulbound gifts and on-chain gifting. ' +
-        'Available Gift Types: Crypto Bro, Love Letter, Birthday, Heart, Mystery Box, Golden Ticket, Treasure Chest, Christmas, Diamond Hands, Soulbound Gift, Gasless Send, DAO Treasury, Card Designer, Time-Locked Gift. ' +
+        'Available Gift Types: Crypto Bro, Love Letter, Birthday, Heart, Mystery Box, Golden Ticket, Treasure Chest, Christmas, Diamond Hands, Soulbound Gift, Secret Gift (Password-Locked), Gasless Send, DAO Treasury, Card Designer, Time-Locked Gift. ' +
         'Rules: Keep responses under 3 sentences. Always use 1-2 relevant emojis. Be creative and enthusiastic. ' +
         'If asked about non-gift topics, say I am your gift expert, ask me about gifts, rewards, or gifting ideas. ' +
         'Never reveal you are an AI language model or mention Google or Gemini. ' +
