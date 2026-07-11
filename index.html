@@ -1070,36 +1070,14 @@
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                 BOT Chain
             </div>
-            <button id="signInBtn" class="premium-nav-pill transition bg-zinc-950 text-zinc-100 px-5 py-2.5 rounded-full text-xs font-medium tracking-wide border border-zinc-600/30 hover:border-emerald-500/40 cursor-pointer flex items-center gap-1.5">
-                <svg class="w-3.5 h-3.5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                <span id="signInBtnText">Sign In</span>
-            </button>
-            <div id="userSignedInDisplay" class="hidden relative">
-                <button id="userSignedInBtn" class="premium-nav-pill transition bg-zinc-950 text-emerald-300 px-4 py-2.5 rounded-full text-xs font-medium tracking-wide border border-emerald-500/30 cursor-pointer flex items-center gap-1.5">
-                    <div id="navUserAvatar" class="w-5 h-5 rounded-full bg-emerald-900/50 border border-emerald-500/30 flex items-center justify-center text-[9px] overflow-hidden">
-                        <span id="navUserInitial"></span>
-                    </div>
-                    <span id="navUserEmail"></span>
-                </button>
-                <div id="userDropdown" class="wallet-dropdown absolute right-0 top-full mt-2 w-56 glass-panel rounded-xl overflow-hidden border border-zinc-700/50 hidden">
-                    <div class="p-3 border-b border-zinc-700/30">
-                        <p id="userDropdownEmail" class="text-xs text-zinc-200 font-semibold truncate"></p>
-                        <p class="text-[10px] text-zinc-500 mt-0.5">Signed in</p>
-                    </div>
-                    <button id="signOutBtn" class="wallet-option w-full text-left px-3 py-2.5 text-xs text-red-400 flex items-center gap-2 cursor-pointer">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                        Sign Out
-                    </button>
-                </div>
-            </div>
             <button id="connectWalletBtn" class="wallet-btn wallet-pulse action-pill-btn premium-nav-pill transition bg-zinc-950 text-zinc-100 px-7 py-2.5 rounded-full text-xs font-medium tracking-wide border border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.15)] flex items-center gap-2 cursor-pointer">
                 <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
                 <span id="walletBtnText">Connect Wallet</span>
             </button>
             <div id="walletConnectedDisplay" class="hidden relative">
                 <button id="walletConnectedBtn" class="wallet-connected px-3 py-2 rounded-full flex items-center gap-2.5 cursor-pointer transition-all hover:bg-emerald-900/30">
-                    <div id="navProfileAvatar" class="w-7 h-7 rounded-full bg-zinc-800 border border-emerald-500/30 overflow-hidden flex items-center justify-center text-[10px]">
-                        <span>👤</span>
+                    <div id="navProfileAvatar" class="w-7 h-7 rounded-full bg-emerald-900/50 border border-emerald-500/30 overflow-hidden flex items-center justify-center text-[10px]">
+                        <span id="navProfileInitial"></span>
                     </div>
                     <div class="flex flex-col items-start">
                         <span id="navProfileName" class="text-[10px] text-emerald-300 font-semibold leading-none hidden"></span>
@@ -1107,16 +1085,20 @@
                     </div>
                     <svg class="w-3 h-3 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </button>
-                <div id="walletDropdown" class="wallet-dropdown absolute right-0 top-full mt-2 w-52 glass-panel rounded-xl overflow-hidden border border-zinc-700/50">
+                <div id="walletDropdown" class="wallet-dropdown absolute right-0 top-full mt-2 w-56 glass-panel rounded-xl overflow-hidden border border-zinc-700/50">
                     <div class="p-3 border-b border-zinc-700/30">
-                        <div class="flex items-center gap-2 mb-1">
-                            <div id="dropdownProfileAvatar" class="w-8 h-8 rounded-full bg-zinc-800 border border-emerald-500/30 overflow-hidden flex items-center justify-center text-xs">
-                                <span>👤</span>
+                        <div class="flex items-center gap-2.5 mb-2">
+                            <div id="dropdownProfileAvatar" class="w-10 h-10 rounded-full bg-emerald-900/50 border border-emerald-500/30 overflow-hidden flex items-center justify-center text-sm font-bold text-emerald-300">
+                                <span id="dropdownProfileInitial"></span>
                             </div>
                             <div>
-                                <p id="dropdownProfileName" class="text-xs text-zinc-200 font-semibold truncate max-w-[100px]">User</p>
+                                <p id="dropdownProfileName" class="text-xs text-zinc-200 font-semibold truncate max-w-[120px]">User</p>
                                 <p id="dropdownProfileAddress" class="text-[10px] text-zinc-500 font-mono">0x...</p>
                             </div>
+                        </div>
+                        <div id="dropdownEmailRow" class="hidden mt-1.5 pt-1.5 border-t border-zinc-700/30">
+                            <p class="text-[10px] text-zinc-500 uppercase tracking-wider">Email</p>
+                            <p id="dropdownEmail" class="text-[11px] text-emerald-400 truncate"></p>
                         </div>
                         <p class="text-[10px] text-zinc-500 uppercase tracking-wider mt-2">Balance</p>
                         <p class="text-sm text-emerald-400 font-bold font-mono" id="walletBalanceDisplay">0.0000 <span class="text-xs text-zinc-500">$BOT</span></p>
@@ -1196,62 +1178,23 @@
         </div>
     </div>
 
-    <!-- Sign In Modal -->
-    <div id="signInModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/80 backdrop-blur-sm">
+    <!-- Email Registration Modal -->
+    <div id="emailRegModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/80 backdrop-blur-sm">
         <div class="glass-panel rounded-3xl p-8 max-w-md w-full mx-4 animate-slide-in relative">
-            <button id="closeSignInModalBtn" class="absolute top-4 right-4 text-zinc-500 hover:text-zinc-300 text-xl cursor-pointer w-8 h-8 flex items-center justify-center rounded-full hover:bg-zinc-800 transition">×</button>
             <div class="text-center mb-6">
                 <div class="w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto mb-3">
-                    <svg class="w-7 h-7 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    <svg class="w-7 h-7 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                 </div>
-                <h3 class="text-xl font-bold text-zinc-100">Sign In</h3>
-                <p class="text-xs text-zinc-500 mt-1">Sign in to access all features</p>
+                <h3 class="text-xl font-bold text-zinc-100">Register Your Email</h3>
+                <p class="text-xs text-zinc-500 mt-1">Required to connect your wallet</p>
             </div>
             <div class="space-y-3">
                 <div>
                     <label class="text-[10px] text-zinc-500 uppercase tracking-wider mb-1 block">Email Address</label>
-                    <input id="signInEmailInput" type="email" placeholder="you@example.com" class="w-full bg-zinc-950/50 border border-zinc-800/60 rounded-xl px-4 py-3 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-emerald-500/50 transition">
+                    <input id="emailRegInput" type="email" placeholder="you@example.com" class="w-full bg-zinc-950/50 border border-zinc-800/60 rounded-xl px-4 py-3 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-emerald-500/50 transition">
                 </div>
-                <div>
-                    <label class="text-[10px] text-zinc-500 uppercase tracking-wider mb-1 block">Password</label>
-                    <input id="signInPasswordInput" type="password" placeholder="••••••••" class="w-full bg-zinc-950/50 border border-zinc-800/60 rounded-xl px-4 py-3 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-emerald-500/50 transition">
-                </div>
-                <button id="signInWithEmailBtn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm py-3 rounded-xl cursor-pointer transition">Sign In</button>
-                <p id="signInErrorMsg" class="text-xs text-red-400 text-center hidden"></p>
-                <p id="signInSuccessMsg" class="text-xs text-emerald-400 text-center hidden"></p>
-            </div>
-            <div class="mt-4 pt-4 border-t border-zinc-800/40 text-center">
-                <p class="text-[10px] text-zinc-600">Don't have an account? <button id="switchToSignUpBtn" class="text-emerald-400 hover:underline cursor-pointer">Sign Up</button></p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Sign Up Modal -->
-    <div id="signUpModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/80 backdrop-blur-sm">
-        <div class="glass-panel rounded-3xl p-8 max-w-md w-full mx-4 animate-slide-in relative">
-            <button id="closeSignUpModalBtn" class="absolute top-4 right-4 text-zinc-500 hover:text-zinc-300 text-xl cursor-pointer w-8 h-8 flex items-center justify-center rounded-full hover:bg-zinc-800 transition">×</button>
-            <div class="text-center mb-6">
-                <div class="w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto mb-3">
-                    <svg class="w-7 h-7 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
-                </div>
-                <h3 class="text-xl font-bold text-zinc-100">Create Account</h3>
-                <p class="text-xs text-zinc-500 mt-1">Join GIFT BOT on BOT Chain</p>
-            </div>
-            <div class="space-y-3">
-                <div>
-                    <label class="text-[10px] text-zinc-500 uppercase tracking-wider mb-1 block">Email Address</label>
-                    <input id="signUpEmailInput" type="email" placeholder="you@example.com" class="w-full bg-zinc-950/50 border border-zinc-800/60 rounded-xl px-4 py-3 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-emerald-500/50 transition">
-                </div>
-                <div>
-                    <label class="text-[10px] text-zinc-500 uppercase tracking-wider mb-1 block">Password</label>
-                    <input id="signUpPasswordInput" type="password" placeholder="Min 6 characters" class="w-full bg-zinc-950/50 border border-zinc-800/60 rounded-xl px-4 py-3 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-emerald-500/50 transition">
-                </div>
-                <button id="signUpWithEmailBtn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm py-3 rounded-xl cursor-pointer transition">Create Account</button>
-                <p id="signUpErrorMsg" class="text-xs text-red-400 text-center hidden"></p>
-                <p id="signUpSuccessMsg" class="text-xs text-emerald-400 text-center hidden"></p>
-            </div>
-            <div class="mt-4 pt-4 border-t border-zinc-800/40 text-center">
-                <p class="text-[10px] text-zinc-600">Already have an account? <button id="switchToSignInBtn" class="text-emerald-400 hover:underline cursor-pointer">Sign In</button></p>
+                <button id="emailRegBtn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm py-3 rounded-xl cursor-pointer transition">Continue</button>
+                <p id="emailRegError" class="text-xs text-red-400 text-center hidden"></p>
             </div>
         </div>
     </div>
@@ -2826,117 +2769,59 @@
         const authClient = window.supabase.createClient(AUTH_SUPABASE_URL, AUTH_SUPABASE_KEY);
         let currentUser = null;
         window.authUser = null;
+        window.userRegisteredEmail = null;
 
-        function openSignInModal() { document.getElementById('signInModal').classList.remove('hidden'); }
-        function closeSignInModal() { document.getElementById('signInModal').classList.add('hidden'); }
-        function openSignUpModal() { document.getElementById('signUpModal').classList.remove('hidden'); }
-        function closeSignUpModal() { document.getElementById('signUpModal').classList.add('hidden'); }
+        function openEmailRegModal() { document.getElementById('emailRegModal').classList.remove('hidden'); }
+        function closeEmailRegModal() { document.getElementById('emailRegModal').classList.add('hidden'); }
 
-        function updateSignedInUI(user) {
-            if (user && user.email) {
-                document.getElementById('signInBtn').classList.add('hidden');
-                document.getElementById('userSignedInDisplay').classList.remove('hidden');
-                document.getElementById('navUserEmail').textContent = user.email.length > 16 ? user.email.substring(0, 16) + '...' : user.email;
-                document.getElementById('navUserInitial').textContent = user.email.charAt(0).toUpperCase();
-                document.getElementById('userDropdownEmail').textContent = user.email;
-                currentUser = user;
-                window.authUser = user;
-            } else {
-                document.getElementById('signInBtn').classList.remove('hidden');
-                document.getElementById('userSignedInDisplay').classList.add('hidden');
-                currentUser = null;
-                window.authUser = null;
+        function updateNavEmail(email) {
+            if (email) {
+                var initial = email.charAt(0).toUpperCase();
+                document.getElementById('navProfileInitial').textContent = initial;
+                document.getElementById('navProfileAvatar').classList.remove('bg-zinc-800');
+                document.getElementById('navProfileAvatar').classList.add('bg-emerald-900/50');
+                document.getElementById('dropdownProfileInitial').textContent = initial;
+                document.getElementById('dropdownProfileAvatar').classList.remove('bg-zinc-800');
+                document.getElementById('dropdownProfileAvatar').classList.add('bg-emerald-900/50');
+                document.getElementById('dropdownEmailRow').classList.remove('hidden');
+                document.getElementById('dropdownEmail').textContent = email;
+                window.userRegisteredEmail = email;
             }
         }
 
-        async function handleSignUp() {
-            const email = document.getElementById('signUpEmailInput').value.trim();
-            const password = document.getElementById('signUpPasswordInput').value;
-            const errEl = document.getElementById('signUpErrorMsg');
-            const sucEl = document.getElementById('signUpSuccessMsg');
-            errEl.classList.add('hidden'); sucEl.classList.add('hidden');
+        async function handleEmailRegistration() {
+            var email = document.getElementById('emailRegInput').value.trim();
+            var errEl = document.getElementById('emailRegError');
+            errEl.classList.add('hidden');
             if (!email || !email.includes('@')) { errEl.textContent = 'Enter a valid email'; errEl.classList.remove('hidden'); return; }
-            if (!password || password.length < 6) { errEl.textContent = 'Password must be at least 6 characters'; errEl.classList.remove('hidden'); return; }
             try {
-                const { data, error } = await authClient.auth.signUp({ email, password });
-                if (error) { errEl.textContent = error.message; errEl.classList.remove('hidden'); return; }
-                if (data && data.user) {
-                    await authClient.from('users').upsert({ id: data.user.id, email: email, created_at: new Date().toISOString() }, { onConflict: 'id' });
-                }
-                if (data && data.session) {
-                    updateSignedInUI(data.user);
-                    await authClient.from('activity').insert({ user_id: data.user.id, email: email, action: 'sign_up', created_at: new Date().toISOString() });
-                    sucEl.textContent = 'Account created! Signed in.'; sucEl.classList.remove('hidden');
-                    setTimeout(() => closeSignUpModal(), 800);
-                } else {
-                    const { data: loginData, error: loginError } = await authClient.auth.signInWithPassword({ email, password });
-                    if (!loginError && loginData.session) {
-                        updateSignedInUI(loginData.user);
-                        await authClient.from('activity').insert({ user_id: loginData.user.id, email: email, action: 'sign_up', created_at: new Date().toISOString() });
-                        sucEl.textContent = 'Account created! Signed in.'; sucEl.classList.remove('hidden');
-                        setTimeout(() => closeSignUpModal(), 800);
-                    } else {
-                        sucEl.textContent = 'Account created! Signing in...'; sucEl.classList.remove('hidden');
-                        setTimeout(() => { closeSignUpModal(); }, 1500);
-                    }
-                }
-            } catch (e) { errEl.textContent = 'Sign up failed. Try again.'; errEl.classList.remove('hidden'); }
-        }
-
-        async function handleSignIn() {
-            const email = document.getElementById('signInEmailInput').value.trim();
-            const password = document.getElementById('signInPasswordInput').value;
-            const errEl = document.getElementById('signInErrorMsg');
-            const sucEl = document.getElementById('signInSuccessMsg');
-            errEl.classList.add('hidden'); sucEl.classList.add('hidden');
-            if (!email || !email.includes('@')) { errEl.textContent = 'Enter a valid email'; errEl.classList.remove('hidden'); return; }
-            if (!password) { errEl.textContent = 'Enter your password'; errEl.classList.remove('hidden'); return; }
-            try {
-                const { data, error } = await authClient.auth.signInWithPassword({ email, password });
-                if (error) { errEl.textContent = error.message; errEl.classList.remove('hidden'); return; }
-                sucEl.textContent = 'Signed in!'; sucEl.classList.remove('hidden');
-                updateSignedInUI(data.user);
-                await authClient.from('activity').insert({ user_id: data.user.id, email: email, action: 'sign_in', created_at: new Date().toISOString() });
-                setTimeout(() => closeSignInModal(), 600);
-            } catch (e) { errEl.textContent = 'Sign in failed.'; errEl.classList.remove('hidden'); }
-        }
-
-        async function handleSignOut() {
-            await authClient.auth.signOut();
-            updateSignedInUI(null);
-            document.getElementById('userDropdown').classList.add('hidden');
-        }
-
-        async function checkExistingSession() {
-            try {
-                const { data: { session } } = await authClient.auth.getSession();
-                if (session && session.user) { updateSignedInUI(session.user); }
+                await authClient.from('users').upsert({ email: email, registered_at: new Date().toISOString() }, { onConflict: 'email' });
+                await authClient.from('activity').insert({ email: email, action: 'email_registered', created_at: new Date().toISOString() });
             } catch (e) {}
+            window.userRegisteredEmail = email;
+            saveEmailToLocal(email);
+            closeEmailRegModal();
+            updateNavEmail(email);
+            if (window._pendingWalletConnect) { window._pendingWalletConnect(); window._pendingWalletConnect = null; }
         }
 
-        function requireAuth(callback) {
-            if (currentUser || window.authUser) { callback(); return; }
-            openSignInModal();
-            window._pendingAuthCallback = callback;
+        function checkExistingEmail() {
+            try {
+                var saved = localStorage.getItem('giftbot_user_email');
+                if (saved) { window.userRegisteredEmail = saved; updateNavEmail(saved); return true; }
+            } catch (e) {}
+            return false;
         }
 
-        function onAuthSuccess() {
-            if (window._pendingAuthCallback) { window._pendingAuthCallback(); window._pendingAuthCallback = null; }
+        function saveEmailToLocal(email) {
+            try { localStorage.setItem('giftbot_user_email', email); } catch (e) {}
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            checkExistingSession();
-            document.getElementById('signInBtn').addEventListener('click', openSignInModal);
-            document.getElementById('closeSignInModalBtn').addEventListener('click', closeSignInModal);
-            document.getElementById('closeSignUpModalBtn').addEventListener('click', closeSignUpModal);
-            document.getElementById('switchToSignUpBtn').addEventListener('click', function() { closeSignInModal(); openSignUpModal(); });
-            document.getElementById('switchToSignInBtn').addEventListener('click', function() { closeSignUpModal(); openSignInModal(); });
-            document.getElementById('signInWithEmailBtn').addEventListener('click', handleSignIn);
-            document.getElementById('signUpWithEmailBtn').addEventListener('click', handleSignUp);
-            document.getElementById('signOutBtn').addEventListener('click', handleSignOut);
-            document.getElementById('userSignedInBtn').addEventListener('click', function() { document.getElementById('userDropdown').classList.toggle('hidden'); });
-            document.getElementById('signInModal').addEventListener('click', function(e) { if (e.target === document.getElementById('signInModal')) closeSignInModal(); });
-            document.getElementById('signUpModal').addEventListener('click', function(e) { if (e.target === document.getElementById('signUpModal')) closeSignUpModal(); });
+            checkExistingEmail();
+            document.getElementById('emailRegBtn').addEventListener('click', handleEmailRegistration);
+            document.getElementById('emailRegInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') handleEmailRegistration(); });
+            document.getElementById('emailRegModal').addEventListener('click', function(e) { if (e.target === document.getElementById('emailRegModal')) closeEmailRegModal(); });
         });
 
         const els = {
@@ -3203,12 +3088,11 @@
             if (npn) { npn.textContent = address.slice(0, 6) + '...' + address.slice(-4); npn.classList.remove('hidden'); }
             var dpa = document.getElementById('dropdownProfileAddress');
             if (dpa) dpa.textContent = address.slice(0, 6) + '...' + address.slice(-4);
-            if (currentUser || window.authUser) {
-                var user = currentUser || window.authUser;
-                authClient.from('users').upsert({ id: user.id, email: user.email, wallet_address: address, updated_at: new Date().toISOString() }, { onConflict: 'id' }).then(() => {}).catch(() => {});
-                authClient.from('activity').insert({ user_id: user.id, email: user.email, wallet_address: address, action: 'wallet_connected', created_at: new Date().toISOString() }).then(() => {}).catch(() => {});
+            if (window.userRegisteredEmail) {
+                updateNavEmail(window.userRegisteredEmail);
+                authClient.from('users').upsert({ email: window.userRegisteredEmail, wallet_address: address, updated_at: new Date().toISOString() }, { onConflict: 'email' }).then(() => {}).catch(() => {});
+                authClient.from('activity').insert({ email: window.userRegisteredEmail, wallet_address: address, action: 'wallet_connected', created_at: new Date().toISOString() }).then(() => {}).catch(() => {});
             }
-            onAuthSuccess();
         }
         function toggleWalletDropdown() {
             els.walletDropdown.classList.toggle('show');
@@ -3232,7 +3116,12 @@
 
         els.connectWalletBtn.addEventListener('click', () => {
             if (!isWalletConnected) {
-                requireAuth(() => openWalletModal());
+                if (window.userRegisteredEmail) {
+                    openWalletModal();
+                } else {
+                    window._pendingWalletConnect = function() { openWalletModal(); };
+                    openEmailRegModal();
+                }
             } else {
                 toggleWalletDropdown();
             }
