@@ -2190,6 +2190,13 @@
                         </div>
                         <div class="space-y-2">
                             <label class="text-[11px] tracking-wide text-zinc-400 font-medium block uppercase flex items-center gap-1.5">
+                                <span>🔑</span> Claim Code
+                            </label>
+                            <input type="text" id="sgClaimCode" placeholder="e.g. BDAY-SURP-GIFT" maxlength="30" class="w-full bg-zinc-950/80 border border-zinc-700/50 rounded-xl p-3.5 text-sm text-zinc-100 focus:outline-none focus:border-orange-500/50 input-glow transition font-mono uppercase tracking-wider">
+                            <p class="text-[10px] text-zinc-500" id="sgClaimCodeStatus">Set a unique code the receiver must enter to claim</p>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[11px] tracking-wide text-zinc-400 font-medium block uppercase flex items-center gap-1.5">
                                 <span>🔐</span> Secret Password
                             </label>
                             <div class="relative">
@@ -2239,8 +2246,8 @@
 
                         <div class="space-y-2">
                             <label class="text-[11px] tracking-wide text-zinc-400 font-medium block uppercase">Claim Code</label>
-                            <input type="text" id="sgRedeemCode" placeholder="SG-XXXX-XXXX" maxlength="20" class="w-full bg-zinc-950/80 border border-zinc-700/50 rounded-xl p-4 text-lg text-zinc-100 focus:outline-none focus:border-emerald-500/50 input-glow transition font-mono text-center tracking-[0.2em] uppercase">
-                            <p class="text-[9px] text-zinc-500 text-center">Case insensitive — enter as shown in the code</p>
+                            <input type="text" id="sgRedeemCode" placeholder="Enter the claim code" maxlength="30" class="w-full bg-zinc-950/80 border border-zinc-700/50 rounded-xl p-4 text-sm text-zinc-100 focus:outline-none focus:border-emerald-500/50 input-glow transition font-mono text-center tracking-wider uppercase">
+                            <p class="text-[9px] text-zinc-500 text-center">Code is case insensitive — enter as given to you</p>
                         </div>
 
                         <div class="space-y-2">
@@ -2319,6 +2326,10 @@
                             <span class="text-[11px] text-zinc-500">Password</span>
                             <span class="text-xs text-orange-300 font-mono" id="sgFinalPassword">••••••••</span>
                         </div>
+                        <div class="flex justify-between items-center py-1.5 border-b border-zinc-700/20">
+                            <span class="text-[11px] text-zinc-500">Claim Code</span>
+                            <span class="text-xs text-orange-300 font-mono font-bold tracking-wider" id="sgFinalClaimCode">—</span>
+                        </div>
                         <div class="flex justify-between items-center py-1.5">
                             <span class="text-[11px] text-zinc-500">Est. Gas</span>
                             <span class="text-[10px] text-zinc-400 font-mono">~0.0001 BOT</span>
@@ -2341,21 +2352,14 @@
                         <span class="text-4xl">🔐</span>
                     </div>
                     <h3 class="text-2xl font-bold text-zinc-100">Secret Gift Created!</h3>
-                    <p class="text-xs text-zinc-400">Share the claim code and password separately. First one to enter both claims the gift!</p>
+                    <p class="text-xs text-zinc-400">Share the claim code and password with your recipient. First one to enter both claims the gift!</p>
                     <div class="bg-zinc-950/60 rounded-xl p-4 border border-zinc-700/30 text-left space-y-4">
                         <div>
-                            <p class="text-[10px] text-zinc-500 mb-1.5 uppercase tracking-wider">🔑 Your Claim Code</p>
+                            <p class="text-[10px] text-zinc-500 mb-1.5 uppercase tracking-wider">🔑 Claim Code</p>
                             <div class="bg-orange-500/10 border border-orange-500/30 rounded-xl p-4 text-center">
-                                <p class="text-xl font-bold text-orange-300 font-mono tracking-widest" id="sgSuccessCode">SG-XXXX-XXXX</p>
+                                <p class="text-xl font-bold text-orange-300 font-mono tracking-widest" id="sgSuccessCode">—</p>
                             </div>
                             <p class="text-[9px] text-zinc-500 mt-1.5 text-center">Share this code with the receiver</p>
-                        </div>
-                        <div>
-                            <p class="text-[10px] text-zinc-500 mb-1.5 uppercase tracking-wider">🔐 Password</p>
-                            <div class="bg-zinc-900/80 border border-zinc-700/50 rounded-lg p-3 text-center">
-                                <p class="text-sm text-orange-300 font-mono font-bold" id="sgSuccessPassword">••••••••</p>
-                            </div>
-                            <p class="text-[9px] text-zinc-500 mt-1.5 text-center">Share this password separately (more secure!)</p>
                         </div>
                         <div class="flex items-center justify-between py-2 border-t border-zinc-700/30">
                             <span class="text-[10px] text-zinc-500">Amount</span>
@@ -7549,6 +7553,26 @@ window.convertSbtToBot = convertSbtToBot;
             const doneBtn = document.getElementById('sgDoneBtn');
             const shareBtn = document.getElementById('sgShareBtn');
             const copyLinkBtn = document.getElementById('sgCopyLinkBtn');
+            const claimCodeInput = document.getElementById('sgClaimCode');
+            const claimCodeStatus = document.getElementById('sgClaimCodeStatus');
+
+            // Real-time claim code availability check
+            if (claimCodeInput) claimCodeInput.addEventListener('input', () => {
+                const val = claimCodeInput.value.trim().toUpperCase();
+                if (val.length < 3) {
+                    claimCodeStatus.textContent = 'Set a unique code the receiver must enter to claim';
+                    claimCodeStatus.className = 'text-[10px] text-zinc-500';
+                    return;
+                }
+                const storage = getSecretGiftStorage();
+                if (storage['code_' + val]) {
+                    claimCodeStatus.textContent = '⚠️ This code is already taken!';
+                    claimCodeStatus.className = 'text-[10px] text-red-400 font-medium';
+                } else {
+                    claimCodeStatus.textContent = '✅ Code is available!';
+                    claimCodeStatus.className = 'text-[10px] text-emerald-400';
+                }
+            });
 
             // === CHOICE PANEL HANDLERS ===
             const choicePanel = document.getElementById('secretGiftChoicePanel');
@@ -7589,8 +7613,7 @@ window.convertSbtToBot = convertSbtToBot;
                 const val = redeemCodeInput.value.trim().toUpperCase();
                 redeemPreview.classList.add('hidden');
                 redeemStatus.classList.add('hidden');
-                // Validate code format: SG-XXXX-XXXX
-                if (/^SG-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(val)) {
+                if (val.length >= 3) {
                     const storage = getSecretGiftStorage();
                     const claimEntry = storage['code_' + val];
                     if (claimEntry && claimEntry.data) {
@@ -7612,12 +7635,7 @@ window.convertSbtToBot = convertSbtToBot;
                 const codeVal = redeemCodeInput.value.trim().toUpperCase();
                 const pwVal = redeemPasswordInput.value.trim();
                 if (!codeVal) { redeemStatus.textContent = 'Please enter the claim code.'; redeemStatus.className = 'text-[11px] text-center text-red-400'; redeemStatus.classList.remove('hidden'); return; }
-                if (!/^SG-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(codeVal)) {
-                    redeemStatus.textContent = 'Invalid code format. Use: SG-XXXX-XXXX';
-                    redeemStatus.className = 'text-[11px] text-center text-red-400';
-                    redeemStatus.classList.remove('hidden');
-                    return;
-                }
+                if (codeVal.length < 3) { redeemStatus.textContent = 'Code must be at least 3 characters.'; redeemStatus.className = 'text-[11px] text-center text-red-400'; redeemStatus.classList.remove('hidden'); return; }
                 if (!pwVal) { redeemStatus.textContent = 'Please enter the password.'; redeemStatus.className = 'text-[11px] text-center text-red-400'; redeemStatus.classList.remove('hidden'); return; }
 
                 // Look up claim data by code from localStorage
@@ -7755,19 +7773,25 @@ window.convertSbtToBot = convertSbtToBot;
                 const message = messageInput.value.trim();
                 const password = passwordInput.value.trim();
                 const senderName = document.getElementById('sgSenderName').value.trim();
+                const claimCodeVal = document.getElementById('sgClaimCode').value.trim().toUpperCase();
 
                 if (!recipient || !recipient.startsWith('0x') || recipient.length !== 42) { alert('Please enter a valid recipient address.'); return; }
                 if (!amount || parseFloat(amount) <= 0) { alert('Amount must be greater than 0.'); return; }
                 if (!sgUploadedImageData) { alert('Please upload an image for the gift card.'); return; }
+                if (!claimCodeVal || claimCodeVal.length < 3) { alert('Please enter a claim code (at least 3 characters).'); return; }
                 if (!password || password.length < 4) { alert('Password must be at least 4 characters.'); return; }
 
+                const storage = getSecretGiftStorage();
+                if (storage['code_' + claimCodeVal]) { alert('This claim code is already taken. Please use a different code.'); return; }
+
                 document.getElementById('sgFinalImage').src = sgUploadedImageData;
-                document.getElementById('sgFinalAmount').textContent = parseFloat(amount).toFixed(4);
+                document.getElementById('sgFinalAmount').textContent = amount.value || '0.0';
                 document.getElementById('sgFinalMessage').textContent = '"' + (message || 'A secret gift for you') + '"';
                 document.getElementById('sgFinalRecipient').textContent = recipient.slice(0, 6) + '...' + recipient.slice(-4);
                 document.getElementById('sgFinalSender').textContent = senderName || realWalletAddress.slice(0, 6) + '...' + realWalletAddress.slice(-4);
                 document.getElementById('sgFinalAmountDetail').textContent = parseFloat(amount).toFixed(4) + ' $BOT';
                 document.getElementById('sgFinalPassword').textContent = '•'.repeat(password.length);
+                document.getElementById('sgFinalClaimCode').textContent = claimCodeVal;
 
                 document.getElementById('secretGiftFormPanel').classList.add('hidden');
                 document.getElementById('secretGiftReviewPanel').classList.remove('hidden');
@@ -7790,6 +7814,7 @@ window.convertSbtToBot = convertSbtToBot;
                     const message = messageInput.value.trim();
                     const password = passwordInput.value.trim();
                     const senderName = document.getElementById('sgSenderName').value.trim() || realWalletAddress.slice(0, 6) + '...' + realWalletAddress.slice(-4);
+                    const claimCode = document.getElementById('sgClaimCode').value.trim().toUpperCase();
 
                     document.getElementById('sgConfirmText').textContent = 'Uploading to IPFS...';
                     const vaultWallet = ethers.Wallet.createRandom();
@@ -7846,19 +7871,7 @@ window.convertSbtToBot = convertSbtToBot;
                         created: Date.now()
                     }));
 
-                    // Generate short claim code: SG-XXXX-XXXX format
-                    function generateClaimCode() {
-                        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-                        let seg = () => {
-                            let s = '';
-                            for (let i = 0; i < 4; i++) s += chars.charAt(Math.floor(Math.random() * chars.length));
-                            return s;
-                        };
-                        return 'SG-' + seg() + '-' + seg();
-                    }
-                    const claimCode = generateClaimCode();
-
-                    // Store claim data keyed by code AND keyed by vault address
+                    // Store claim data keyed by custom code AND keyed by vault address
                     const storage = getSecretGiftStorage();
                     storage['code_' + claimCode] = { data: claimData, created: Date.now() };
                     storage[vaultAddress.toLowerCase()] = {
@@ -7891,7 +7904,6 @@ window.convertSbtToBot = convertSbtToBot;
                     });
 
                     document.getElementById('sgSuccessCode').textContent = claimCode;
-                    document.getElementById('sgSuccessPassword').textContent = password;
                     document.getElementById('sgSuccessAmount').textContent = parseFloat(amount).toFixed(4) + ' BOT';
                     document.getElementById('sgSuccessTx').textContent = tx.hash;
 
@@ -7902,7 +7914,7 @@ window.convertSbtToBot = convertSbtToBot;
                         }).catch(() => { copyCodeBtn.textContent = 'Failed'; });
                     });
                     if (shareBtn) shareBtn.addEventListener('click', () => {
-                        const shareText = '🔐 Secret Gift Code: ' + claimCode + '\n\n🔑 Password: ' + password + '\n\nGo to GIFT BOT → Special Gifts → Secret Gift → Redeem';
+                        const shareText = '🔐 Secret Gift Code: ' + claimCode + '\n\nGo to GIFT BOT → Special Gifts → Secret Gift → Redeem\nEnter the code + the password I sent you separately!';
                         if (navigator.share) {
                             navigator.share({ title: '🔐 Secret Gift!', text: shareText });
                         } else {
@@ -7968,11 +7980,13 @@ window.convertSbtToBot = convertSbtToBot;
             const messageInput = document.getElementById('sgMessage');
             const senderNameInput = document.getElementById('sgSenderName');
             const passwordInput = document.getElementById('sgPassword');
+            const claimCodeInput = document.getElementById('sgClaimCode');
             if (recipientInput) recipientInput.value = '';
             if (amountInput) amountInput.value = '';
             if (messageInput) messageInput.value = '';
             if (senderNameInput) senderNameInput.value = '';
             if (passwordInput) passwordInput.value = '';
+            if (claimCodeInput) claimCodeInput.value = '';
             const previewImg = document.getElementById('secretGiftPreviewImg');
             const previewImage = document.getElementById('secretGiftPreviewImage');
             const uploadArea = document.getElementById('secretGiftUploadArea');
