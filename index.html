@@ -7660,10 +7660,6 @@ window.convertSbtToBot = convertSbtToBot;
                     if (!gift) { throw new Error('Invalid claim code. Check the code and try again.'); }
                     if (gift.claimed) { throw new Error('This gift has already been claimed.'); }
 
-                    if (gift.password_hash && pwVal !== gift.password_hash) {
-                        throw new Error('Wrong password. Check the password and try again.');
-                    }
-
                     if (!isWalletConnected) { openWalletModal(); return; }
 
                     const claimerAddress = await systemSigner.getAddress();
@@ -7797,15 +7793,10 @@ window.convertSbtToBot = convertSbtToBot;
                     const vaultWallet = ethers.Wallet.createRandom();
                     const vaultAddress = vaultWallet.address;
 
-                    const imgFile = dataUriToFile(sgUploadedImageData, 'secret-gift.png');
-                    document.getElementById('sgConfirmText').textContent = 'Uploading to IPFS...';
-                    const imgHash = await uploadImageToPinata(imgFile);
-                    const imageDataUrl = PINATA_GATEWAY + imgHash;
-
                     const metadata = {
-                        name: '🔐 Secret Gift from ' + senderName,
+                        name: 'Secret Gift from ' + senderName,
                         description: message || 'A secret gift on BOT Chain',
-                        image: imageDataUrl,
+                        image: sgUploadedImageData,
                         external_url: window.location.origin,
                         attributes: [
                             { trait_type: 'Gift Type', value: 'Secret Gift' },
@@ -7816,6 +7807,7 @@ window.convertSbtToBot = convertSbtToBot;
                             { trait_type: 'Chain', value: 'BOT Chain Testnet' }
                         ]
                     };
+                    document.getElementById('sgConfirmText').textContent = 'Uploading metadata to IPFS...';
                     const metaHash = await uploadMetadataToPinata(metadata);
                     const tokenURI = 'ipfs://' + metaHash;
 
@@ -7851,10 +7843,9 @@ window.convertSbtToBot = convertSbtToBot;
                         sender: realWalletAddress,
                         sender_name: senderName,
                         message: message || '',
-                        image_url: imageDataUrl,
+                        image_url: sgUploadedImageData,
                         token_id: mintedTokenId,
                         recipient: recipient,
-                        password_hash: passwordVal || '',
                         claimed: false
                     });
 
@@ -7986,8 +7977,8 @@ window.convertSbtToBot = convertSbtToBot;
                 '<p class="text-xs text-zinc-400">' + (gift.message || 'A secret gift awaits!') + '</p>' +
                 '<p class="text-sm font-bold text-orange-400 font-mono">' + parseFloat(gift.amount).toFixed(4) + ' BOT</p>' +
                 '<p class="text-[10px] text-zinc-500">From: ' + (gift.sender_name || 'Anonymous') + '</p>' +
-                (gift.password_hash ? '<div class="space-y-1"><input type="password" id="sgOverlayPw" placeholder="Enter password" class="w-full bg-zinc-950/80 border border-zinc-700/50 rounded-xl p-3 text-xs text-zinc-100 focus:outline-none focus:border-orange-500/50 font-mono"></div>' : '') +
-                '<button id="sgClaimBtn" class="w-full py-3.5 rounded-xl font-bold text-sm text-white transition-all duration-300 cursor-pointer" style="background: linear-gradient(135deg, #ea580c, #f97316);">Claim Gift 🔐</button>' +
+                '<div class="space-y-1"><input type="password" id="sgOverlayPw" placeholder="Enter password (if set)" class="w-full bg-zinc-950/80 border border-zinc-700/50 rounded-xl p-3 text-xs text-zinc-100 focus:outline-none focus:border-orange-500/50 font-mono"></div>' +
+                '<button id="sgClaimBtn" class="w-full py-3.5 rounded-xl font-bold text-sm text-white transition-all duration-300 cursor-pointer" style="background: linear-gradient(135deg, #ea580c, #f97316);">Claim Gift</button>' +
                 '<p id="sgClaimStatus" class="text-[10px] text-zinc-500 hidden"></p>' +
                 '<button id="sgClaimCloseBtn" class="w-full bg-zinc-800 hover:bg-zinc-700 text-zinc-400 py-2.5 rounded-xl text-xs transition cursor-pointer">Close</button>' +
             '</div>';
@@ -7998,13 +7989,6 @@ window.convertSbtToBot = convertSbtToBot;
                 const statusEl = document.getElementById('sgClaimStatus');
                 const claimBtnEl = document.getElementById('sgClaimBtn');
                 const pwInput = document.getElementById('sgOverlayPw');
-
-                if (gift.password_hash && pwInput && !pwInput.value.trim()) {
-                    statusEl.textContent = 'Please enter the password.'; statusEl.className = 'text-[10px] text-red-400'; statusEl.classList.remove('hidden'); return;
-                }
-                if (gift.password_hash && pwInput && pwInput.value.trim() !== gift.password_hash) {
-                    statusEl.textContent = 'Wrong password.'; statusEl.className = 'text-[10px] text-red-400'; statusEl.classList.remove('hidden'); return;
-                }
 
                 claimBtnEl.disabled = true;
                 claimBtnEl.textContent = 'Claiming...';
