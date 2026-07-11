@@ -1237,7 +1237,7 @@
                 <h3 class="text-xl font-bold text-zinc-100">Create Account</h3>
                 <p class="text-xs text-zinc-500 mt-1">Join GIFT BOT on BOT Chain</p>
             </div>
-            <div class="space-y-3">
+            <div id="signUpStep1" class="space-y-3">
                 <div>
                     <label class="text-[10px] text-zinc-500 uppercase tracking-wider mb-1 block">Email Address</label>
                     <input id="signUpEmailInput" type="email" placeholder="you@example.com" class="w-full bg-zinc-950/50 border border-zinc-800/60 rounded-xl px-4 py-3 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-emerald-500/50 transition">
@@ -1249,6 +1249,20 @@
                 <button id="signUpWithEmailBtn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm py-3 rounded-xl cursor-pointer transition">Create Account</button>
                 <p id="signUpErrorMsg" class="text-xs text-red-400 text-center hidden"></p>
                 <p id="signUpSuccessMsg" class="text-xs text-emerald-400 text-center hidden"></p>
+            </div>
+            <div id="signUpStep2" class="space-y-3 hidden">
+                <div class="text-center mb-2">
+                    <p class="text-xs text-zinc-400">We sent a 6-digit code to</p>
+                    <p id="signUpCodeEmail" class="text-sm text-emerald-400 font-semibold"></p>
+                </div>
+                <div>
+                    <label class="text-[10px] text-zinc-500 uppercase tracking-wider mb-1 block">Verification Code</label>
+                    <input id="signUpCodeInput" type="text" maxlength="6" placeholder="000000" class="w-full bg-zinc-950/50 border border-zinc-800/60 rounded-xl px-4 py-3 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-emerald-500/50 transition text-center tracking-[0.3em] font-mono text-lg">
+                </div>
+                <button id="verifyCodeBtn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm py-3 rounded-xl cursor-pointer transition">Verify Code</button>
+                <button id="resendCodeBtn" class="w-full text-zinc-500 hover:text-zinc-300 text-xs cursor-pointer transition">Resend Code</button>
+                <p id="verifyCodeError" class="text-xs text-red-400 text-center hidden"></p>
+                <p id="verifyCodeSuccess" class="text-xs text-emerald-400 text-center hidden"></p>
             </div>
             <div class="mt-4 pt-4 border-t border-zinc-800/40 text-center">
                 <p class="text-[10px] text-zinc-600">Already have an account? <button id="switchToSignInBtn" class="text-emerald-400 hover:underline cursor-pointer">Sign In</button></p>
@@ -2858,14 +2872,44 @@
             if (!email || !email.includes('@')) { errEl.textContent = 'Enter a valid email'; errEl.classList.remove('hidden'); return; }
             if (!password || password.length < 6) { errEl.textContent = 'Password must be at least 6 characters'; errEl.classList.remove('hidden'); return; }
             try {
-                const { data, error } = await authClient.auth.signUp({ email, password });
+                const { data, error } = await authClient.auth.signUp({ email, password, options: { emailRedirectTo: window.location.href } });
                 if (error) { errEl.textContent = error.message; errEl.classList.remove('hidden'); return; }
-                if (data && data.user) {
-                    await authClient.from('users').upsert({ id: data.user.id, email: email, created_at: new Date().toISOString() }, { onConflict: 'id' });
-                }
-                sucEl.textContent = 'Account created! Check your email to confirm, or sign in now.'; sucEl.classList.remove('hidden');
-                setTimeout(() => { closeSignUpModal(); openSignInModal(); }, 2000);
+                await authClient.from('users').upsert({ id: data.user.id, email: email, created_at: new Date().toISOString() }, { onConflict: 'id' });
+                window._signUpEmail = email;
+                window._signUpPassword = password;
+                document.getElementById('signUpCodeEmail').textContent = email;
+                document.getElementById('signUpStep1').classList.add('hidden');
+                document.getElementById('signUpStep2').classList.remove('hidden');
+                sucEl.textContent = ''; sucEl.classList.add('hidden');
             } catch (e) { errEl.textContent = 'Sign up failed. Try again.'; errEl.classList.remove('hidden'); }
+        }
+
+        async function handleVerifyCode() {
+            const code = document.getElementById('signUpCodeInput').value.trim();
+            const errEl = document.getElementById('verifyCodeError');
+            const sucEl = document.getElementById('verifyCodeSuccess');
+            errEl.classList.add('hidden'); sucEl.classList.add('hidden');
+            if (!code || code.length !== 6) { errEl.textContent = 'Enter the 6-digit code'; errEl.classList.remove('hidden'); return; }
+            try {
+                const { data, error } = await authClient.auth.verifyOtp({ email: window._signUpEmail, token: code, type: 'signup' });
+                if (error) { errEl.textContent = 'Invalid or expired code. Try again.'; errEl.classList.remove('hidden'); return; }
+                sucEl.textContent = 'Verified! Signing you in...'; sucEl.classList.remove('hidden');
+                const { data: signInData, error: signInError } = await authClient.auth.signInWithPassword({ email: window._signUpEmail, password: window._signUpPassword });
+                if (!signInError && signInData.user) {
+                    updateSignedInUI(signInData.user);
+                    await authClient.from('activity').insert({ user_id: signInData.user.id, email: window._signUpEmail, action: 'sign_up', created_at: new Date().toISOString() });
+                }
+                setTimeout(() => closeSignUpModal(), 1000);
+            } catch (e) { errEl.textContent = 'Verification failed. Try again.'; errEl.classList.remove('hidden'); }
+        }
+
+        async function handleResendCode() {
+            const email = window._signUpEmail;
+            if (!email) return;
+            try {
+                await authClient.auth.resend({ email: email, type: 'signup' });
+                document.getElementById('verifyCodeSuccess').textContent = 'Code resent! Check your email.'; document.getElementById('verifyCodeSuccess').classList.remove('hidden');
+            } catch (e) {}
         }
 
         async function handleSignIn() {
@@ -2913,11 +2957,13 @@
             checkExistingSession();
             document.getElementById('signInBtn').addEventListener('click', openSignInModal);
             document.getElementById('closeSignInModalBtn').addEventListener('click', closeSignInModal);
-            document.getElementById('closeSignUpModalBtn').addEventListener('click', closeSignUpModal);
+            document.getElementById('closeSignUpModalBtn').addEventListener('click', function() { closeSignUpModal(); document.getElementById('signUpStep1').classList.remove('hidden'); document.getElementById('signUpStep2').classList.add('hidden'); });
             document.getElementById('switchToSignUpBtn').addEventListener('click', function() { closeSignInModal(); openSignUpModal(); });
             document.getElementById('switchToSignInBtn').addEventListener('click', function() { closeSignUpModal(); openSignInModal(); });
             document.getElementById('signInWithEmailBtn').addEventListener('click', handleSignIn);
             document.getElementById('signUpWithEmailBtn').addEventListener('click', handleSignUp);
+            document.getElementById('verifyCodeBtn').addEventListener('click', handleVerifyCode);
+            document.getElementById('resendCodeBtn').addEventListener('click', handleResendCode);
             document.getElementById('signOutBtn').addEventListener('click', handleSignOut);
             document.getElementById('userSignedInBtn').addEventListener('click', function() { document.getElementById('userDropdown').classList.toggle('hidden'); });
             document.getElementById('signInModal').addEventListener('click', function(e) { if (e.target === document.getElementById('signInModal')) closeSignInModal(); });
