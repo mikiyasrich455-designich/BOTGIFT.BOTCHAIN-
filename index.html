@@ -7655,8 +7655,6 @@ window.convertSbtToBot = convertSbtToBot;
                     const gift = await sgLookupGift(codeVal);
                     if (!gift) { throw new Error('Invalid claim code. Check the code and try again.'); }
 
-                    if (gift.gift_password && pwVal !== gift.gift_password) { throw new Error('Wrong password.'); }
-
                     if (!isWalletConnected) { openWalletModal(); return; }
 
                     const claimerAddress = await systemSigner.getAddress();
@@ -7795,7 +7793,6 @@ window.convertSbtToBot = convertSbtToBot;
                         recipient: recipient,
                         message: message || '',
                         image_url: sgUploadedImageData,
-                        gift_password: passwordVal || '',
                         tx_hash: tx.hash,
                         claimed: false
                     });
@@ -7844,7 +7841,7 @@ window.convertSbtToBot = convertSbtToBot;
                     if (typeof loadOnChainHistory === 'function') await loadOnChainHistory();
                 } catch (err) {
                     console.error('Secret Gift creation failed:', err);
-                    alert('Failed to create Secret Gift: ' + (err.reason || err.message || 'Unknown error') + '\n\nMake sure you have enough BOT to cover the gift amount + gas for 2 transactions (fund vault + mint NFT).');
+                    alert('Failed to create Secret Gift: ' + (err.reason || err.message || 'Unknown error'));
                     document.getElementById('sgConfirmText').textContent = 'Confirm & Create';
                     document.getElementById('sgConfirmIcon').textContent = '🔐';
                 } finally {
@@ -8004,10 +8001,6 @@ window.convertSbtToBot = convertSbtToBot;
                     try {
                         await window.ethereum.request({ method: 'personal_sign', params: [signMsg, claimerAddress] });
                     } catch(signErr) { throw new Error('Signature rejected in MetaMask.'); }
-
-                    if (gift.gift_password && pwInput && pwInput.value.trim() !== gift.gift_password) {
-                        throw new Error('Wrong password.');
-                    }
 
                     statusEl.textContent = 'Claiming...';
                     await sgMarkClaimed(code, claimerAddress);
