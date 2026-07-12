@@ -1,84 +1,96 @@
-# 🤝 Contributing to GIFT BOT
+# Contributing
 
-Thanks for your interest in contributing! Here's how to get started.
+Thanks for your interest in contributing to GIFT BOT!
 
----
+## How to Contribute
 
-## 🐛 Found a Bug?
-
-1. Check [existing issues](https://github.com/yourusername/gift-bot/issues) first
-2. If not found, open a new issue with:
-   - Clear title
-   - Steps to reproduce
-   - Expected vs actual behavior
-   - Browser/OS info
-
----
-
-## 💡 Suggest a Feature
-
-1. Open an issue with label `enhancement`
-2. Describe the feature and use case
-3. Explain why it fits GIFT BOT's mission
-
----
-
-## 🔧 Submit a Pull Request
-
-### Setup
-
+### 1. Fork the Repository
 ```bash
-git clone https://github.com/yourusername/gift-bot.git
+git clone https://github.com/YOUR-USERNAME/gift-bot.git
 cd gift-bot
-# No build step needed — single HTML file
 ```
 
-### Guidelines
+### 2. Create a Branch
+```bash
+git checkout -b feature/your-feature-name
+```
 
-- **Single file architecture** — keep `index.html` self-contained
-- **No external dependencies** — everything via CDN
-- **Follow existing code style** — match indentation, naming
-- **Test on multiple browsers** — Chrome, Firefox, Safari, Mobile
-- **Don't break wallet connection** — MetaMask flow is critical
+### 3. Make Your Changes
+- Edit `index.html` for UI/logic changes
+- Edit `setup.sql` for database schema changes
+- Keep all changes in the single-file architecture
 
-### PR Checklist
+### 4. Test Locally
+```bash
+npx serve .
+```
+Open `http://localhost:8000` and test your changes.
 
-- [ ] Code works in Chrome and Firefox
-- [ ] Mobile responsive
-- [ ] No console errors
-- [ ] Wallet connect/disconnect works
-- [ ] Gift send flow complete
-- [ ] Gift claim flow complete
-- [ ] History loads correctly
+### 5. Commit and Push
+```bash
+git add .
+git commit -m "Add your feature description"
+git push origin feature/your-feature-name
+```
 
----
+### 6. Open a Pull Request
+- Go to the original repo on GitHub
+- Click **New Pull Request**
+- Select your branch
+- Describe your changes
+- Submit
 
-## 📝 Code Style
+## Development Guidelines
 
-- Use `camelCase` for variables/functions
-- Use `PascalCase` for React components
-- 4-space indentation
-- Comments for complex logic
-- No global variable pollution (use IIFE scope)
+### Code Style
+- Use Tailwind CSS classes for styling
+- Use React functional components with hooks
+- Keep JavaScript in `<script type="text/babel">` blocks
+- Use `!important` sparingly (only in mobile CSS overrides)
 
----
+### Single-File Architecture
+GIFT BOT is intentionally a single `index.html` file. When adding features:
+- Add HTML in the appropriate `<div>` view section
+- Add CSS in the `<style>` block
+- Add JS in a `<script type="text/babel">` block
+- Keep the file organized with section comments
 
-## 🎨 Adding a New Gift Type
+### Mobile Responsiveness
+All new features must work on both desktop and mobile:
+- Use responsive Tailwind classes (`md:`, `sm:`)
+- Add CSS overrides in the `@media (max-width: 768px)` block
+- Ensure 44px minimum tap targets
+- Test with MetaMask Mobile
 
-1. Add theme colors in `giftThemeColor()`
-2. Add icon in `giftIconFor()`
-3. Add card in HTML gift grid
-4. Add animation CSS (keyframes + classes)
-5. Add renderer in `renderThemedGiftBox()`
-6. Add form theme in `getGiftFormTheme()`
-7. Test claim flow end-to-end
+### Blockchain Integration
+- Use ethers.js v6.7 API
+- Handle errors gracefully (user rejections, network issues)
+- Always show loading states during transactions
+- Never expose private keys in logs
 
----
+### Database Changes
+- If modifying the `secret_gifts` table, update `setup.sql`
+- Maintain backward compatibility with existing data
+- Test both new and existing gift flows
 
-## ❓ Questions?
+## Reporting Issues
 
-Open an issue with label `question` or reach out directly.
+When reporting bugs, include:
+1. Browser and version
+2. Device (desktop/mobile)
+3. Steps to reproduce
+4. Expected behavior
+5. Actual behavior
+6. Console errors (if any)
 
----
+## Feature Requests
 
-Thank you for contributing! 🎁
+Open an issue with:
+- Clear description of the feature
+- Use case (why it's needed)
+- Expected behavior
+- Any design mockups
+
+## License
+
+By contributing, you agree that your contributions will be licensed under the MIT License.

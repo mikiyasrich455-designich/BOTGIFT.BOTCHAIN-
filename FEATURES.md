@@ -1,149 +1,142 @@
-# ✨ Feature Breakdown
+# Features
 
-## 🎁 Gift System
+## Gift Types
 
-### 10 Themed Gift Types
-Each gift type has:
-- Unique card design with gradient and glow
-- Themed form styling (borders, focus states, button color)
-- Custom placeholders ("Who holds your heart?" for Love Letter, "Fellow pirate" for Treasure)
-- Animated claim experience (envelope unseal, vault door, box shatter, etc.)
-- Type-specific confetti/particles on claim success
+### 1. Standard Gift
+Send BOT with a custom Soulbound NFT card. Upload an image, write a message, and mint a non-transferable NFT that holds the gift value.
 
-### Gift Cards
-- 3D tilt effect on mouse hover
-- Staggered entrance animation
-- Glow effect on selection
-- Info modal with description
+- Custom image upload (stored on IPFS via Pinata)
+- Personal message (140 characters)
+- Sender name
+- On-chain Soulbound NFT with metadata
+- Optional gas grant for recipient
 
----
+### 2. Secret Gift
+Encrypted vault wallet system. Lock BOT in a randomly generated wallet, encrypt the private key with a claim code, and share the code. First person to claim gets the funds.
 
-## ⛓️ Blockchain
+- Random wallet generation per gift
+- AES-256-GCM encryption (PBKDF2, 100k iterations)
+- Claim code generation (format: `SG-XXXX-XXXX`)
+- Gas buffer included (0.001 BOT)
+- Sweep-to-claim (decrypts vault, transfers to claimer)
+- Custom image support
+- Supabase cross-device storage
+- Real-time claimed status check
 
-### Soulbound NFTs
-- Non-transferable ERC-721 tokens
-- Burn-to-claim via `convertToBot()`
-- Metadata stored on IPFS (Pinata)
-- Token URI with full gift data
+### 3. Mystery Box
+Randomized rewards with animated reveal. Send a mystery gift that reveals a random amount to the recipient.
 
-### Gasless Claims
-- Sender auto-sends 0.01 BOT to recipient
-- Recipient pays $0 to claim
-- Works via `systemSigner.sendTransaction()`
+### 4. Time-Locked Vault
+Gift with an unlock date. Recipient must wait until the timer expires before claiming.
 
-### Time-Locked Gifts
-- Set unlock date/time when sending
-- Countdown display in history
-- Blocked claim before unlock (client-side)
+- Configurable unlock duration
+- Countdown display
+- Locked/unlocked status badges
+- Auto-release on expiry
 
----
+### 5. Gasless Claim
+Sender pays gas for the recipient to claim. Removes the barrier for first-time crypto users.
 
-## 🎨 UI/UX
+- Auto gas grant (0.02 BOT)
+- One-click claim experience
 
-### Animations
-- 10 unique claim page animations
-- 3D gift box with perspective transforms
-- Confetti on every success state
-- Smooth section transitions
-- Floating particle effects
-- Card tilt on hover
+### 6. DAO Batch Gift
+Send gifts to multiple addresses in a single transaction. Designed for community rewards and airdrops.
 
-### Theming
-- Glassmorphism panels
-- Custom scrollbars
-- Gradient backgrounds per section
-- Responsive design (mobile → desktop)
+- Multi-recipient support
+- Batch transaction
+- Individual amounts per recipient
 
-### Gift Claim Page
-- Full-screen overlay with `?gift=TOKEN_ID` URL
-- Three-step flow: Preview → Connect → Claim
-- Animated claim button
-- Success screen with TX link
+### 7. Custom Designer
+Full card designer with image upload, text customization, and live preview.
 
----
+- Drag-and-drop image upload
+- Live card preview
+- Custom text and styling
+- IPFS storage for artwork
 
-## 🤖 AI Integration
+### 8. Soulbound NFT (SBT)
+Non-transferable ERC-721 tokens with on-chain metadata. Every gift is a unique NFT with custom artwork, traits, and message.
 
-### Gift Assistant Chatbot
-- Groq API with llama-3.3-70b-versatile
-- Context-aware (knows gift types, amounts, features)
-- Themed per gift type
-- Quick prompt buttons
-- 20-message history cap
+- ERC-721 Soulbound standard
+- IPFS metadata (image + JSON)
+- Token ID generation
+- Convert-to-BOT function (unwrap)
+- On-chain viewing via block explorer
 
 ---
 
-## 📊 History & Tracking
+## Pages
+
+### Home
+Animated hero section with headline, subtext, and CTA buttons. Desktop shows left-aligned layout with background image. Mobile shows centered 3-zone layout with gift box artwork.
+
+### Gift
+Standard gift sending form with multi-step flow:
+1. Select gift type
+2. Enter recipient, amount, message
+3. Upload custom image
+4. Review and confirm
+5. Mint on-chain
+
+### Special Gifts
+Grid of special gift types (Secret Gift, Mystery Box, Time-Lock, Gasless, DAO Batch, Custom Designer). Each card has icon, description, and click-to-navigate.
 
 ### Gift History
-- Card-based grid layout
-- Filter tabs (All, Pending, Claimed)
-- 3D tilt hover effect
-- Staggered entrance animation
-- Share link + preview buttons
-- Timelock status badges
+On-chain explorer showing all sent and received gifts. Merges Supabase database records with blockchain transaction data.
 
-### On-Chain Data
-- Real-time balance updates
-- Token counter tracking
-- Owner verification
-- TX hash links to explorer
+- Filter by sent/received
+- Transaction hash links to explorer
+- Gift amount and status
+- Timestamp display
 
----
+### About
+Project information page with typewriter animations. Explains the GIFT BOT vision, BOT Chain, and technical details.
 
-## 🔐 Security
-
-### Wallet Connection
-- MetaMask-only (clean modal)
-- Auto-reconnect on page load
-- Disconnect flag in sessionStorage
-- Chain switching with auto-add
-- Error handling for all edge cases
-
-### Data Validation
-- Address format validation (0x + 40 chars)
-- Amount > 0 check
-- Self-send prevention
-- Timelock enforcement
+### Profile / Soulbound Gifts
+View all minted Soulbound NFTs. Shows NFT card with image, amount, message, and token ID. Includes convert-to-BOT functionality.
 
 ---
 
-## 📱 Mobile
+## Navigation
 
-### Responsive Design
-- Tailwind CSS responsive utilities
-- Mobile-first approach
-- Touch-friendly buttons
-- Scrollable containers
+### Desktop
+- Top navigation bar with pill tabs
+- Wallet connection button with address display
+- Profile dropdown (copy address, view explorer, edit profile, soulbound gifts)
+- BOT Chain network indicator
 
-### MetaMask Mobile
-- Deep-linking to MetaMask app
-- Protocol detection (http vs file)
-- Helpful error messages for local files
+### Mobile
+- Bottom navigation bar (5 tabs: Home, Gift, Special, History, Profile)
+- Special button has elevated circular design
+- Top wallet bar (compact, fixed)
+- Safe-area padding for notch devices
+- Touch-optimized (44px minimum tap targets)
 
 ---
 
-## 🎯 Special Features
+## Animations
 
-### Mystery Box
-- Randomized reward amounts
-- Shaking animation
-- Crack + shatter effect
-- Surprise reveal
+| Animation | Trigger | Description |
+|-----------|---------|-------------|
+| `fadeUpReveal` | Page load | Content slides up with fade |
+| `slideIn` | Panel open | Panel slides in from bottom |
+| `pulseGlow` | Active elements | Green glow pulse |
+| `shineSweep` | Card hover | Light sweep across card |
+| `checkPop` | Selection | Checkmark pop animation |
+| `confettiFall` | Success | Confetti particles |
+| `floatParticle` | Background | Floating gift emojis |
+| `giftBoxShake` | Claim | Gift box shake on open |
+| `claimSuccessPop` | Claim success | Success checkmark animation |
+| `aboutFadeUp` | About page | Staggered content reveal |
+| `typewriter` | About page | Typewriter text effect |
 
-### DAO Treasury
-- Batch-send to multiple wallets
-- Progress tracking per recipient
-- Individual error handling
+---
 
-### Card Designer
-- Canvas-based artwork
-- Custom text and images
-- Export to IPFS
-- Mint as NFT
+## AI Assistant
 
-### Shareable Links
-- URL format: `?gift=TOKEN_ID`
-- Copy to clipboard
-- QR code generation
-- Works on any device
+Floating chatbot widget available on all pages. Powered by Botchain AI, provides:
+- Gift recommendations
+- How-to guidance
+- Feature explanations
+- Message suggestions
