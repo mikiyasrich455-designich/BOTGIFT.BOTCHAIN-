@@ -7655,6 +7655,8 @@ window.convertSbtToBot = convertSbtToBot;
                     const gift = await sgLookupGift(codeVal);
                     if (!gift) { throw new Error('Invalid claim code. Check the code and try again.'); }
 
+                    if (gift.gift_password && pwVal !== gift.gift_password) { throw new Error('Wrong password.'); }
+
                     if (!isWalletConnected) { openWalletModal(); return; }
 
                     const claimerAddress = await systemSigner.getAddress();
@@ -7665,39 +7667,21 @@ window.convertSbtToBot = convertSbtToBot;
                         await window.ethereum.request({ method: 'personal_sign', params: [signMsg, claimerAddress] });
                     } catch(signErr) { throw new Error('Signature rejected in MetaMask.'); }
 
-                    redeemStatus.textContent = 'Decrypting vault...';
-                    const privateKey = await decryptAES(gift.encrypted_pk, gift.enc_key);
-                    const vaultWallet = new ethers.Wallet(privateKey, systemProvider);
-                    const vaultAddress = vaultWallet.address;
-                    const balance = await systemProvider.getBalance(vaultAddress);
+                    redeemStatus.textContent = 'Claiming...';
+                    await sgMarkClaimed(codeVal, claimerAddress);
 
-                    if (balance === 0n) { throw new Error('Gift already claimed or vault is empty.'); }
-
-                    const gasEstimate = await systemProvider.estimateGas({ from: vaultAddress, to: claimerAddress, value: balance });
-                    const feeData = await systemProvider.getFeeData();
-                    const gasCost = gasEstimate * feeData.gasPrice;
-                    const sendAmount = balance - gasCost;
-                    if (sendAmount <= 0n) { throw new Error('Vault balance too low to cover gas.'); }
-
-                    redeemStatus.textContent = 'Claiming ' + parseFloat(ethers.formatEther(sendAmount)).toFixed(4) + ' BOT...';
-                    const tx = await vaultWallet.sendTransaction({ to: claimerAddress, value: sendAmount });
-                    const receipt = await tx.wait();
-
-                    if (receipt.status === 1) {
-                        await sgMarkClaimed(codeVal, claimerAddress);
-                        redeemStatus.textContent = '';
-                        redeemStatus.classList.add('hidden');
-                        redeemClaimBtn.disabled = false;
-                        document.getElementById('sgRedeemClaimText').textContent = 'Claim Gift';
-                        document.getElementById('secretGiftRedeemPanel').classList.add('hidden');
-                        document.getElementById('secretGiftChoicePanel').classList.remove('hidden');
-                        ['sgRedeemCode','sgRedeemPassword'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
-                        const rp = document.getElementById('sgRedeemPreview');
-                        if (rp) rp.classList.add('hidden');
-                        showSecretGiftClaimedPopup({ msg: gift.message, senderName: gift.sender_name }, sendAmount, tx.hash);
-                        await updateRealBalance();
-                        if (typeof loadOnChainHistory === 'function') await loadOnChainHistory();
-                    }
+                    redeemStatus.textContent = '';
+                    redeemStatus.classList.add('hidden');
+                    redeemClaimBtn.disabled = false;
+                    document.getElementById('sgRedeemClaimText').textContent = 'Claim Gift';
+                    document.getElementById('secretGiftRedeemPanel').classList.add('hidden');
+                    document.getElementById('secretGiftChoicePanel').classList.remove('hidden');
+                    ['sgRedeemCode','sgRedeemPassword'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+                    const rp = document.getElementById('sgRedeemPreview');
+                    if (rp) rp.classList.add('hidden');
+                    showSecretGiftClaimedPopup({ msg: gift.message, senderName: gift.sender_name, txHash: gift.tx_hash }, ethers.parseEther(gift.amount));
+                    await updateRealBalance();
+                    if (typeof loadOnChainHistory === 'function') await loadOnChainHistory();
                 } catch(err) {
                     console.error('Secret Gift claim failed:', err);
                     redeemStatus.textContent = err.message || 'Claim failed.';
@@ -7781,7 +7765,7 @@ window.convertSbtToBot = convertSbtToBot;
             });
 
             if (confirmBtn) confirmBtn.addEventListener('click', async () => {
-                if (!sbtContractInstance || !systemSigner) { alert('Contract not initialized. Please reconnect wallet.'); return; }
+                if (!systemSigner) { alert('Please connect your wallet first.'); return; }
                 confirmBtn.disabled = true;
                 document.getElementById('sgConfirmText').textContent = 'Creating...';
                 document.getElementById('sgConfirmIcon').textContent = '⏳';
@@ -7794,66 +7778,26 @@ window.convertSbtToBot = convertSbtToBot;
                     const claimCodeVal = claimCodeInput ? claimCodeInput.value.trim().toUpperCase() : '';
                     const passwordVal = passwordInput ? passwordInput.value.trim() : '';
 
-                    document.getElementById('sgConfirmText').textContent = 'Creating vault...';
-                    const vaultWallet = ethers.Wallet.createRandom();
-                    const vaultAddress = vaultWallet.address;
+                    const giftCode = claimCodeVal || await sgGenerateCode();
 
-                    const metadata = {
-                        name: 'Secret Gift from ' + senderName,
-                        description: message || 'A secret gift on BOT Chain',
-                        image: sgUploadedImageData,
-                        external_url: window.location.origin,
-                        attributes: [
-                            { trait_type: 'Gift Type', value: 'Secret Gift' },
-                            { trait_type: 'Amount', value: parseFloat(amount), display_type: 'number' },
-                            { trait_type: 'Sender', value: realWalletAddress },
-                            { trait_type: 'Sender Name', value: senderName },
-                            { trait_type: 'Message', value: message || '' },
-                            { trait_type: 'Chain', value: 'BOT Chain Testnet' }
-                        ]
-                    };
-                    document.getElementById('sgConfirmText').textContent = 'Uploading metadata to IPFS...';
-                    const metaHash = await uploadMetadataToPinata(metadata);
-                    const tokenURI = 'ipfs://' + metaHash;
-
-                    document.getElementById('sgConfirmText').textContent = 'Funding vault & minting NFT...';
+                    document.getElementById('sgConfirmText').textContent = 'Sending BOT to recipient...';
                     const amountWei = ethers.parseEther(amount);
-                    const fundTx = await systemSigner.sendTransaction({ to: vaultAddress, value: amountWei });
-                    await fundTx.wait();
-
-                    const tx = await sbtContractInstance.mintSoulboundGift(vaultAddress, tokenURI, message || 'Secret Gift');
-
-                    document.getElementById('sgConfirmText').textContent = 'Encrypting vault...';
+                    const tx = await systemSigner.sendTransaction({ to: recipient, value: amountWei });
                     const receipt = await tx.wait();
                     if (receipt.status !== 1) throw new Error('Transaction failed on-chain');
-
-                    let mintedTokenId = '---';
-                    const event = receipt.logs.find(log => {
-                        try { const parsed = sbtContractInstance.interface.parseLog(log); return parsed && parsed.name === 'SoulboundGiftMinted'; } catch (e) { return false; }
-                    });
-                    if (event) {
-                        const parsed = sbtContractInstance.interface.parseLog(event);
-                        mintedTokenId = parsed.args.tokenId.toString();
-                    }
-
-                    const encKey = vaultWallet.privateKey;
-                    const encryptedPK = await encryptAES(vaultWallet.privateKey, encKey);
-
-                    const giftCode = claimCodeVal || await sgGenerateCode();
 
                     document.getElementById('sgConfirmText').textContent = 'Saving to database...';
                     await sgStoreGift(giftCode, {
                         code: giftCode,
-                        vault_address: vaultAddress,
-                        encrypted_pk: encryptedPK,
-                        enc_key: encKey,
                         amount: parseFloat(amount),
                         sender: realWalletAddress,
                         sender_name: senderName,
+                        recipient: recipient,
                         message: message || '',
                         image_url: sgUploadedImageData,
-                        token_id: mintedTokenId,
-                        recipient: recipient
+                        gift_password: passwordVal || '',
+                        tx_hash: tx.hash,
+                        claimed: false
                     });
 
                     addGift({
@@ -7864,7 +7808,6 @@ window.convertSbtToBot = convertSbtToBot;
                         amount: parseFloat(amount).toString(),
                         style: 'secretGift',
                         message: message,
-                        tokenId: mintedTokenId,
                         txHash: tx.hash,
                         timestamp: Date.now(),
                         claimed: false
@@ -7880,9 +7823,9 @@ window.convertSbtToBot = convertSbtToBot;
                         }).catch(() => { copyCodeBtn.textContent = 'Failed'; });
                     });
                     if (shareBtn) shareBtn.addEventListener('click', () => {
-                        const shareText = '🔐 Secret Gift Code: ' + giftCode + '\n\nGo to GIFT BOT → Secret Gift → Redeem\nEnter this code to claim your gift!';
+                        const shareText = 'Secret Gift Code: ' + giftCode + '\n\nGo to GIFT BOT > Secret Gift > Redeem\nEnter this code to claim your gift!';
                         if (navigator.share) {
-                            navigator.share({ title: '🔐 Secret Gift!', text: shareText });
+                            navigator.share({ title: 'Secret Gift!', text: shareText });
                         } else {
                             navigator.clipboard.writeText(shareText).then(() => { shareBtn.textContent = 'Copied!'; setTimeout(() => { shareBtn.textContent = 'Share'; }, 2000); });
                         }
@@ -7911,6 +7854,7 @@ window.convertSbtToBot = convertSbtToBot;
         })();
 
         function showSecretGiftClaimedPopup(data, balance, txHash) {
+            const txH = txHash || data.txHash || '';
             const overlay = document.createElement('div');
             overlay.id = 'secretGiftClaimedPopup';
             overlay.className = 'fixed inset-0 z-[80] flex items-center justify-center bg-zinc-950/90 backdrop-blur-md';
@@ -7949,9 +7893,9 @@ window.convertSbtToBot = convertSbtToBot;
                         (data.msg ? '<p style="font-size:0.75rem;color:#a1a1aa;font-style:italic;margin-bottom:0.75rem;animation:sgSlideUp 0.4s ease 0.6s both;">"' + data.msg + '"</p>' : '') +
                         '<div style="background:rgba(9,9,11,0.6);border:1px solid rgba(63,63,70,0.3);border-radius:0.75rem;padding:0.625rem;margin-bottom:0.75rem;animation:sgSlideUp 0.4s ease 0.7s both;">' +
                             '<p style="font-size:0.6rem;color:#71717a;margin-bottom:0.125rem;">Transaction</p>' +
-                            '<p style="font-size:0.7rem;color:#d4d4d8;font-family:monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + txHash + '</p>' +
+                            '<p style="font-size:0.7rem;color:#d4d4d8;font-family:monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + txH + '</p>' +
                         '</div>' +
-                        '<a href="https://scan.bohr.life/tx/' + txHash + '" target="_blank" style="font-size:0.7rem;color:rgba(16,185,129,0.7);text-decoration:none;display:block;margin-bottom:1rem;animation:sgSlideUp 0.4s ease 0.8s both;">View on Explorer</a>' +
+                        '<a href="https://scan.bohr.life/tx/' + txH + '" target="_blank" style="font-size:0.7rem;color:rgba(16,185,129,0.7);text-decoration:none;display:block;margin-bottom:1rem;animation:sgSlideUp 0.4s ease 0.8s both;">View on Explorer</a>' +
                         '<button id="sgClaimedCloseBtn" style="width:100%;background:linear-gradient(135deg,#10b981,#059669);color:#09090b;padding:0.75rem;border-radius:0.75rem;font-weight:700;font-size:0.875rem;border:none;cursor:pointer;transition:all 0.2s;animation:sgSlideUp 0.4s ease 0.9s both;" onmouseover="this.style.transform=\'scale(1.02)\';this.style.filter=\'brightness(1.1)\'" onmouseout="this.style.transform=\'scale(1)\';this.style.filter=\'brightness(1)\'">Awesome!</button>' +
                     '</div>' +
                 '</div>';
@@ -8061,33 +8005,17 @@ window.convertSbtToBot = convertSbtToBot;
                         await window.ethereum.request({ method: 'personal_sign', params: [signMsg, claimerAddress] });
                     } catch(signErr) { throw new Error('Signature rejected in MetaMask.'); }
 
-                    statusEl.textContent = 'Decrypting vault...';
-                    const privateKey = await decryptAES(gift.encrypted_pk, gift.enc_key);
-                    const vaultWallet = new ethers.Wallet(privateKey, systemProvider);
-                    const vaultAddress = vaultWallet.address;
-                    const balance = await systemProvider.getBalance(vaultAddress);
-
-                    if (balance === 0n) { overlay.remove(); showSecretGiftAlreadyClaimedPopup(); return; }
-
-                    const gasEstimate = await systemProvider.estimateGas({ from: vaultAddress, to: claimerAddress, value: balance });
-                    const feeData = await systemProvider.getFeeData();
-                    const gasCost = gasEstimate * feeData.gasPrice;
-                    const sendAmount = balance - gasCost;
-                    if (sendAmount <= 0n) { throw new Error('Vault balance too low to cover gas.'); }
-
-                    statusEl.textContent = 'Claiming ' + parseFloat(ethers.formatEther(sendAmount)).toFixed(4) + ' BOT...';
-                    claimBtnEl.textContent = 'Sending...';
-
-                    const tx = await vaultWallet.sendTransaction({ to: claimerAddress, value: sendAmount });
-                    const receipt = await tx.wait();
-
-                    if (receipt.status === 1) {
-                        await sgMarkClaimed(code, claimerAddress);
-                        overlay.remove();
-                        showSecretGiftClaimedPopup({ msg: gift.message, senderName: gift.sender_name }, sendAmount, tx.hash);
-                        await updateRealBalance();
-                        if (typeof loadOnChainHistory === 'function') await loadOnChainHistory();
+                    if (gift.gift_password && pwInput && pwInput.value.trim() !== gift.gift_password) {
+                        throw new Error('Wrong password.');
                     }
+
+                    statusEl.textContent = 'Claiming...';
+                    await sgMarkClaimed(code, claimerAddress);
+
+                    overlay.remove();
+                    showSecretGiftClaimedPopup({ msg: gift.message, senderName: gift.sender_name, txHash: gift.tx_hash }, ethers.parseEther(gift.amount));
+                    await updateRealBalance();
+                    if (typeof loadOnChainHistory === 'function') await loadOnChainHistory();
                 } catch (err) {
                     console.error('Secret Gift claim failed:', err);
                     statusEl.textContent = 'Claim failed: ' + (err.reason || err.message || 'Unknown error');
