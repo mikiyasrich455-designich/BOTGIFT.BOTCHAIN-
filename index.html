@@ -7671,25 +7671,15 @@ window.convertSbtToBot = convertSbtToBot;
                     const vaultAddress = vaultWallet.address;
                     const balance = await systemProvider.getBalance(vaultAddress);
 
-                    if (balance === 0n) {
-                        redeemClaimBtn.disabled = false;
-                        document.getElementById('sgRedeemClaimText').textContent = 'Claim Gift';
-                        document.getElementById('secretGiftRedeemPanel').classList.add('hidden');
-                        document.getElementById('secretGiftChoicePanel').classList.remove('hidden');
-                        ['sgRedeemCode','sgRedeemPassword'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
-                        const rp = document.getElementById('sgRedeemPreview');
-                        if (rp) rp.classList.add('hidden');
-                        showSecretGiftAlreadyClaimedPopup();
-                        return;
-                    }
-
-                    redeemStatus.textContent = 'Claiming ' + parseFloat(ethers.formatEther(balance)).toFixed(4) + ' BOT...';
+                    if (balance === 0n) { throw new Error('Gift already claimed or vault is empty.'); }
 
                     const gasEstimate = await systemProvider.estimateGas({ from: vaultAddress, to: claimerAddress, value: balance });
                     const feeData = await systemProvider.getFeeData();
                     const gasCost = gasEstimate * feeData.gasPrice;
                     const sendAmount = balance - gasCost;
                     if (sendAmount <= 0n) { throw new Error('Vault balance too low to cover gas.'); }
+
+                    redeemStatus.textContent = 'Claiming ' + parseFloat(ethers.formatEther(sendAmount)).toFixed(4) + ' BOT...';
                     const tx = await vaultWallet.sendTransaction({ to: claimerAddress, value: sendAmount });
                     const receipt = await tx.wait();
 
@@ -7704,7 +7694,7 @@ window.convertSbtToBot = convertSbtToBot;
                         ['sgRedeemCode','sgRedeemPassword'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
                         const rp = document.getElementById('sgRedeemPreview');
                         if (rp) rp.classList.add('hidden');
-                        showSecretGiftClaimedPopup({ msg: gift.message, senderName: gift.sender_name }, balance, tx.hash);
+                        showSecretGiftClaimedPopup({ msg: gift.message, senderName: gift.sender_name }, sendAmount, tx.hash);
                         await updateRealBalance();
                         if (typeof loadOnChainHistory === 'function') await loadOnChainHistory();
                     }
@@ -7826,12 +7816,11 @@ window.convertSbtToBot = convertSbtToBot;
                     const metaHash = await uploadMetadataToPinata(metadata);
                     const tokenURI = 'ipfs://' + metaHash;
 
-                    document.getElementById('sgConfirmText').textContent = 'Funding vault...';
+                    document.getElementById('sgConfirmText').textContent = 'Funding vault & minting NFT...';
                     const amountWei = ethers.parseEther(amount);
                     const fundTx = await systemSigner.sendTransaction({ to: vaultAddress, value: amountWei });
                     await fundTx.wait();
 
-                    document.getElementById('sgConfirmText').textContent = 'Minting NFT...';
                     const tx = await sbtContractInstance.mintSoulboundGift(vaultAddress, tokenURI, message || 'Secret Gift');
 
                     document.getElementById('sgConfirmText').textContent = 'Encrypting vault...';
@@ -7912,7 +7901,7 @@ window.convertSbtToBot = convertSbtToBot;
                     if (typeof loadOnChainHistory === 'function') await loadOnChainHistory();
                 } catch (err) {
                     console.error('Secret Gift creation failed:', err);
-                    alert('Failed to create Secret Gift: ' + (err.reason || err.message || 'Unknown error'));
+                    alert('Failed to create Secret Gift: ' + (err.reason || err.message || 'Unknown error') + '\n\nMake sure you have enough BOT to cover the gift amount + gas for 2 transactions (fund vault + mint NFT).');
                     document.getElementById('sgConfirmText').textContent = 'Confirm & Create';
                     document.getElementById('sgConfirmIcon').textContent = '🔐';
                 } finally {
@@ -8075,25 +8064,27 @@ window.convertSbtToBot = convertSbtToBot;
                     statusEl.textContent = 'Decrypting vault...';
                     const privateKey = await decryptAES(gift.encrypted_pk, gift.enc_key);
                     const vaultWallet = new ethers.Wallet(privateKey, systemProvider);
-                    const balance = await systemProvider.getBalance(vaultWallet.address);
+                    const vaultAddress = vaultWallet.address;
+                    const balance = await systemProvider.getBalance(vaultAddress);
 
                     if (balance === 0n) { overlay.remove(); showSecretGiftAlreadyClaimedPopup(); return; }
 
-                    statusEl.textContent = 'Claiming ' + parseFloat(ethers.formatEther(balance)).toFixed(4) + ' BOT...';
-                    claimBtnEl.textContent = 'Sending...';
-
-                    const gasEstimate = await systemProvider.estimateGas({ from: vaultWallet.address, to: claimerAddress, value: balance });
+                    const gasEstimate = await systemProvider.estimateGas({ from: vaultAddress, to: claimerAddress, value: balance });
                     const feeData = await systemProvider.getFeeData();
                     const gasCost = gasEstimate * feeData.gasPrice;
                     const sendAmount = balance - gasCost;
                     if (sendAmount <= 0n) { throw new Error('Vault balance too low to cover gas.'); }
+
+                    statusEl.textContent = 'Claiming ' + parseFloat(ethers.formatEther(sendAmount)).toFixed(4) + ' BOT...';
+                    claimBtnEl.textContent = 'Sending...';
+
                     const tx = await vaultWallet.sendTransaction({ to: claimerAddress, value: sendAmount });
                     const receipt = await tx.wait();
 
                     if (receipt.status === 1) {
                         await sgMarkClaimed(code, claimerAddress);
                         overlay.remove();
-                        showSecretGiftClaimedPopup({ msg: gift.message, senderName: gift.sender_name }, balance, tx.hash);
+                        showSecretGiftClaimedPopup({ msg: gift.message, senderName: gift.sender_name }, sendAmount, tx.hash);
                         await updateRealBalance();
                         if (typeof loadOnChainHistory === 'function') await loadOnChainHistory();
                     }
@@ -8102,7 +8093,7 @@ window.convertSbtToBot = convertSbtToBot;
                     statusEl.textContent = 'Claim failed: ' + (err.reason || err.message || 'Unknown error');
                     statusEl.className = 'text-[10px] text-red-400';
                     claimBtnEl.disabled = false;
-                    claimBtnEl.textContent = 'Claim Gift 🔐';
+                    claimBtnEl.textContent = 'Claim Gift';
                 }
             });
         }
