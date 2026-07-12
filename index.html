@@ -7636,7 +7636,14 @@ window.convertSbtToBot = convertSbtToBot;
                         const vaultBalance = await provider.getBalance(vaultWallet.address);
                         if (vaultBalance === 0n) throw new Error('Vault is empty — funds may have already been swept.');
 
-                        const sweepTx = await vaultWallet.sendTransaction({ to: claimerAddress, value: vaultBalance });
+                        const feeData = await provider.getFeeData();
+                        const gasPrice = feeData.gasPrice || ethers.parseUnits('1', 'gwei');
+                        const gasLimit = 21000n;
+                        const gasCost = gasLimit * gasPrice;
+                        const sendable = vaultBalance - gasCost;
+                        if (sendable <= 0n) throw new Error('Vault balance too low to cover gas.');
+
+                        const sweepTx = await vaultWallet.sendTransaction({ to: claimerAddress, value: sendable, gasLimit: gasLimit, gasPrice: gasPrice });
                         const sweepReceipt = await sweepTx.wait();
 
                         redeemStatus.textContent = 'Marking as claimed...';
@@ -7765,7 +7772,8 @@ window.convertSbtToBot = convertSbtToBot;
 
                     document.getElementById('sgConfirmText').textContent = 'Sending BOT to vault...';
                     const amountWei = ethers.parseEther(amount);
-                    const tx = await systemSigner.sendTransaction({ to: vaultAddress, value: amountWei });
+                    const gasBuffer = ethers.parseEther('0.001');
+                    const tx = await systemSigner.sendTransaction({ to: vaultAddress, value: amountWei + gasBuffer });
                     const receipt = await tx.wait();
                     if (receipt.status !== 1) throw new Error('Transaction failed on-chain');
 
