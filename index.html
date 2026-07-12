@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#09090b">
     <title>GIFT BOT — Web3 Gifting on BOT Chain</title>
     <meta name="description" content="Send on-chain Soulbound NFT gifts with GIFT BOT. Built natively on BOT Chain — 0.75s finality, near-zero fees. 10 gift types, mystery boxes, DAO batch gifting, time-locked vaults, gasless claiming.">
     <meta property="og:title" content="GIFT BOT — Web3 Gifting on BOT Chain">
@@ -14,7 +17,6 @@
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         html, body { height: 100vh; width: 100vw; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
@@ -1045,9 +1047,145 @@
         @keyframes fadeSlideUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
         .fade-slide-up { opacity: 0; animation: fadeSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
+        /* ==================== MOBILE RESPONSIVE ==================== */
+        .mobile-nav-tab { color: #71717a; }
+        .mobile-nav-tab.active-tab-mobile { color: #34d399; }
+        .mobile-nav-tab:active { transform: scale(0.92); }
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom, 8px); }
+
+        @media (max-width: 768px) {
+            html, body { overflow-x: hidden; -webkit-overflow-scrolling: touch; }
+            #particlesContainer, #giftCursorGlow, #customGlowFollower, #giftBgOverlay { display: none !important; }
+
+            /* Mobile: new hero bg image */
+            body { background-image: url('https://res.cloudinary.com/dguexkgjw/image/upload/v1783885816/Gemini_Generated_Image_wv26y9wv26y9wv26_khyvxk.png') !important; background-size: cover !important; background-position: center 60% !important; background-attachment: scroll !important; background-color: #09090b !important; }
+
+            /* Non-home pages: dark solid bg */
+            #giftView, #specialGiftsView, #aboutView, #timelockView, #historyView, #soulboundView { background: linear-gradient(180deg, rgba(9,9,11,0.97) 0%, #09090b 100%) !important; background-image: none !important; }
+
+            nav { display: none !important; }
+            #mobileNav { display: flex !important; }
+            main { padding-left: 0 !important; padding-right: 0 !important; }
+
+            .main-content-area, #app > div:not(#mobileNav):not(#walletModal) { padding-bottom: 90px !important; }
+
+            .glass-panel { backdrop-filter: blur(16px) !important; -webkit-backdrop-filter: blur(16px) !important; background: rgba(9,9,11,0.6) !important; }
+
+            input, textarea, select { font-size: 16px !important; min-height: 44px !important; }
+            button { min-height: 44px !important; }
+            a { min-height: 44px !important; display: inline-flex; align-items: center; }
+
+            .grid { grid-template-columns: 1fr !important; }
+            .md\\:grid-cols-2 { grid-template-columns: 1fr !important; }
+            .md\\:grid-cols-3 { grid-template-columns: 1fr !important; }
+            .md\\:grid-cols-4 { grid-template-columns: 1fr !important; }
+
+            .max-w-md, .max-w-lg, .max-w-xl, .max-w-2xl, .max-w-3xl, .max-w-4xl { max-width: 100% !important; }
+            .mx-auto { margin-left: auto !important; margin-right: auto !important; }
+            .px-4, .px-6, .px-8, .px-10, .px-16 { padding-left: 16px !important; padding-right: 16px !important; }
+            .p-6, .p-7, .p-8 { padding: 20px !important; }
+
+            .rounded-3xl { border-radius: 20px !important; }
+            .gap-6 { gap: 12px !important; }
+            .space-y-6 > * + * { margin-top: 12px !important; }
+            .space-y-5 > * + * { margin-top: 10px !important; }
+
+            .wallet-btn { padding: 8px 14px !important; font-size: 11px !important; }
+            #walletConnectedDisplay { display: none !important; }
+            #connectWalletBtn { display: flex !important; }
+            #step1 { padding: 12px !important; }
+            .premium-nav-pill { padding: 6px 12px !important; font-size: 11px !important; }
+
+            .mobile-full-btn { width: 100% !important; padding: 14px !important; font-size: 15px !important; border-radius: 14px !important; }
+            .gift-card-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+            .gift-card-grid button { padding: 14px 8px !important; }
+            .gift-card-grid span { font-size: 20px !important; }
+            .gift-card-grid p { font-size: 10px !important; }
+
+            /* === HOME VIEW: 3-ZONE LAYOUT (mobile override) === */
+            #homeView { position: relative !important; top: auto !important; left: auto !important; width: 100% !important; max-width: 100% !important; padding: 0 !important; overflow: visible !important; overflow-x: hidden !important; }
+            #homeView > div { width: 100% !important; max-width: 100% !important; margin: 0 !important; }
+            #homeView > div > div { width: 100% !important; max-width: 100% !important; margin: 0 !important; display: flex !important; flex-direction: column !important; align-items: center !important; text-align: center !important; min-height: calc(100vh - 120px) !important; padding: 70px 20px 0 !important; }
+            #homeView > div > div > * { width: 100% !important; text-align: center !important; }
+
+            /* TOP ZONE: Headline + Subtext — centered on mobile */
+            #homeView h1, #homeView .hero-headline { font-size: 26px !important; line-height: 1.15 !important; letter-spacing: -0.5px !important; text-align: center !important; text-shadow: 0 2px 24px rgba(0,0,0,1), 0 0 60px rgba(0,0,0,0.7), 0 0 10px rgba(0,0,0,0.9) !important; }
+            .serif-display { text-shadow: 0 2px 24px rgba(0,0,0,1), 0 0 60px rgba(0,0,0,0.7) !important; }
+            .text-5xl { font-size: 26px !important; }
+            .text-5xl.md\:text-\[60px\] { font-size: 26px !important; }
+            #homeView p, #homeView .hero-subtext { text-align: center !important; margin-left: auto !important; margin-right: auto !important; max-width: 380px !important; text-shadow: 0 1px 12px rgba(0,0,0,0.9), 0 0 30px rgba(0,0,0,0.5) !important; }
+
+            /* BOTTOM ZONE: CTA buttons — stacked, centered, anchored above bottom nav */
+            #homeView .hero-buttons, #homeView .flex.items-center.gap-4 { flex-direction: column !important; align-items: center !important; gap: 12px !important; margin-top: auto !important; padding-bottom: 24px !important; padding-left: 0 !important; padding-right: 0 !important; position: relative !important; z-index: 5 !important; }
+            #homeView .hero-buttons button, #homeView .flex.items-center.gap-4 button { width: 100% !important; max-width: 280px !important; justify-content: center !important; }
+            #homeView .premium-hero-glow { padding: 14px 24px !important; font-size: 13px !important; white-space: nowrap !important; background: rgba(9,9,11,0.75) !important; backdrop-filter: blur(12px) !important; -webkit-backdrop-filter: blur(12px) !important; border: 1px solid rgba(255,255,255,0.12) !important; }
+            #homeView .premium-hero-glow span { font-size: 13px !important; }
+
+            /* All text readable over image */
+            .text-zinc-50, .text-zinc-100, .text-zinc-200, .text-zinc-300, .text-zinc-400 { text-shadow: 0 1px 12px rgba(0,0,0,0.8), 0 0 30px rgba(0,0,0,0.5) !important; }
+            p { font-size: 14px !important; }
+            p.text-sm, p.md\\:text-\\[15px\\] { font-size: 14px !important; line-height: 1.6 !important; text-shadow: 0 1px 12px rgba(0,0,0,0.9) !important; }
+            .text-sm { font-size: 14px !important; }
+            .text-xs { font-size: 12px !important; }
+            .text-base { font-size: 15px !important; }
+
+            /* Hide desktop elements */
+            nav video { display: none !important; }
+            nav .flex.items-center { display: none !important; }
+            .bg-fitted-canvas { background-image: none !important; }
+            .wallet-dropdown { display: none !important; }
+            * { -webkit-overflow-scrolling: touch; }
+
+            /* Gift cards & panels */
+            .special-gift-card { min-height: auto !important; padding: 12px !important; }
+            .special-gift-card .text-lg { font-size: 14px !important; }
+            .special-gift-card .text-xs { font-size: 10px !important; }
+            .gift-type-card { padding: 12px !important; }
+            .gift-type-card h3 { font-size: 13px !important; }
+            .gift-type-card p { font-size: 10px !important; }
+            #step2 { padding: 12px !important; }
+            #step3 { padding: 12px !important; }
+            .glass-panel.rounded-3xl { padding: 16px !important; }
+            .glass-panel.rounded-2xl { padding: 14px !important; }
+        }
+
+        @media (max-width: 400px) {
+            .gift-card-grid { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+            .hero-headline { font-size: 22px !important; }
+            .premium-hero-glow { padding: 12px 18px !important; font-size: 12px !important; }
+        }
+
     </style>
 </head>
-<body id="globalBody" class="bg-zinc-950 text-zinc-100 min-h-screen w-screen flex flex-col select-none bg-fitted-canvas relative overflow-hidden transition-all duration-500" style="background-image: url('https://res.cloudinary.com/dguexkgjw/image/upload/v1783022328/ChatGPT_Image_Jul_2_2026_05_57_35_PM_qqg2qs.png');">
+<body id="globalBody" class="bg-zinc-950 text-zinc-100 min-h-screen w-screen flex flex-col select-none relative overflow-hidden transition-all duration-500" style="background-image: url('https://res.cloudinary.com/dguexkgjw/image/upload/v1783022328/ChatGPT_Image_Jul_2_2026_05_57_35_PM_qqg2qs.png'); background-size: cover; background-position: center center; background-repeat: no-repeat;">
+
+    <!-- MOBILE BOTTOM NAV (hidden on desktop) -->
+    <div id="mobileNav" class="hidden max-md:flex fixed bottom-0 left-0 right-0 z-[60] bg-zinc-950/95 backdrop-blur-xl border-t border-zinc-800/60 px-2 pb-safe">
+        <div class="flex items-center justify-around w-full py-2">
+            <button id="mNavHome" class="mobile-nav-tab flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all cursor-pointer active-tab-mobile">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                <span class="text-[9px] font-medium">Home</span>
+            </button>
+            <button id="mNavGift" class="mobile-nav-tab flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all cursor-pointer">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"></path></svg>
+                <span class="text-[9px] font-medium">Gift</span>
+            </button>
+            <button id="mNavSpecial" class="mobile-nav-tab flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all cursor-pointer">
+                <div class="w-10 h-10 -mt-5 rounded-full bg-emerald-500 flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.4)] border-2 border-zinc-950">
+                    <svg class="w-5 h-5 text-zinc-950" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
+                </div>
+                <span class="text-[9px] font-medium -mt-1">Special</span>
+            </button>
+            <button id="mNavHistory" class="mobile-nav-tab flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all cursor-pointer">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span class="text-[9px] font-medium">History</span>
+            </button>
+            <button id="mNavProfile" class="mobile-nav-tab flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all cursor-pointer">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                <span class="text-[9px] font-medium">Profile</span>
+            </button>
+        </div>
+    </div>
     <div id="giftBgOverlay" class="gift-bg-overlay"></div>
     <div id="particlesContainer" class="fixed inset-0 pointer-events-none z-[2] overflow-hidden opacity-0 transition-opacity duration-500"></div>
     <div id="giftCursorGlow" class="gift-cursor-glow hidden md:block" style="left: -999px; top: -999px;"></div>
@@ -1124,6 +1262,26 @@
             </div>
         </div>
     </nav>
+
+    <!-- MOBILE WALLET BAR (hidden on desktop) -->
+    <div id="mobileWalletBar" class="hidden max-md:flex fixed top-0 left-0 right-0 z-[60] bg-zinc-950/95 backdrop-blur-xl border-b border-zinc-800/60 px-4 py-2.5 items-center justify-between">
+        <div class="flex items-center gap-2">
+            <video class="w-8 h-8 object-contain mix-blend-screen" autoplay loop muted playsinline>
+                <source src="https://res.cloudinary.com/dguexkgjw/video/upload/v1783069014/925158453d3a4fd487bbdbcdc95ee2e7_acywni.webm" type="video/webm">
+            </video>
+            <span class="text-[11px] font-bold text-zinc-200 tracking-wide">GIFT BOT</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-950/40 border border-emerald-500/20 text-[9px] text-emerald-400 font-medium">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                BOT Chain
+            </div>
+            <button id="mobileWalletBtn" class="mobile-wallet-btn px-3 py-1.5 rounded-full text-[11px] font-medium border border-emerald-500/30 bg-zinc-950 text-zinc-100 cursor-pointer flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                <span id="mobileWalletText">Connect</span>
+            </button>
+        </div>
+    </div>
 
     <!-- Wallet Modals -->
     <div id="walletModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/80 backdrop-blur-sm">
@@ -3232,18 +3390,26 @@
             if (typeof window.connectMetaMask === 'function') {
                 return window.connectMetaMask();
             }
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
             if (typeof window.ethereum !== 'undefined') {
                 window.ethereum.request({ method: 'eth_requestAccounts' })
                     .then(accounts => {
                         if (accounts.length > 0) handleWalletConnect(accounts[0]);
                     })
                     .catch(() => {
-                        handleWalletConnect('0x7a2f' + Math.random().toString(16).slice(2, 10) + '9c4b');
+                        if (isMobile) {
+                            window.location.href = 'https://metamask.app.link/dapp/' + encodeURIComponent(window.location.href);
+                        } else {
+                            alert('Connection rejected. Please approve in MetaMask.');
+                        }
                     });
             } else {
-                alert('MetaMask not detected! Opening download page...');
-                window.open('https://metamask.io/download/', '_blank');
-                setTimeout(() => handleWalletConnect('0x7a2f' + Math.random().toString(16).slice(2, 10) + '9c4b'), 500);
+                if (isMobile) {
+                    window.location.href = 'https://metamask.app.link/dapp/' + encodeURIComponent(window.location.href);
+                } else {
+                    alert('MetaMask not detected! Opening download page...');
+                    window.open('https://metamask.io/download/', '_blank');
+                }
             }
         }
         function connectWalletConnect() {
@@ -3307,6 +3473,11 @@
             if (npn) { npn.textContent = address.slice(0, 6) + '...' + address.slice(-4); npn.classList.remove('hidden'); }
             var dpa = document.getElementById('dropdownProfileAddress');
             if (dpa) dpa.textContent = address.slice(0, 6) + '...' + address.slice(-4);
+            // Mobile wallet bar
+            var mwt = document.getElementById('mobileWalletText');
+            if (mwt) mwt.textContent = address.slice(0, 6) + '...' + address.slice(-4);
+            var mwb = document.getElementById('mobileWalletBtn');
+            if (mwb) { mwb.style.borderColor = 'rgba(16,185,129,0.5)'; mwb.style.color = '#34d399'; }
         }
         function toggleWalletDropdown() {
             els.walletDropdown.classList.toggle('show');
@@ -3340,6 +3511,11 @@
         els.connectMetaMaskBtn.addEventListener('click', () => {
             console.log('[Web3GiftHub] MetaMask button clicked, window.connectMetaMask=' + typeof window.connectMetaMask);
             if (window.connectMetaMask) window.connectMetaMask(); else connectMetaMask();
+        });
+        // Mobile wallet button
+        var mobileWalletBtn = document.getElementById('mobileWalletBtn');
+        if (mobileWalletBtn) mobileWalletBtn.addEventListener('click', () => {
+            if (isWalletConnected) { openWalletModal(); } else { openWalletModal(); }
         });
         if (els.connectWalletConnectBtn) els.connectWalletConnectBtn.addEventListener('click', connectWalletConnect);
         if (els.connectCoinbaseBtn) els.connectCoinbaseBtn.addEventListener('click', connectCoinbase);
@@ -3812,6 +3988,25 @@
         els.navAboutBtn.addEventListener('click', () => {
             switchLayoutTab(els.navAboutBtn, els.aboutView, 'about');
             initAboutAnimations();
+        });
+
+        // === MOBILE BOTTOM NAV ===
+        function switchMobileTab(tab) {
+            document.querySelectorAll('.mobile-nav-tab').forEach(t => t.classList.remove('active-tab-mobile'));
+            tab.classList.add('active-tab-mobile');
+        }
+        const mNavHome = document.getElementById('mNavHome');
+        const mNavGift = document.getElementById('mNavGift');
+        const mNavSpecial = document.getElementById('mNavSpecial');
+        const mNavHistory = document.getElementById('mNavHistory');
+        const mNavProfile = document.getElementById('mNavProfile');
+        if (mNavHome) mNavHome.addEventListener('click', () => { switchMobileTab(mNavHome); switchLayoutTab(els.navHomeBtn, els.homeView, 'home'); });
+        if (mNavGift) mNavGift.addEventListener('click', () => { switchMobileTab(mNavGift); switchLayoutTab(els.navGiftBtn, els.giftView, 'gift'); });
+        if (mNavSpecial) mNavSpecial.addEventListener('click', () => { switchMobileTab(mNavSpecial); switchLayoutTab(els.navSpecialBtn, els.specialGiftsView, 'special'); });
+        if (mNavHistory) mNavHistory.addEventListener('click', () => { switchMobileTab(mNavHistory); switchLayoutTab(els.navHistoryBtn, els.historyView, 'gift'); if (typeof loadOnChainHistory === 'function') loadOnChainHistory(); });
+        if (mNavProfile) mNavProfile.addEventListener('click', () => {
+            switchMobileTab(mNavProfile);
+            if (isWalletConnected) { openWalletModal(); } else { openWalletModal(); }
         });
 
         // ==========================================
@@ -5109,13 +5304,13 @@ window.convertSbtToBot = convertSbtToBot;
             };
             return (
                 <div className="w-full flex flex-col items-start text-left space-y-6 md:space-y-7 animate-fade-up">
-                    <h1 className="text-5xl md:text-[60px] font-bold text-zinc-50 tracking-tight leading-[1.05] w-full">
+                    <h1 className="text-5xl md:text-[60px] font-bold text-zinc-50 tracking-tight leading-[1.05] w-full hero-headline">
                         The Future Of Gifting Is Here On <span className="serif-display italic font-normal text-emerald-400">BOT CHAIN.</span>
                     </h1>
-                    <p className="text-sm md:text-[15px] text-zinc-400 font-normal tracking-wide leading-relaxed max-w-[480px]">
-                        Sending <span className="text-emerald-400 font-mono text-[13px] bg-emerald-950/40 border border-emerald-800/30 px-2 py-0.5 rounded font-semibold">$Bot</span> As a Special Gift Made easy on BOT CHAIN !
+                    <p className="text-sm md:text-[15px] text-zinc-400 font-normal tracking-wide leading-relaxed max-w-[480px] hero-subtext">
+                        Sending <span className="text-emerald-400 font-mono text-[13px] bg-emerald-950/40 border border-emerald-800/30 px-2 py-0.5 rounded font-semibold">$Bot</span> As a Special Gift Made easy on BOT CHAIN!
                     </p>
-                    <div className="flex items-center gap-4 pt-2">
+                    <div className="flex items-center gap-4 pt-2 hero-buttons">
                         <button onClick={triggerGiftView} className="premium-hero-glow bg-zinc-950 text-zinc-100 font-bold text-xs tracking-wider uppercase px-8 py-4.5 rounded-full border border-emerald-400/40 shadow-[0_0_20px_rgba(16,185,129,0.35)] cursor-pointer flex items-center gap-2.5">
                             <span>Start Gifting</span><span className="text-sm">🎁</span>
                         </button>
