@@ -1,230 +1,224 @@
 <div align="center">
 
-# 🎁 GIFT BOT
+# GIFT BOT
 
-### *The On-Chain Gifting Protocol on BOT Chain*
+### Web3 Gifting on BOT Chain
 
-![BOT Chain](https://img.shields.io/badge/BOT%20Chain-Testnet-059669?style=for-the-badge&logo=ethereum&logoColor=white)
-![Solidity](https://img.shields.io/badge/Solidity-0.8+-363636?style=for-the-badge&logo=solidity&logoColor=white)
-![IPFS](https://img.shields.io/badge/IPFS-Pinata-65CFF0?style=for-the-badge&logo=ipfs&logoColor=white)
-![MetaMask](https://img.shields.io/badge/MetaMask-Supported-F6851B?style=for-the-badge&logo=metamask&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-10b981?style=for-the-badge)
+**Send on-chain Soulbound NFT gifts with custom artwork, encrypted vaults, and gasless claiming.**
 
-<br>
+[![BOT Chain](https://img.shields.io/badge/BOT%20Chain-Testnet-10b981?style=for-the-badge&logo=ethereum&logoColor=white)](#)
+[![License](https://img.shields.io/badge/License-MIT-blueviolet?style=for-the-badge)](#)
+[![Status](https://img.shields.io/badge/Status-Live-brightgreen?style=for-the-badge)](#)
 
-**Send crypto gifts as Soulbound NFTs. Recipients claim for free. No gas fees.**
-
-<br>
-
-[🚀 Live Demo](#-quick-start) • [📖 How It Works](#-how-it-works) • [🎨 Gift Types](#-gift-types) • [⚙️ Tech Stack](#-tech-stack) • [🔧 Setup](#-setup)
-
-<br>
+[Live App](https://gift-bot.vercel.app) · [BOT Chain Scan](https://scan.bohr.life) · [Report Bug](https://github.com/your-username/gift-bot/issues)
 
 </div>
 
 ---
 
-## 🌟 What is GIFT BOT?
+## What is GIFT BOT?
 
-GIFT BOT is a **decentralized gifting protocol** built on BOT Chain Testnet that transforms how people send crypto. Instead of boring wallet transfers, gifts become **Soulbound NFTs** — non-transferable digital collectibles with themed animations, personal messages, and a premium claim experience.
+GIFT BOT is a full-stack Web3 gifting dApp built natively on **BOT Chain Testnet** — a high-performance L1 with 0.75s finality and near-zero fees. Users can send crypto as beautiful, personalized Soulbound NFT gifts with custom artwork, messages, and traits stored on IPFS.
 
-> **The sender pays everything. The recipient claims for free. Zero gas fees.**
-
----
-
-## ✨ Features
-
-<table>
-<tr>
-<td width="50%">
-
-### 🎨 10 Themed Gift Types
-- 💌 Love Letter — sealed envelope animation
-- 💖 Heart — 3D beat & pulse
-- 🎁 Crypto Bro — vault door opening
-- 🎂 Birthday — balloons & cake reveal
-- 💎 Diamond — prismatic light split
-- 🎫 Golden Ticket — shimmer unfold
-- 🎲 Mystery — box shatter effect
-- 🏴‍☠️ Treasure — chest & gold spill
-- 🎄 Christmas — ornament & snowfall
-- 🏛️ DAO — temple doors opening
-
-</td>
-<td width="50%">
-
-### ⚡ Core Capabilities
-- **Soulbound NFT Gifts** — non-transferable, burn-to-claim
-- **$0 Claim Fee** — sender pre-funds 0.01 BOT for gas
-- **Shareable Claim Links** — `?gift=TOKEN_ID` URL
-- **Time-Locked Gifts** — unlock at a specific date
-- **Mystery Box** — randomized reward amounts
-- **DAO Treasury** — batch-send to multiple wallets
-- **Card Designer** — custom NFT artwork
-- **AI Gift Assistant** — Groq-powered chatbot
-
-</td>
-</tr>
-</table>
+The app features **10+ gift types** including standard transfers, mystery boxes, DAO batch gifting, time-locked vaults, and the signature **Secret Gift** — an encrypted voucher system where private keys are locked behind claim codes.
 
 ---
 
-## 🎬 How It Works
+## Features
 
-```
-┌─────────────┐     ┌──────────────┐     ┌──────────────┐
-│   SENDER    │────▶│  MINT SBT    │────▶│  AUTO-GAS   │
-│  Connects   │     │  NFT Gift    │     │  0.01 BOT   │
-│  Wallet     │     │  + IPFS      │     │  to Recipient│
-└─────────────┘     └──────────────┘     └──────────────┘
-                           │                     │
-                           ▼                     ▼
-                    ┌──────────────┐     ┌──────────────┐
-                    │  SHARE LINK  │     │  RECIPIENT   │
-                    │  ?gift=ID    │────▶│  Claims FREE │
-                    └──────────────┘     │  Burns NFT   │
-                                         │  Gets BOT    │
-                                         └──────────────┘
-```
+### Gift Types
+| Type | Description |
+|------|-------------|
+| **Standard Gift** | Send BOT with a custom Soulbound NFT card |
+| **Secret Gift** | Encrypted vault wallet — lock BOT, share a code, first claimant wins |
+| **Mystery Box** | Randomized rewards with animated reveal |
+| **Time-Locked Vault** | Gift with unlock date — recipient waits until the timer expires |
+| **Gasless Claim** | Sender pays gas for recipient to claim |
+| **DAO Batch Gift** | Send gifts to multiple addresses in one transaction |
+| **Custom Designer** | Upload custom artwork for NFT gift cards |
+| **About Page** | Project info with typewriter animations |
+| **Gift History** | On-chain explorer for sent/received gifts |
+| **AI Assistant** | Chatbot for gifting advice and navigation |
 
-### The Flow
+### Technical Highlights
 
-1. **Sender** connects MetaMask → selects gift type → fills recipient, amount, message
-2. **Smart Contract** mints a Soulbound NFT to the recipient + uploads metadata to IPFS
-3. **Auto-Gas** sends 0.01 BOT to the recipient's wallet (they pay nothing)
-4. **Sender** shares the claim link via any platform
-5. **Recipient** opens link → connects wallet → sees themed claim animation → claims instantly
-6. **NFT burns** → BOT tokens released to recipient's wallet
+- **Soulbound NFTs** — Non-transferable ERC-721 tokens with on-chain metadata (IPFS via Pinata)
+- **Encrypted Vault Wallets** — Private keys encrypted with claim codes via AES-256-GCM (PBKDF2, 100k iterations)
+- **MetaMask Integration** — Wallet connection, chain switching, transaction signing
+- **Cross-Device Sync** — Gift data stored in Supabase, claimable from any device
+- **Real-Time History** — On-chain gift explorer with live blockchain data
+- **Single-File Architecture** — Entire app in one `index.html` (React 18 + Tailwind CSS + ethers.js)
 
 ---
 
-## 🎁 Gift Types
-
-| Type | Icon | Theme | Animation | Use Case |
-|------|------|-------|-----------|----------|
-| Love Letter | 💌 | Rose/Pink | Envelope unseal + hearts | Romantic gestures |
-| Heart | 💖 | Purple/Magenta | 3D beat + pulse rings | Express love |
-| Crypto Bro | 🎁 | Green/Gold | Vault door + coin spill | Crypto community |
-| Birthday | 🎂 | Indigo/Colorful | Balloons + cake reveal | Birthday gifts |
-| Diamond | 💎 | Cyan/Teal | Prism split + gem glow | Premium gifts |
-| Golden Ticket | 🎫 | Amber/Gold | Ticket shimmer unfold | Lottery/wins |
-| Mystery | 🎲 | Violet/Purple | Box rattle + shatter | Surprise gifts |
-| Treasure | 🏴‍☠️ | Brown/Gold | Chest open + gold spill | Pirate theme |
-| Christmas | 🎄 | Red/Green | Ornament crack + snow | Holiday gifts |
-| DAO | 🏛️ | Purple/Violet | Temple doors open | Governance |
-
----
-
-## ⚙️ Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
-| **Blockchain** | BOT Chain Testnet (EVM-compatible L1) |
-| **Smart Contract** | Solidity — Soulbound NFT with `convertToBot()` burn-to-claim |
-| **Frontend** | Vanilla JS + Tailwind CSS v4 + React 18 (CDN) |
-| **Web3** | ethers.js 6.7 — wallet connection, contract interactions |
-| **Storage** | IPFS via Pinata — NFT metadata + artwork |
-| **AI** | Groq API — llama-3.3-70b-versatile gift assistant |
-| **Wallet** | MetaMask — browser extension + mobile deep-link |
-| **Animations** | Pure CSS — 10 unique claim sequences, 3D transforms, keyframes |
-| **Claim Page** | Next.js 14 + Framer Motion + canvas-confetti (optional) |
+| **Frontend** | React 18, Tailwind CSS v4, ethers.js v6.7 |
+| **Blockchain** | BOT Chain Testnet (chainId: `968`) |
+| **Smart Contract** | SoulboundGiftNFTV2 — `0x740e1ce98364EfF4d5e3d89b2b1fa513e0F75b16` |
+| **Database** | Supabase (PostgreSQL + Row Level Security) |
+| **IPFS** | Pinata (JWT-based pinning + metadata storage) |
+| **Wallet** | MetaMask (injected provider) |
+| **Build** | Zero build step — Babel standalone transpilation in browser |
+| **Deploy** | Vercel (static hosting) |
 
 ---
 
-## 🔧 Setup
-
-### Quick Start (Single File)
-
-```bash
-# Clone the repo
-git clone https://github.com/yourusername/gift-bot.git
-
-# Open index.html in any browser
-open index.html
-# or
-python -m http.server 8000
-```
-
-> **Note:** Must be served over HTTP (not `file://`) for MetaMask connection to work.
+## Getting Started
 
 ### Prerequisites
 
-- [MetaMask](https://metamask.io/) browser extension installed
-- BOT Chain Testnet added to MetaMask (auto-prompts on first connect)
-- Some BOT tokens in your wallet ([Faucet](https://faucet.botchain.ai))
+- [MetaMask](https://metamask.io) browser extension
+- BOT Chain Testnet configured in MetaMask
+- Supabase project (for gift database)
 
-### Environment
+### Setup
 
-No `.env` file needed — all configuration is in the HTML file:
-- **Contract:** `0x740e1ce98364EfF4d5e3d89b2b1fa513e0F75b16`
-- **Chain ID:** `0x3C8` (BOT Chain Testnet)
-- **RPC:** `https://rpc.bohr.life`
-- **Explorer:** `https://scan.bohr.life`
+1. **Clone the repo**
+   ```bash
+   git clone https://github.com/your-username/gift-bot.git
+   cd gift-bot
+   ```
+
+2. **Set up the database**
+   - Go to your [Supabase Dashboard](https://supabase.com/dashboard)
+   - Open SQL Editor
+   - Run the contents of `setup.sql`
+
+3. **Configure environment**
+   
+   Open `index.html` and update these constants:
+   ```javascript
+   // Line ~4866 — Supabase config
+   const SG_SUPABASE_URL = 'https://YOUR_PROJECT.supabase.co';
+   const SG_SUPABASE_KEY = 'YOUR_ANON_KEY';
+   
+   // Line ~4792 — Contract address (already deployed on BOT Chain)
+   const SBT_CONTRACT_ADDRESS = "0x740e1ce98364EfF4d5e3d89b2b1fa513e0F75b16";
+   
+   // Line ~4860 — Pinata IPFS config
+   const PINATA_JWT = 'YOUR_PINATA_JWT';
+   ```
+
+4. **Run locally**
+   ```bash
+   # No build step needed — just serve the file
+   npx serve .
+   # or
+   python -m http.server 8000
+   ```
+
+5. **Deploy to Vercel**
+   ```bash
+   npx vercel --prod
+   ```
+
+### BOT Chain Testnet
+
+Add to MetaMask manually:
+
+| Field | Value |
+|-------|-------|
+| Network Name | BOT Chain Testnet |
+| Chain ID | `968` |
+| RPC URL | `https://rpc.bohr.life` |
+| Currency | `BOT` |
+| Explorer | `https://scan.bohr.life` |
 
 ---
 
-## 📁 Project Structure
+## Database Schema
+
+The `secret_gifts` table stores encrypted vault gift data:
+
+```sql
+CREATE TABLE secret_gifts (
+  id           UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  code         TEXT UNIQUE NOT NULL,           -- Short claim code (e.g. SG-XXXX-XXXX)
+  amount       NUMERIC NOT NULL,               -- BOT amount locked
+  sender       TEXT NOT NULL,                  -- Creator address
+  sender_name  TEXT DEFAULT '',
+  recipient    TEXT DEFAULT '',
+  message      TEXT DEFAULT '',
+  image_url    TEXT DEFAULT '',                 -- Custom card image
+  encrypted_pk TEXT DEFAULT '',                 -- AES-encrypted vault private key
+  claimed      BOOLEAN DEFAULT false,
+  claimed_by   TEXT DEFAULT '',
+  claimed_at   TIMESTAMPTZ,
+  created_at   TIMESTAMPTZ DEFAULT now()
+);
+```
+
+---
+
+## Architecture
 
 ```
 gift-bot/
-├── index.html              # 🎯 Main application (single-file)
-├── gift-dapp/              # Optional: Next.js claim page
-│   ├── app/
-│   │   └── gifts/claim/
-│   │       └── [giftId]/
-│   │           └── page.tsx
-│   ├── lib/
-│   │   ├── contracts.ts
-│   │   ├── gift-themes.ts
-│   │   ├── gift-data.ts
-│   │   ├── types.ts
-│   │   └── use-wallet.ts
-│   ├── package.json
-│   └── tailwind.config.js
-├── README.md
-├── LICENSE
-└── .gitignore
+├── index.html    # Single-file app (~9600 lines)
+│   ├── <style>       CSS + Tailwind + animations
+│   ├── <nav>         Desktop navigation bar
+│   ├── #mobileNav    Mobile bottom navigation
+│   ├── #homeView     Hero section (React)
+│   ├── #giftView     Standard gift form
+│   ├── #specialGiftsView  Special gift types grid
+│   ├── #secretGiftView    Secret Gift create/redeem
+│   ├── #soulboundView     SBT minting form
+│   ├── #timelockView      Time-locked vault form
+│   ├── #historyView       On-chain gift history
+│   ├── #aboutView         Project info page
+│   └── <script>      Blockchain + DB + UI logic
+└── setup.sql      # Supabase table setup
 ```
 
 ---
 
-## 🏆 BOT Chain Builder Challenge
+## How Secret Gift Works
 
-Built for the **BOT Chain Builder Challenge** (7-day sprint, deadline: Jul 8, 2026).
-
-### What Makes This Different
-
-- **10 unique animated claim experiences** — not just a boring claim button
-- **Gasless claiming** — recipient pays absolutely nothing
-- **Soulbound mechanics** — NFTs that burn to release value
-- **AI-powered gift assistant** — contextual help for every gift type
-- **Full-stack in one file** — HTML + CSS + JS + React + Web3 + IPFS + AI
-
----
-
-## 📜 Smart Contract
-
-```solidity
-// SoulboundGift.sol (simplified)
-function mintSoulboundGift(
-    address recipient,
-    string memory tokenURI,
-    string memory message
-) external payable returns (uint256);
-
-function convertToBot(uint256 tokenId) external;
-// Burns the NFT and releases BOT to the caller
+```
+Creator                          Vault Wallet                    Claimer
+  │                                    │                            │
+  ├─ 1. Enter amount + message         │                            │
+  │                                    │                            │
+  ├─ 2. Generate random wallet ────────┤                            │
+  │   (ethers.Wallet.createRandom)     │                            │
+  │                                    │                            │
+  ├─ 3. Send BOT + gas to vault ───────┤                            │
+  │   (amount + 0.001 BOT)            │                            │
+  │                                    │                            │
+  ├─ 4. Encrypt vault PK with code     │                            │
+  │   (AES-256-GCM, PBKDF2 100k)      │                            │
+  │                                    │                            │
+  ├─ 5. Store encrypted PK in DB ──────┤──── Supabase ─────────────┤
+  │                                    │                            │
+  ├─ 6. Share claim code ──────────────┤────────────────────────────┤
+  │                                    │                            │
+  │                                    │  7. Enter code ────────────┤
+  │                                    │                            │
+  │                                    │  8. Decrypt vault PK       │
+  │                                    │  9. Sweep BOT to wallet    │
+  │                                    │ 10. Mark claimed in DB     │
 ```
 
-- **Token Standard:** ERC-721 (Soulbound — non-transferable)
-- **Claim Function:** `convertToBot()` — burns NFT, sends BOT to recipient
-- **Metadata:** Stored on IPFS via Pinata, retrieved via `tokenURI()`
+---
+
+## Screenshots
+
+<div align="center">
+
+**Desktop** — Full navigation, animated hero, multi-step gift forms
+
+**Mobile** — Bottom nav, touch-optimized, app-like experience with PWA support
+
+</div>
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
-1. Fork the repository
+1. Fork the repo
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)
 3. Commit your changes (`git commit -m 'Add amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
@@ -232,27 +226,14 @@ function convertToBot(uint256 tokenId) external;
 
 ---
 
-## 📄 License
+## License
 
-MIT License — see [LICENSE](LICENSE) for details.
-
----
-
-## 🙏 Acknowledgments
-
-- [BOT Chain](https://botchain.ai) — blockchain infrastructure
-- [Pinata](https://pinata.cloud) — IPFS pinning service
-- [ethers.js](https://docs.ethers.org) — Ethereum library
-- [Tailwind CSS](https://tailwindcss.com) — utility-first CSS
-- [Groq](https://groq.com) — AI inference API
-- [MetaMask](https://metamask.io) — wallet provider
+MIT License — use freely, build freely.
 
 ---
 
 <div align="center">
 
-**Built with 💚 for BOT Chain Builder Challenge 2026**
-
-![GIFT BOT](https://img.shields.io/badge/GIFT%20BOT-v1.0-10b981?style=for-the-badge&logo=ethereum&logoColor=white)
+**Built for the BOT Chain Builder Challenge**
 
 </div>
