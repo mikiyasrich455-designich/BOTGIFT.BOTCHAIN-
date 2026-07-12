@@ -7789,11 +7789,10 @@ window.convertSbtToBot = convertSbtToBot;
                         code: giftCode,
                         amount: parseFloat(amount),
                         sender: realWalletAddress,
-                        sender_name: senderName,
+                        sender_name: senderName || '',
                         recipient: recipient,
                         message: message || '',
-                        image_url: sgUploadedImageData,
-                        tx_hash: tx.hash,
+                        image_url: sgUploadedImageData || '',
                         claimed: false
                     });
 
