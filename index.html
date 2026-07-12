@@ -7676,15 +7676,13 @@ window.convertSbtToBot = convertSbtToBot;
                     redeemStatus.classList.add('hidden');
                     redeemClaimBtn.disabled = false;
                     document.getElementById('sgRedeemClaimText').textContent = 'Claim Gift';
-                    document.getElementById('secretGiftRedeemPanel').classList.add('hidden');
-                    document.getElementById('secretGiftChoicePanel').classList.remove('hidden');
                     ['sgRedeemCode','sgRedeemPassword'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
                     const rp = document.getElementById('sgRedeemPreview');
                     if (rp) rp.classList.add('hidden');
-                    await updateRealBalance();
-                    if (typeof loadOnChainHistory === 'function') await loadOnChainHistory();
-                    await new Promise(r => setTimeout(r, 200));
+                    document.getElementById('secretGiftRedeemPanel').classList.add('hidden');
+                    document.getElementById('secretGiftChoicePanel').classList.remove('hidden');
                     showSecretGiftClaimedPopup({ msg: gift.message, senderName: gift.sender_name, txHash: gift.tx_hash || '' }, ethers.parseEther(gift.amount));
+                    setTimeout(async () => { await updateRealBalance(); if (typeof loadOnChainHistory === 'function') await loadOnChainHistory(); }, 500);
                 } catch(err) {
                     console.error('Secret Gift claim failed:', err);
                     redeemStatus.textContent = err.message || 'Claim failed.';
@@ -8010,10 +8008,8 @@ window.convertSbtToBot = convertSbtToBot;
                     await sgMarkClaimed(code, claimerAddress);
 
                     overlay.remove();
-                    await updateRealBalance();
-                    if (typeof loadOnChainHistory === 'function') await loadOnChainHistory();
-                    await new Promise(r => setTimeout(r, 200));
                     showSecretGiftClaimedPopup({ msg: gift.message, senderName: gift.sender_name, txHash: gift.tx_hash || '' }, ethers.parseEther(gift.amount));
+                    setTimeout(async () => { await updateRealBalance(); if (typeof loadOnChainHistory === 'function') await loadOnChainHistory(); }, 500);
                 } catch (err) {
                     console.error('Secret Gift claim failed:', err);
                     statusEl.textContent = 'Claim failed: ' + (err.reason || err.message || 'Unknown error');
