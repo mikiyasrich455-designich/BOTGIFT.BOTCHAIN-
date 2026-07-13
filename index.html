@@ -20,6 +20,7 @@
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/@solana/web3.js@1.98.2/lib/index.iife.min.js"></script>
     <style>
         html, body { height: 100vh; width: 100vw; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
         .serif-display { font-family: 'Playfair Display', serif; }
@@ -1207,9 +1208,35 @@
             <button id="navAboutBtn" class="premium-nav-pill text-zinc-400 text-[13px] font-medium tracking-wide px-6 py-2 rounded-full border border-transparent cursor-pointer">About</button>
         </div>
         <div class="flex items-center relative gap-2">
-            <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-950/40 border border-emerald-500/20 text-[10px] text-emerald-400 font-medium">
+            <div id="chainBadge" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-950/40 border border-emerald-500/20 text-[10px] text-emerald-400 font-medium transition-all duration-300">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                 BOT Chain
+            </div>
+            <div id="tokenSelectorWrap" class="relative">
+                <button id="tokenSelector" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-900/60 border border-emerald-500/20 cursor-pointer transition-all duration-200 hover:border-emerald-500/40">
+                    <img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783934565/Y9jDf0A3_400x400_1_nppzje.jpg" class="w-5 h-5 rounded-full object-cover" alt="BOT">
+                    <span class="text-xs font-semibold text-emerald-400">$BOT</span>
+                    <svg class="w-3 h-3 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div id="tokenDropdown" class="hidden absolute right-0 top-full mt-2 w-52 glass-panel rounded-xl overflow-hidden border border-zinc-700/50 z-50 shadow-xl">
+                    <button onclick="window.selectToken('BOT')" class="token-option w-full flex items-center gap-3 px-4 py-3 hover:bg-zinc-800/60 transition cursor-pointer">
+                        <img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783934565/Y9jDf0A3_400x400_1_nppzje.jpg" class="w-8 h-8 rounded-full object-cover" alt="BOT">
+                        <div class="text-left">
+                            <p class="text-sm font-semibold text-zinc-200">$BOT</p>
+                            <p class="text-[10px] text-zinc-500">BOT Chain Testnet</p>
+                        </div>
+                        <span class="ml-auto text-emerald-400 text-xs font-medium">ERC-20</span>
+                    </button>
+                    <div class="border-t border-zinc-700/30"></div>
+                    <button onclick="window.selectToken('ACE')" class="token-option w-full flex items-center gap-3 px-4 py-3 hover:bg-zinc-800/60 transition cursor-pointer">
+                        <img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783934547/photo_5771752171526360799_y-removebg-preview_pdxfdf.png" class="w-8 h-8 rounded-full object-cover" alt="ACE">
+                        <div class="text-left">
+                            <p class="text-sm font-semibold text-zinc-200">$ACE</p>
+                            <p class="text-[10px] text-zinc-500">Solana Mainnet</p>
+                        </div>
+                        <span class="ml-auto text-purple-400 text-xs font-medium">SPL</span>
+                    </button>
+                </div>
             </div>
             <button id="connectWalletBtn" class="wallet-btn wallet-pulse action-pill-btn premium-nav-pill transition bg-zinc-950 text-zinc-100 px-7 py-2.5 rounded-full text-xs font-medium tracking-wide border border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.15)] flex items-center gap-2 cursor-pointer">
                 <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
@@ -1274,9 +1301,32 @@
             <span class="text-[11px] font-bold text-zinc-200 tracking-wide">GIFT BOT</span>
         </div>
         <div class="flex items-center gap-2">
-            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-950/40 border border-emerald-500/20 text-[9px] text-emerald-400 font-medium">
+            <div id="mobileChainBadge" class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-950/40 border border-emerald-500/20 text-[9px] text-emerald-400 font-medium transition-all duration-300">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                 BOT Chain
+            </div>
+            <div id="mobileTokenSelectorWrap" class="relative">
+                <button id="mobileTokenSelector" class="flex items-center gap-1 px-2 py-1 rounded-full bg-zinc-900/60 border border-emerald-500/20 cursor-pointer transition-all">
+                    <img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783934565/Y9jDf0A3_400x400_1_nppzje.jpg" class="w-4 h-4 rounded-full object-cover" alt="BOT">
+                    <span class="text-[10px] font-semibold text-emerald-400">$BOT</span>
+                </button>
+                <div id="mobileTokenDropdown" class="hidden absolute right-0 top-full mt-2 w-48 glass-panel rounded-xl overflow-hidden border border-zinc-700/50 z-50 shadow-xl">
+                    <button onclick="window.selectToken('BOT')" class="token-option w-full flex items-center gap-2 px-3 py-2.5 hover:bg-zinc-800/60 transition cursor-pointer">
+                        <img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783934565/Y9jDf0A3_400x400_1_nppzje.jpg" class="w-6 h-6 rounded-full object-cover" alt="BOT">
+                        <div class="text-left">
+                            <p class="text-xs font-semibold text-zinc-200">$BOT</p>
+                            <p class="text-[9px] text-zinc-500">BOT Chain</p>
+                        </div>
+                    </button>
+                    <div class="border-t border-zinc-700/30"></div>
+                    <button onclick="window.selectToken('ACE')" class="token-option w-full flex items-center gap-2 px-3 py-2.5 hover:bg-zinc-800/60 transition cursor-pointer">
+                        <img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783934547/photo_5771752171526360799_y-removebg-preview_pdxfdf.png" class="w-6 h-6 rounded-full object-cover" alt="ACE">
+                        <div class="text-left">
+                            <p class="text-xs font-semibold text-zinc-200">$ACE</p>
+                            <p class="text-[9px] text-zinc-500">Solana</p>
+                        </div>
+                    </button>
+                </div>
             </div>
             <button id="mobileWalletBtn" class="mobile-wallet-btn px-3 py-1.5 rounded-full text-[11px] font-medium border border-emerald-500/30 bg-zinc-950 text-zinc-100 cursor-pointer flex items-center gap-1.5">
                 <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
@@ -1290,11 +1340,11 @@
         <div class="glass-panel rounded-3xl p-8 max-w-md w-full mx-4 animate-slide-in relative">
             <button id="closeWalletModalBtn" class="absolute top-4 right-4 text-zinc-500 hover:text-zinc-300 text-xl cursor-pointer w-8 h-8 flex items-center justify-center rounded-full hover:bg-zinc-800 transition">×</button>
             <div class="text-center mb-6">
-                <div class="w-14 h-14 rounded-full bg-orange-500/10 border border-orange-500/20 flex items-center justify-center mx-auto mb-3 overflow-hidden">
-                    <img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783409183/download__3_-removebg-preview_qp2okz.png" alt="MetaMask" class="w-10 h-10 object-contain">
+                <div class="w-14 h-14 rounded-full bg-zinc-500/10 border border-zinc-500/20 flex items-center justify-center mx-auto mb-3 overflow-hidden">
+                    <svg class="w-8 h-8 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
                 </div>
                 <h3 class="text-xl font-bold text-zinc-100">Connect Wallet</h3>
-                <p class="text-xs text-zinc-500 mt-1">Continue with MetaMask</p>
+                <p class="text-xs text-zinc-500 mt-1">Choose your wallet</p>
             </div>
             <div class="space-y-3">
                 <button id="connectMetaMaskBtn" class="wallet-option w-full flex items-center gap-4 p-4 rounded-xl bg-zinc-950/50 border border-zinc-800/60 hover:border-emerald-500/30 transition cursor-pointer group">
@@ -1303,18 +1353,23 @@
                     </div>
                     <div class="text-left flex-1">
                         <p class="text-sm font-medium text-zinc-200 group-hover:text-emerald-400 transition">MetaMask</p>
-                        <p class="text-[10px] text-zinc-500">Browser Extension & Mobile</p>
+                        <p class="text-[10px] text-zinc-500">BOT Chain — $BOT token</p>
                     </div>
                     <svg class="w-4 h-4 text-zinc-600 group-hover:text-emerald-400 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                 </button>
+                <button id="connectPhantomBtn" class="wallet-option w-full flex items-center gap-4 p-4 rounded-xl bg-zinc-950/50 border border-zinc-800/60 hover:border-purple-500/30 transition cursor-pointer group">
+                    <div class="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center overflow-hidden">
+                        <img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783934547/photo_5771752171526360799_y-removebg-preview_pdxfdf.png" alt="Phantom" class="w-8 h-8 object-contain">
+                    </div>
+                    <div class="text-left flex-1">
+                        <p class="text-sm font-medium text-zinc-200 group-hover:text-purple-400 transition">Phantom</p>
+                        <p class="text-[10px] text-zinc-500">Solana — $ACE token</p>
+                    </div>
+                    <svg class="w-4 h-4 text-zinc-600 group-hover:text-purple-400 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </button>
             </div>
             <div class="mt-4 pt-4 border-t border-zinc-800/40">
-                <p class="text-[10px] text-zinc-600 text-center">More wallets coming soon</p>
-                <div class="flex items-center justify-center gap-3 mt-2.5 opacity-30">
-                    <div class="w-7 h-7 rounded-md bg-zinc-800/50 flex items-center justify-center text-xs">🔗</div>
-                    <div class="w-7 h-7 rounded-md bg-zinc-800/50 flex items-center justify-center text-xs">🔵</div>
-                    <div class="w-7 h-7 rounded-md bg-zinc-800/50 flex items-center justify-center text-xs">👻</div>
-                </div>
+                <p class="text-[10px] text-zinc-600 text-center">Supports BOT Chain + Solana</p>
             </div>
             <p class="text-[10px] text-zinc-600 text-center mt-3">By connecting, you agree to the Terms of Service</p>
         </div>
@@ -3508,11 +3563,35 @@
                 toggleWalletDropdown();
             }
         });
+        // Token dropdown toggles
+        var tokenSelBtn = document.getElementById('tokenSelector');
+        var tokenDrop = document.getElementById('tokenDropdown');
+        var mobileTokenSelBtn = document.getElementById('mobileTokenSelector');
+        var mobileTokenDrop = document.getElementById('mobileTokenDropdown');
+        if (tokenSelBtn && tokenDrop) {
+            tokenSelBtn.addEventListener('click', (e) => { e.stopPropagation(); tokenDrop.classList.toggle('hidden'); if (mobileTokenDrop) mobileTokenDrop.classList.add('hidden'); });
+        }
+        if (mobileTokenSelBtn && mobileTokenDrop) {
+            mobileTokenSelBtn.addEventListener('click', (e) => { e.stopPropagation(); mobileTokenDrop.classList.toggle('hidden'); if (tokenDrop) tokenDrop.classList.add('hidden'); });
+        }
+        document.addEventListener('click', (e) => {
+            if (tokenDrop && !tokenSelBtn?.contains(e.target) && !tokenDrop.contains(e.target)) tokenDrop.classList.add('hidden');
+            if (mobileTokenDrop && !mobileTokenSelBtn?.contains(e.target) && !mobileTokenDrop.contains(e.target)) mobileTokenDrop.classList.add('hidden');
+        });
         els.closeWalletModalBtn.addEventListener('click', closeWalletModal);
         els.closeWalletConnectModalBtn.addEventListener('click', closeWalletConnectModal);
         els.connectMetaMaskBtn.addEventListener('click', () => {
             console.log('[Web3GiftHub] MetaMask button clicked, window.connectMetaMask=' + typeof window.connectMetaMask);
+            window.CURRENT_TOKEN = 'BOT';
+            updateTokenSelectorUI();
             if (window.connectMetaMask) window.connectMetaMask(); else connectMetaMask();
+        });
+        var connectPhantomBtnEl = document.getElementById('connectPhantomBtn');
+        if (connectPhantomBtnEl) connectPhantomBtnEl.addEventListener('click', async () => {
+            console.log('[Web3GiftHub] Phantom button clicked');
+            window.CURRENT_TOKEN = 'ACE';
+            updateTokenSelectorUI();
+            await window.selectToken('ACE');
         });
         // Mobile wallet button
         var mobileWalletBtn = document.getElementById('mobileWalletBtn');
@@ -4888,6 +4967,286 @@ function initSbtContract() {
 }
 
 // ==========================================
+// MULTI-CHAIN CONFIG — BOT Chain + Solana
+// ==========================================
+window.SOLANA_CONFIG = {
+    rpc: 'https://api.mainnet-beta.solana.com',
+    explorer: 'https://solscan.io',
+    commitment: 'confirmed'
+};
+window.ACE_TOKEN = {
+    mint: 'GnHpRsrcyfHSMZNzmpjAzTFQA26vnbRMzbKQ11ZKpump',
+    decimals: 6,
+    symbol: 'ACE',
+    name: 'Ace Data Cloud',
+    logo: 'https://res.cloudinary.com/dguexkgjw/image/upload/v1783934547/photo_5771752171526360799_y-removebg-preview_pdxfdf.png'
+};
+window.BOT_LOGO = 'https://res.cloudinary.com/dguexkgjw/image/upload/v1783934565/Y9jDf0A3_400x400_1_nppzje.jpg';
+window.CURRENT_TOKEN = 'BOT';
+window.solanaConnection = null;
+window.solanaWallet = null;
+window.solanaPublicKey = null;
+
+// SPL Token Program IDs
+const SPL_TOKEN_PROGRAM_ID = new solanaWeb3.PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
+const ASSOCIATED_TOKEN_PROGRAM_ID = new solanaWeb3.PublicKey('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL');
+
+function getSolanaConnection() {
+    if (!window.solanaConnection) {
+        window.solanaConnection = new solanaWeb3.Connection(
+            window.SOLANA_CONFIG.rpc,
+            window.SOLANA_CONFIG.commitment
+        );
+    }
+    return window.solanaConnection;
+}
+
+function isValidSolanaAddress(address) {
+    try {
+        if (!address || typeof address !== 'string') return false;
+        if (address.length < 32 || address.length > 44) return false;
+        if (!/^[1-9A-HJ-NP-Za-km-z]+$/.test(address)) return false;
+        new solanaWeb3.PublicKey(address);
+        return true;
+    } catch (e) { return false; }
+}
+
+function isValidAddressForChain(address, chain) {
+    if (chain === 'solana') return isValidSolanaAddress(address);
+    if (chain === 'bot') return address && address.startsWith('0x') && address.length === 42;
+    return false;
+}
+
+function getAssociatedTokenAddress(mint, owner) {
+    return solanaWeb3.PublicKey.findProgramAddressSync(
+        [owner.toBuffer(), SPL_TOKEN_PROGRAM_ID.toBuffer(), mint.toBuffer()],
+        ASSOCIATED_TOKEN_PROGRAM_ID
+    )[0];
+}
+
+function createAssociatedTokenAccountInstruction(payer, mint, owner, ata) {
+    const keys = [
+        { pubkey: payer, isSigner: true, isWritable: true },
+        { pubkey: ata, isSigner: false, isWritable: true },
+        { pubkey: owner, isSigner: false, isWritable: false },
+        { pubkey: mint, isSigner: false, isWritable: false },
+        { pubkey: solanaWeb3.SystemProgram.programId, isSigner: false, isWritable: false },
+        { pubkey: SPL_TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
+        { pubkey: solanaWeb3.SYSVAR_RENT_PUBKEY, isSigner: false, isWritable: false }
+    ];
+    return new solanaWeb3.TransactionInstruction({
+        keys,
+        programId: ASSOCIATED_TOKEN_PROGRAM_ID,
+        data: Buffer.alloc(0)
+    });
+}
+
+function createSplTransferInstruction(source, destination, owner, amount) {
+    const data = Buffer.alloc(35);
+    data.writeUInt8(3, 0);
+    data.writeBigUInt64LE(BigInt(amount), 1);
+    const keys = [
+        { pubkey: source, isSigner: false, isWritable: true },
+        { pubkey: destination, isSigner: false, isWritable: true },
+        { pubkey: owner, isSigner: true, isWritable: false }
+    ];
+    return new solanaWeb3.TransactionInstruction({
+        keys,
+        programId: SPL_TOKEN_PROGRAM_ID,
+        data
+    });
+}
+
+async function getTokenBalanceSolana(mintAddress, walletAddress) {
+    try {
+        const connection = getSolanaConnection();
+        const mint = new solanaWeb3.PublicKey(mintAddress);
+        const owner = new solanaWeb3.PublicKey(walletAddress);
+        const ata = getAssociatedTokenAddress(mint, owner);
+        const balance = await connection.getTokenAccountBalance(ata);
+        return {
+            amount: balance.value.amount,
+            uiAmount: balance.value.uiAmount || 0,
+            decimals: balance.value.decimals
+        };
+    } catch (e) {
+        console.warn('[SOL] Token balance error:', e);
+        return { amount: '0', uiAmount: 0, decimals: 6 };
+    }
+}
+
+async function getSOLBalance(walletAddress) {
+    try {
+        const connection = getSolanaConnection();
+        const pubkey = new solanaWeb3.PublicKey(walletAddress);
+        const lamports = await connection.getBalance(pubkey);
+        return lamports / solanaWeb3.LAMPORTS_PER_SOL;
+    } catch (e) {
+        console.warn('[SOL] SOL balance error:', e);
+        return 0;
+    }
+}
+
+// ==========================================
+// PHANTOM WALLET CONNECTION
+// ==========================================
+async function connectPhantomWallet() {
+    const provider = window.phantom?.solana;
+    if (!provider || !provider.isPhantom) {
+        alert('Phantom Wallet not found!\n\nInstall it from https://phantom.app');
+        window.open('https://phantom.app', '_blank');
+        return false;
+    }
+
+    try {
+        const resp = await provider.connect();
+        window.solanaWallet = provider;
+        window.solanaPublicKey = resp.publicKey;
+        const address = resp.publicKey.toString();
+        console.log('[SOL] Phantom connected:', address);
+
+        provider.on('disconnect', () => {
+            console.log('[SOL] Phantom disconnected');
+            window.solanaWallet = null;
+            window.solanaPublicKey = null;
+        });
+
+        return address;
+    } catch (err) {
+        console.error('[SOL] Phantom connect error:', err);
+        if (err.code === 4001) {
+            alert('Connection rejected. Please approve in Phantom.');
+        } else {
+            alert('Phantom connection failed: ' + (err.message || err));
+        }
+        return false;
+    }
+}
+
+async function disconnectPhantomWallet() {
+    try {
+        if (window.solanaWallet) {
+            await window.solanaWallet.disconnect();
+        }
+    } catch (e) {}
+    window.solanaWallet = null;
+    window.solanaPublicKey = null;
+}
+
+// ==========================================
+// TOKEN SELECTOR
+// ==========================================
+window.selectToken = async function(tokenSymbol) {
+    if (window.CURRENT_TOKEN === tokenSymbol) return;
+    const prevToken = window.CURRENT_TOKEN;
+    window.CURRENT_TOKEN = tokenSymbol;
+    console.log('[TOKEN] Switching from', prevToken, 'to', tokenSymbol);
+
+    // Update selector UI
+    updateTokenSelectorUI();
+
+    if (tokenSymbol === 'ACE') {
+        // Switch to Solana — disconnect MetaMask, connect Phantom
+        if (prevToken === 'BOT' && window.isWalletConnected) {
+            window.disconnectWallet();
+        }
+        if (!window.solanaPublicKey) {
+            const addr = await connectPhantomWallet();
+            if (!addr) {
+                window.CURRENT_TOKEN = prevToken;
+                updateTokenSelectorUI();
+                return;
+            }
+        }
+        await handleSolanaWalletConnected();
+    } else {
+        // Switch to BOT — disconnect Phantom, connect MetaMask
+        if (window.solanaWallet) {
+            await disconnectPhantomWallet();
+        }
+        if (!window.isWalletConnected) {
+            if (window.connectMetaMask) await window.connectMetaMask();
+        }
+    }
+    updateAllBalances();
+    updateRecipientValidation();
+};
+
+function updateTokenSelectorUI() {
+    const sel = document.getElementById('tokenSelector');
+    const selMobile = document.getElementById('mobileTokenSelector');
+    const badge = document.getElementById('chainBadge');
+    const badgeMobile = document.getElementById('mobileChainBadge');
+    const isACE = window.CURRENT_TOKEN === 'ACE';
+    const symbol = isACE ? 'ACE' : 'BOT';
+    const logo = isACE ? window.ACE_TOKEN.logo : window.BOT_LOGO;
+    const chainLabel = isACE ? 'Solana' : 'BOT Chain';
+    const color = isACE ? '#a855f7' : '#10b981';
+
+    [sel, selMobile].forEach(el => {
+        if (!el) return;
+        el.innerHTML = '<img src="' + logo + '" class="w-5 h-5 rounded-full object-cover" alt="' + symbol + '"><span class="text-xs font-semibold" style="color:' + color + '">$' + symbol + '</span><svg class="w-3 h-3" style="color:' + color + '" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>';
+        el.style.borderColor = color + '40';
+    });
+
+    [badge, badgeMobile].forEach(el => {
+        if (!el) return;
+        el.innerHTML = '<span class="w-1.5 h-1.5 rounded-full animate-pulse" style="background:' + color + '"></span>' + chainLabel;
+        el.style.borderColor = color + '33';
+        el.style.color = color;
+        el.style.backgroundColor = color + '0a';
+    });
+}
+
+async function handleSolanaWalletConnected() {
+    const addr = window.solanaPublicKey ? window.solanaPublicKey.toString() : '';
+    if (!addr) return;
+
+    isWalletConnected = true;
+    window.isWalletConnected = true;
+    realWalletAddress = addr;
+    window.realWalletAddress = addr;
+
+    closeWalletModal();
+    closeWalletConnectModal();
+    els.connectWalletBtn.classList.add('hidden');
+    els.walletConnectedDisplay.classList.remove('hidden');
+    els.connectedAddress.textContent = addr.slice(0, 4) + '...' + addr.slice(-4);
+    var wbt = document.getElementById('walletBtnText');
+    if (wbt) wbt.textContent = addr.slice(0, 4) + '...' + addr.slice(-4);
+    var npn = document.getElementById('navProfileName');
+    if (npn) { npn.textContent = addr.slice(0, 4) + '...' + addr.slice(-4); npn.classList.remove('hidden'); }
+    var dpa = document.getElementById('dropdownProfileAddress');
+    if (dpa) dpa.textContent = addr.slice(0, 4) + '...' + addr.slice(-4);
+
+    // Update explorer link for Solana
+    var veb = document.getElementById('viewExplorerBtn');
+    if (veb) veb.onclick = () => { window.open('https://solscan.io/address/' + addr, '_blank'); els.walletDropdown.classList.remove('show'); };
+
+    updateTokenSelectorUI();
+    updateAllBalances();
+}
+
+async function updateAllBalances() {
+    if (window.CURRENT_TOKEN === 'ACE' && window.solanaPublicKey) {
+        const addr = window.solanaPublicKey.toString();
+        const aceBal = await getTokenBalanceSolana(window.ACE_TOKEN.mint, addr);
+        const wb = document.getElementById('walletBalanceDisplay');
+        if (wb) wb.innerHTML = aceBal.uiAmount.toFixed(2) + ' <span class="text-xs text-zinc-500">$ACE</span>';
+        const am = document.getElementById('availableBalanceMain');
+        if (am) am.textContent = aceBal.uiAmount.toFixed(2);
+        const ac = document.getElementById('availableBalanceCrypto');
+        if (ac) ac.textContent = aceBal.uiAmount.toFixed(2);
+    } else if (window.CURRENT_TOKEN === 'BOT') {
+        await updateRealBalance();
+    }
+}
+
+function updateRecipientValidation() {
+    // Placeholder — actual validation happens at gift creation time
+}
+
+// ==========================================
 // PINATA UPLOAD FUNCTIONS
 // ==========================================
 
@@ -5846,6 +6205,17 @@ window.convertSbtToBot = convertSbtToBot;
             els.walletConnectedDisplay.classList.add('hidden');
             els.walletDropdown.classList.remove('show');
 
+            // Also disconnect Phantom if connected
+            if (window.solanaWallet) { disconnectPhantomWallet(); }
+
+            // Reset token selector to BOT
+            window.CURRENT_TOKEN = 'BOT';
+            updateTokenSelectorUI();
+
+            // Reset explorer link
+            var veb2 = document.getElementById('viewExplorerBtn');
+            if (veb2) veb2.onclick = viewOnExplorer;
+
             // Clear wallet button text
             var wbt3 = document.getElementById('walletBtnText');
             if (wbt3) wbt3.textContent = 'Connect Wallet';
@@ -5874,7 +6244,7 @@ window.convertSbtToBot = convertSbtToBot;
 
             // Clear all displayed data
             const wb = document.getElementById('walletBalanceDisplay');
-            if (wb) wb.innerHTML = `0.0000 <span class="text-xs text-zinc-500">$BOT</span>`;
+            if (wb) wb.innerHTML = `0.0000 <span class="text-xs text-zinc-500">$` + (window.CURRENT_TOKEN === 'ACE' ? 'ACE' : 'BOT') + `</span>`;
             const am = document.getElementById('availableBalanceMain');
             if (am) am.textContent = '0.0000';
             const ac = document.getElementById('availableBalanceCrypto');
@@ -5919,6 +6289,10 @@ window.convertSbtToBot = convertSbtToBot;
         };
 
         async function updateRealBalance() {
+            if (window.CURRENT_TOKEN === 'ACE') {
+                await updateAllBalances();
+                return;
+            }
             if (!systemProvider || !realWalletAddress) return;
             try {
                 const bal = await systemProvider.getBalance(realWalletAddress);
@@ -5937,6 +6311,14 @@ window.convertSbtToBot = convertSbtToBot;
         }
 
         async function estimateNetworkFee() {
+            if (window.CURRENT_TOKEN === 'ACE') {
+                const feeStr = '~0.000005 SOL (~$0.001)';
+                const fm = document.getElementById('networkFeeMain');
+                const fc = document.getElementById('networkFeeCrypto');
+                if (fm) fm.textContent = feeStr;
+                if (fc) fc.textContent = feeStr;
+                return;
+            }
             if (!sbtContractInstance || !systemProvider) return;
             try {
                 const recipient = (els.recipientInput.value || els.cryptoRecipientInput.value || '0x0000000000000000000000000000000000000000').trim();
@@ -5944,7 +6326,11 @@ window.convertSbtToBot = convertSbtToBot;
                 const message = (els.messageInput.value || els.cryptoMessageInput.value || '').trim();
                 const amount = (els.amountInput.value || els.cryptoAmountInput.value || '0').trim();
 
-                if (!recipient.startsWith('0x') || recipient.length !== 42) return;
+                if (window.CURRENT_TOKEN === 'ACE') {
+                    if (!isValidSolanaAddress(recipient)) return;
+                } else {
+                    if (!recipient.startsWith('0x') || recipient.length !== 42) return;
+                }
                 if (!amount || parseFloat(amount) <= 0) return;
 
                 const gasLimit = await sbtContractInstance.mintSoulboundGift.estimateGas(recipient, 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxIiBoZWlnaHQ9IjEiLz4=', message, {
@@ -5972,8 +6358,12 @@ window.convertSbtToBot = convertSbtToBot;
             });
         });
 
-        window.setMaxAmount = function() {
-            if (systemProvider && realWalletAddress) {
+        window.setMaxAmount = async function() {
+            if (window.CURRENT_TOKEN === 'ACE' && window.solanaPublicKey) {
+                const bal = await getTokenBalanceSolana(window.ACE_TOKEN.mint, window.solanaPublicKey.toString());
+                els.amountInput.value = bal.uiAmount.toString();
+                updateForm();
+            } else if (systemProvider && realWalletAddress) {
                 systemProvider.getBalance(realWalletAddress).then(bal => {
                     const formatted = ethers.formatEther(bal);
                     els.amountInput.value = parseFloat(formatted).toString();
@@ -5986,8 +6376,13 @@ window.convertSbtToBot = convertSbtToBot;
             }
         };
 
-        window.setCryptoMaxAmount = function() {
-            if (systemProvider && realWalletAddress) {
+        window.setCryptoMaxAmount = async function() {
+            if (window.CURRENT_TOKEN === 'ACE' && window.solanaPublicKey) {
+                const bal = await getTokenBalanceSolana(window.ACE_TOKEN.mint, window.solanaPublicKey.toString());
+                els.cryptoAmountInput.value = bal.uiAmount.toString();
+                updateCryptoCardPreview();
+                validateCryptoForm();
+            } else if (systemProvider && realWalletAddress) {
                 systemProvider.getBalance(realWalletAddress).then(bal => {
                     const formatted = ethers.formatEther(bal);
                     els.cryptoAmountInput.value = parseFloat(formatted).toString();
@@ -6429,20 +6824,25 @@ window.convertSbtToBot = convertSbtToBot;
             const amount = els.amountInput.value.trim();
             const message = els.messageInput.value.trim();
             const style = selectedGiftType || 'gift';
+            const isSolana = window.CURRENT_TOKEN === 'ACE';
 
-            if (!recipient.startsWith('0x') || recipient.length !== 42) {
-                alert("Invalid recipient address.");
+            if (!isValidAddressForChain(recipient, isSolana ? 'solana' : 'bot')) {
+                alert(isSolana ? "Invalid Solana address. Must be a valid base58 address." : "Invalid recipient address.");
                 return;
             }
             if (!amount || parseFloat(amount) <= 0) {
                 alert("Amount must be greater than 0.");
                 return;
             }
-            if (recipient.toLowerCase() === realWalletAddress.toLowerCase()) {
-                alert("You cannot send a gift to yourself.");
-                return;
+            if (isSolana) {
+                if (!window.solanaPublicKey) { alert("Connect Phantom wallet first."); return; }
+                if (recipient === window.solanaPublicKey.toString()) { alert("You cannot send a gift to yourself."); return; }
+            } else {
+                if (!realWalletAddress) { alert("Connect MetaMask wallet first."); return; }
+                if (recipient.toLowerCase() === realWalletAddress.toLowerCase()) { alert("You cannot send a gift to yourself."); return; }
             }
-            if (!sbtContractInstance) { alert("SBT contract not initialized. Please reconnect wallet."); return; }
+            if (isSolana && !window.solanaWallet) { alert("Solana wallet not connected."); return; }
+            if (!isSolana && !sbtContractInstance) { alert("SBT contract not initialized. Please reconnect wallet."); return; }
 
             const btn = els.sendFinalBtn;
             btn.disabled = true;
@@ -6452,51 +6852,70 @@ window.convertSbtToBot = convertSbtToBot;
             try {
                 const giftId = 'gift_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
 
-                els.finalBtnText.textContent = 'Uploading to IPFS...';
-                const tokenURIHash = await createGiftMetadata(realWalletAddress, style, message, amount, sbtUploadedImageData);
-                const tokenURI = 'ipfs://' + tokenURIHash;
+                if (isSolana) {
+                    // === SOLANA SPL TOKEN TRANSFER ===
+                    els.finalBtnText.textContent = 'Preparing SPL transfer...';
+                    const connection = getSolanaConnection();
+                    const mint = new solanaWeb3.PublicKey(window.ACE_TOKEN.mint);
+                    const senderPub = window.solanaPublicKey;
+                    const recipientPub = new solanaWeb3.PublicKey(recipient);
+                    const amountRaw = Math.floor(parseFloat(amount) * Math.pow(10, window.ACE_TOKEN.decimals));
 
-                els.finalBtnText.textContent = 'Minting NFT...';
-                const amountWei = ethers.parseEther(amount);
-                const tx = await sbtContractInstance.mintSoulboundGift(recipient, tokenURI, message, { value: amountWei });
+                    // Get or create ATAs
+                    const senderATA = getAssociatedTokenAddress(mint, senderPub);
+                    const recipientATA = getAssociatedTokenAddress(mint, recipientPub);
 
-                els.finalBtnText.textContent = 'Confirming...';
-                const receipt = await tx.wait();
+                    const tx = new solanaWeb3.Transaction();
 
-                if (receipt.status === 1) {
-                    let mintedTokenId = '---';
-                    const event = receipt.logs.find(log => {
-                        try { const parsed = sbtContractInstance.interface.parseLog(log); return parsed && parsed.name === "SoulboundGiftMinted"; } catch (e) { return false; }
-                    });
-                    if (event) {
-                        const parsed = sbtContractInstance.interface.parseLog(event);
-                        mintedTokenId = parsed.args.tokenId.toString();
+                    // Check if recipient ATA exists
+                    try {
+                        await connection.getAccountInfo(recipientATA);
+                    } catch (e) {
+                        // Create ATA for recipient
+                        tx.add(createAssociatedTokenAccountInstruction(senderPub, mint, recipientPub, recipientATA));
                     }
+
+                    // Add transfer instruction
+                    tx.add(createSplTransferInstruction(senderATA, recipientATA, senderPub, amountRaw));
+
+                    // Get recent blockhash
+                    const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
+                    tx.recentBlockhash = blockhash;
+                    tx.feePayer = senderPub;
+
+                    els.finalBtnText.textContent = 'Approve in Phantom...';
+                    const signedTx = await window.solanaWallet.signTransaction(tx);
+                    const txHash = await connection.sendRawTransaction(signedTx.serialize());
+
+                    els.finalBtnText.textContent = 'Confirming...';
+                    await connection.confirmTransaction({ signature: txHash, blockhash, lastValidBlockHeight });
 
                     addGift({
                         id: giftId,
-                        sender: realWalletAddress,
-                        senderName: (document.getElementById('senderNameInput') && document.getElementById('senderNameInput').value.trim()) || (document.getElementById('cryptoSenderNameInput') && document.getElementById('cryptoSenderNameInput').value.trim()) || realWalletAddress.slice(0,6) + '...' + realWalletAddress.slice(-4),
+                        sender: senderPub.toString(),
+                        senderName: (document.getElementById('senderNameInput') && document.getElementById('senderNameInput').value.trim()) || (document.getElementById('cryptoSenderNameInput') && document.getElementById('cryptoSenderNameInput').value.trim()) || senderPub.toString().slice(0, 4) + '...' + senderPub.toString().slice(-4),
                         recipient: recipient,
                         amount: parseFloat(amount).toString(),
                         style: style,
                         message: message,
-                        tokenId: mintedTokenId,
-                        txHash: tx.hash,
+                        tokenId: 'spl-' + txHash.slice(0, 8),
+                        txHash: txHash,
                         timestamp: Date.now(),
-                        claimed: false
+                        claimed: false,
+                        chain: 'solana',
+                        token_symbol: 'ACE'
                     });
 
-                    els.txHash.textContent = tx.hash;
-                    els.successAmount.textContent = amount + ' $BOT';
+                    els.txHash.textContent = txHash;
+                    els.successAmount.textContent = amount + ' $ACE';
                     const theme = getGiftTheme(style);
-                    const claimUrl = window.location.origin + window.location.pathname + '?gift=' + mintedTokenId;
+                    const claimUrl = window.location.origin + window.location.pathname + '?gift=' + txHash;
                     const claimLinkInput = document.getElementById('claimLinkInput');
                     if (claimLinkInput) { claimLinkInput.value = claimUrl; }
                     const copyBtn = document.getElementById('copyClaimLinkBtn');
-                    if (copyBtn) { copyBtn.onclick = () => { navigator.clipboard.writeText(claimUrl).then(() => { copyBtn.textContent = 'Copied!'; setTimeout(() => { copyBtn.textContent = 'Copy'; }, 2000); }).catch(() => { claimLinkInput.select(); document.execCommand('copy'); copyBtn.textContent = 'Copied!'; setTimeout(() => { copyBtn.textContent = 'Copy'; }, 2000); }); }; }
-                    const shareBtn = document.getElementById('shareClaimLinkBtn');
-                    if (shareBtn) { shareBtn.onclick = () => { if (navigator.share) { navigator.share({ title: theme.successIcon + ' Gift for you!', text: 'You received ' + amount + ' $BOT as a gift! Click to claim:', url: claimUrl }); } else { navigator.clipboard.writeText(claimUrl).then(() => { shareBtn.textContent = 'Copied!'; setTimeout(() => { shareBtn.textContent = 'Share'; }, 2000); }); } }; }
+                    if (copyBtn) { copyBtn.onclick = () => { navigator.clipboard.writeText(claimUrl).then(() => { copyBtn.textContent = 'Copied!'; setTimeout(() => { copyBtn.textContent = 'Copy'; }, 2000); }).catch(() => { claimLinkInput.select(); document.execCommand('copy'); }); }; }
+                    const shareBtn2 = document.getElementById('shareClaimLinkBtn');
+                    if (shareBtn2) { shareBtn2.onclick = () => { if (navigator.share) { navigator.share({ title: theme.successIcon + ' Gift for you!', text: 'You received ' + amount + ' $ACE as a gift!', url: claimUrl }); } else { navigator.clipboard.writeText(claimUrl); } }; }
                     const shareSection = document.getElementById('giftShareSection');
                     if (shareSection) shareSection.classList.remove('hidden');
                     els.confettiContainer.innerHTML = '';
@@ -6511,12 +6930,77 @@ window.convertSbtToBot = convertSbtToBot;
                         els.confettiContainer.appendChild(c);
                     }
                     els.successOverlay.classList.remove('hidden');
-
-                    await updateRealBalance();
-                    grantGasToRecipient(recipient);
-                    if (typeof loadOnChainHistory === 'function') await loadOnChainHistory();
+                    await updateAllBalances();
                 } else {
-                    alert("Transaction failed on-chain.");
+                    // === BOT CHAIN NFT MINT (existing) ===
+                    els.finalBtnText.textContent = 'Creating NFT metadata...';
+                    const tokenURIHash = await createGiftMetadata(realWalletAddress, style, message, amount, sbtUploadedImageData);
+                    const tokenURI = 'ipfs://' + tokenURIHash;
+
+                    els.finalBtnText.textContent = 'Minting NFT...';
+                    const amountWei = ethers.parseEther(amount);
+                    const tx = await sbtContractInstance.mintSoulboundGift(recipient, tokenURI, message, { value: amountWei });
+
+                    els.finalBtnText.textContent = 'Confirming...';
+                    const receipt = await tx.wait();
+
+                    if (receipt.status === 1) {
+                        let mintedTokenId = '---';
+                        const event = receipt.logs.find(log => {
+                            try { const parsed = sbtContractInstance.interface.parseLog(log); return parsed && parsed.name === "SoulboundGiftMinted"; } catch (e) { return false; }
+                        });
+                        if (event) {
+                            const parsed = sbtContractInstance.interface.parseLog(event);
+                            mintedTokenId = parsed.args.tokenId.toString();
+                        }
+
+                        addGift({
+                            id: giftId,
+                            sender: realWalletAddress,
+                            senderName: (document.getElementById('senderNameInput') && document.getElementById('senderNameInput').value.trim()) || (document.getElementById('cryptoSenderNameInput') && document.getElementById('cryptoSenderNameInput').value.trim()) || realWalletAddress.slice(0,6) + '...' + realWalletAddress.slice(-4),
+                            recipient: recipient,
+                            amount: parseFloat(amount).toString(),
+                            style: style,
+                            message: message,
+                            tokenId: mintedTokenId,
+                            txHash: tx.hash,
+                            timestamp: Date.now(),
+                            claimed: false,
+                            chain: 'bot',
+                            token_symbol: 'BOT'
+                        });
+
+                        els.txHash.textContent = tx.hash;
+                        els.successAmount.textContent = amount + ' $BOT';
+                        const theme = getGiftTheme(style);
+                        const claimUrl = window.location.origin + window.location.pathname + '?gift=' + mintedTokenId;
+                        const claimLinkInput2 = document.getElementById('claimLinkInput');
+                        if (claimLinkInput2) { claimLinkInput2.value = claimUrl; }
+                        const copyBtn2 = document.getElementById('copyClaimLinkBtn');
+                        if (copyBtn2) { copyBtn2.onclick = () => { navigator.clipboard.writeText(claimUrl).then(() => { copyBtn2.textContent = 'Copied!'; setTimeout(() => { copyBtn2.textContent = 'Copy'; }, 2000); }).catch(() => { claimLinkInput2.select(); document.execCommand('copy'); copyBtn2.textContent = 'Copied!'; setTimeout(() => { copyBtn2.textContent = 'Copy'; }, 2000); }); }; }
+                        const shareBtn3 = document.getElementById('shareClaimLinkBtn');
+                        if (shareBtn3) { shareBtn3.onclick = () => { if (navigator.share) { navigator.share({ title: theme.successIcon + ' Gift for you!', text: 'You received ' + amount + ' $BOT as a gift! Click to claim:', url: claimUrl }); } else { navigator.clipboard.writeText(claimUrl).then(() => { shareBtn3.textContent = 'Copied!'; setTimeout(() => { shareBtn3.textContent = 'Share'; }, 2000); }); } }; }
+                        const shareSection2 = document.getElementById('giftShareSection');
+                        if (shareSection2) shareSection2.classList.remove('hidden');
+                        els.confettiContainer.innerHTML = '';
+                        for (let i = 0; i < 30; i++) {
+                            const c = document.createElement('div');
+                            c.className = 'confetti-piece confetti-fall';
+                            c.style.left = Math.random() * 100 + '%';
+                            c.style.animationDelay = Math.random() * 0.5 + 's';
+                            c.style.backgroundColor = theme.confetti[Math.floor(Math.random()*theme.confetti.length)];
+                            c.style.width = (Math.random() * 8 + 4) + 'px';
+                            c.style.height = (Math.random() * 8 + 4) + 'px';
+                            els.confettiContainer.appendChild(c);
+                        }
+                        els.successOverlay.classList.remove('hidden');
+
+                        await updateRealBalance();
+                        grantGasToRecipient(recipient);
+                        if (typeof loadOnChainHistory === 'function') await loadOnChainHistory();
+                    } else {
+                        alert("Transaction failed on-chain.");
+                    }
                 }
             } catch (err) {
                 console.error("Tx failed:", err);
@@ -7803,7 +8287,9 @@ window.convertSbtToBot = convertSbtToBot;
                         redeemPreview.classList.remove('hidden');
                         var ri2 = document.getElementById('sgRedeemImage');
                         if (ri2 && gift.image_url) { ri2.src = gift.image_url; ri2.classList.remove('hidden'); } else if (ri2) { ri2.classList.add('hidden'); }
-                        document.getElementById('sgRedeemAmount').textContent = parseFloat(gift.amount).toFixed(4) + ' BOT';
+                        var sgTokLabel = (gift.chain === 'solana') ? ' ACE' : ' BOT';
+                        var sgAmtDisp = (gift.chain === 'solana') ? parseFloat(gift.amount).toFixed(2) : parseFloat(gift.amount).toFixed(4);
+                        document.getElementById('sgRedeemAmount').textContent = sgAmtDisp + sgTokLabel;
                         document.getElementById('sgRedeemMsg').textContent = '"' + (gift.message || 'A secret gift') + '"';
                         document.getElementById('sgRedeemSender').textContent = gift.sender_name || 'Anonymous';
                         redeemStatus.classList.add('hidden');
@@ -7842,35 +8328,100 @@ window.convertSbtToBot = convertSbtToBot;
                         } catch(e) {
                             throw new Error('Wrong claim code — could not decrypt vault.');
                         }
-                        if (!vaultPrivateKey || !vaultPrivateKey.startsWith('0x')) throw new Error('Invalid vault key.');
 
-                        redeemStatus.textContent = 'Sweeping funds from vault...';
-                        const provider = systemProvider || new ethers.JsonRpcProvider('https://rpc.bohr.life');
-                        const vaultWallet = new ethers.Wallet(vaultPrivateKey, provider);
-                        const vaultBalance = await provider.getBalance(vaultWallet.address);
-                        if (vaultBalance === 0n) throw new Error('Vault is empty — funds may have already been swept.');
+                        const isSGSolana = gift.chain === 'solana';
 
-                        const feeData = await provider.getFeeData();
-                        const gasPrice = feeData.gasPrice || ethers.parseUnits('1', 'gwei');
-                        const gasLimit = 21000n;
-                        const gasCost = gasLimit * gasPrice;
-                        const sendable = vaultBalance - gasCost;
-                        if (sendable <= 0n) throw new Error('Vault balance too low to cover gas.');
+                        if (isSGSolana) {
+                            // === SOLANA VAULT SWEEP ===
+                            if (!window.solanaPublicKey) {
+                                redeemStatus.textContent = 'Connect Phantom to claim...';
+                                await connectPhantomWallet();
+                                if (!window.solanaPublicKey) throw new Error('Phantom wallet required to claim Solana gift.');
+                            }
 
-                        const sweepTx = await vaultWallet.sendTransaction({ to: claimerAddress, value: sendable, gasLimit: gasLimit, gasPrice: gasPrice });
-                        console.log('[SG] Sweep tx sent:', sweepTx.hash);
-                        const sweepReceipt = await sweepTx.wait();
-                        console.log('[SG] Sweep confirmed in block:', sweepReceipt.blockNumber);
+                            redeemStatus.textContent = 'Sweeping ACE from vault...';
+                            const connection = getSolanaConnection();
+                            const vaultSecretKey = Uint8Array.from(Buffer.from(vaultPrivateKey, 'base64'));
+                            const vaultKeypair = solanaWeb3.Keypair.fromSecretKey(vaultSecretKey);
+                            const mint = new solanaWeb3.PublicKey(window.ACE_TOKEN.mint);
+                            const claimerPub = window.solanaPublicKey;
+                            const vaultPub = vaultKeypair.publicKey;
 
-                        redeemStatus.textContent = 'Marking as claimed...';
-                        await sgMarkClaimed(codeVal, claimerAddress);
-                        console.log('[SG] Marked as claimed in DB');
+                            const vaultATA = getAssociatedTokenAddress(mint, vaultPub);
+                            const claimerATA = getAssociatedTokenAddress(mint, claimerPub);
 
-                        document.getElementById('secretGiftRedeemPanel').classList.add('hidden');
-                        document.getElementById('secretGiftChoicePanel').classList.remove('hidden');
-                        await updateRealBalance();
-                        console.log('[SG] Balance updated');
-                        showSecretGiftClaimedPopup({ msg: gift.message, senderName: gift.sender_name, txHash: sweepTx.hash, imageUrl: gift.image_url }, gift.amount);
+                            // Check vault ATA balance
+                            let vaultBalance;
+                            try {
+                                vaultBalance = await connection.getTokenAccountBalance(vaultATA);
+                            } catch(e) {
+                                throw new Error('Vault is empty — funds may have already been swept.');
+                            }
+                            const balanceRaw = BigInt(vaultBalance.value.amount);
+                            if (balanceRaw === 0n) throw new Error('Vault is empty — funds may have already been swept.');
+
+                            const tx = new solanaWeb3.Transaction();
+
+                            // Check if claimer ATA exists
+                            try {
+                                await connection.getAccountInfo(claimerATA);
+                            } catch (e) {
+                                tx.add(createAssociatedTokenAccountInstruction(claimerPub, mint, claimerPub, claimerATA));
+                            }
+
+                            // Transfer all ACE to claimer
+                            tx.add(createSplTransferInstruction(vaultATA, claimerATA, vaultKeypair.publicKey, balanceRaw));
+
+                            const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
+                            tx.recentBlockhash = blockhash;
+                            tx.feePayer = claimerPub;
+
+                            redeemStatus.textContent = 'Approve in Phantom...';
+                            const signedTx = await window.solanaWallet.signTransaction(tx);
+                            const sweepHash = await connection.sendRawTransaction(signedTx.serialize());
+                            await connection.confirmTransaction({ signature: sweepHash, blockhash, lastValidBlockHeight });
+                            console.log('[SG-SOL] Sweep confirmed:', sweepHash);
+
+                            redeemStatus.textContent = 'Marking as claimed...';
+                            await sgMarkClaimed(codeVal, claimerPub.toString());
+
+                            document.getElementById('secretGiftRedeemPanel').classList.add('hidden');
+                            document.getElementById('secretGiftChoicePanel').classList.remove('hidden');
+                            await updateAllBalances();
+                            showSecretGiftClaimedPopup({ msg: gift.message, senderName: gift.sender_name, txHash: sweepHash, imageUrl: gift.image_url, chain: 'solana' }, gift.amount);
+
+                        } else {
+                            // === BOT CHAIN VAULT SWEEP (existing) ===
+                            if (!vaultPrivateKey || !vaultPrivateKey.startsWith('0x')) throw new Error('Invalid vault key.');
+
+                            redeemStatus.textContent = 'Sweeping funds from vault...';
+                            const provider = systemProvider || new ethers.JsonRpcProvider('https://rpc.bohr.life');
+                            const vaultWallet = new ethers.Wallet(vaultPrivateKey, provider);
+                            const vaultBalance = await provider.getBalance(vaultWallet.address);
+                            if (vaultBalance === 0n) throw new Error('Vault is empty — funds may have already been swept.');
+
+                            const feeData = await provider.getFeeData();
+                            const gasPrice = feeData.gasPrice || ethers.parseUnits('1', 'gwei');
+                            const gasLimit = 21000n;
+                            const gasCost = gasLimit * gasPrice;
+                            const sendable = vaultBalance - gasCost;
+                            if (sendable <= 0n) throw new Error('Vault balance too low to cover gas.');
+
+                            const sweepTx = await vaultWallet.sendTransaction({ to: claimerAddress, value: sendable, gasLimit: gasLimit, gasPrice: gasPrice });
+                            console.log('[SG] Sweep tx sent:', sweepTx.hash);
+                            const sweepReceipt = await sweepTx.wait();
+                            console.log('[SG] Sweep confirmed in block:', sweepReceipt.blockNumber);
+
+                            redeemStatus.textContent = 'Marking as claimed...';
+                            await sgMarkClaimed(codeVal, claimerAddress);
+                            console.log('[SG] Marked as claimed in DB');
+
+                            document.getElementById('secretGiftRedeemPanel').classList.add('hidden');
+                            document.getElementById('secretGiftChoicePanel').classList.remove('hidden');
+                            await updateRealBalance();
+                            console.log('[SG] Balance updated');
+                            showSecretGiftClaimedPopup({ msg: gift.message, senderName: gift.sender_name, txHash: sweepTx.hash, imageUrl: gift.image_url, chain: 'bot' }, gift.amount);
+                        }
                     } else {
                         redeemStatus.textContent = 'Open MetaMask to confirm...';
                         try {
@@ -7884,7 +8435,7 @@ window.convertSbtToBot = convertSbtToBot;
                         document.getElementById('secretGiftRedeemPanel').classList.add('hidden');
                         document.getElementById('secretGiftChoicePanel').classList.remove('hidden');
                         await updateRealBalance();
-                        showSecretGiftClaimedPopup({ msg: gift.message, senderName: gift.sender_name, txHash: gift.tx_hash || '', imageUrl: gift.image_url }, gift.amount);
+                        showSecretGiftClaimedPopup({ msg: gift.message, senderName: gift.sender_name, txHash: gift.tx_hash || '', imageUrl: gift.image_url, chain: gift.chain || 'bot' }, gift.amount);
                     }
                 } catch(err) {
                     console.error('[SG] Claim failed:', err);
@@ -7925,8 +8476,10 @@ window.convertSbtToBot = convertSbtToBot;
             }
 
             if (createBtn) createBtn.addEventListener('click', async () => {
-                if (!isWalletConnected) { openWalletModal(); return; }
-                if (!systemSigner) { alert('Connect wallet to BOT Chain Testnet first.'); return; }
+                const isSGSolana = window.CURRENT_TOKEN === 'ACE';
+                if (isSGSolana && !window.solanaPublicKey) { alert('Connect Phantom wallet first.'); return; }
+                if (!isSGSolana && !isWalletConnected) { openWalletModal(); return; }
+                if (!isSGSolana && !systemSigner) { alert('Connect wallet to BOT Chain Testnet first.'); return; }
                 const amount = amountInput.value.trim();
                 const message = messageInput.value.trim();
                 const senderName = document.getElementById('sgSenderName').value.trim();
@@ -7940,10 +8493,12 @@ window.convertSbtToBot = convertSbtToBot;
                 if (existing) { alert('This claim code is already taken. Use a different one.'); return; }
 
                 document.getElementById('sgFinalImage').src = sgUploadedImageData;
-                document.getElementById('sgFinalAmount').textContent = parseFloat(amount).toFixed(4) + ' BOT';
+                var sgFormToken = window.CURRENT_TOKEN === 'ACE' ? ' ACE' : ' BOT';
+                var sgFormAmt = window.CURRENT_TOKEN === 'ACE' ? parseFloat(amount).toFixed(2) : parseFloat(amount).toFixed(4);
+                document.getElementById('sgFinalAmount').textContent = sgFormAmt + sgFormToken;
                 document.getElementById('sgFinalMessage').textContent = '"' + (message || 'A secret gift for you') + '"';
-                document.getElementById('sgFinalSender').textContent = senderName || realWalletAddress.slice(0, 6) + '...' + realWalletAddress.slice(-4);
-                document.getElementById('sgFinalAmountDetail').textContent = parseFloat(amount).toFixed(4) + ' $BOT';
+                document.getElementById('sgFinalSender').textContent = senderName || (isSGSolana ? window.solanaPublicKey.toString().slice(0, 4) + '...' + window.solanaPublicKey.toString().slice(-4) : realWalletAddress.slice(0, 6) + '...' + realWalletAddress.slice(-4));
+                document.getElementById('sgFinalAmountDetail').textContent = sgFormAmt + ' $' + window.CURRENT_TOKEN;
                 document.getElementById('sgFinalClaimCode').textContent = claimCodeVal;
 
                 document.getElementById('secretGiftFormPanel').classList.add('hidden');
@@ -7956,7 +8511,9 @@ window.convertSbtToBot = convertSbtToBot;
             });
 
             if (confirmBtn) confirmBtn.addEventListener('click', async () => {
-                if (!systemSigner) { alert('Please connect your wallet first.'); return; }
+                const isSGSolana = window.CURRENT_TOKEN === 'ACE';
+                if (isSGSolana && !window.solanaPublicKey) { alert('Connect Phantom wallet first.'); return; }
+                if (!isSGSolana && !systemSigner) { alert('Please connect your wallet first.'); return; }
                 confirmBtn.disabled = true;
                 document.getElementById('sgConfirmText').textContent = 'Creating...';
                 document.getElementById('sgConfirmIcon').textContent = '⏳';
@@ -7964,55 +8521,136 @@ window.convertSbtToBot = convertSbtToBot;
                 try {
                     const amount = amountInput.value.trim();
                     const message = messageInput.value.trim();
-                    const senderName = document.getElementById('sgSenderName').value.trim() || realWalletAddress.slice(0, 6) + '...' + realWalletAddress.slice(-4);
+                    const senderName = document.getElementById('sgSenderName').value.trim() || (isSGSolana ? window.solanaPublicKey.toString().slice(0, 4) + '...' + window.solanaPublicKey.toString().slice(-4) : realWalletAddress.slice(0, 6) + '...' + realWalletAddress.slice(-4));
                     const claimCodeVal = claimCodeInput ? claimCodeInput.value.trim().toUpperCase() : '';
-
                     const giftCode = claimCodeVal || await sgGenerateCode();
 
-                    document.getElementById('sgConfirmText').textContent = 'Generating vault wallet...';
-                    const vaultWallet = ethers.Wallet.createRandom();
-                    const vaultAddress = vaultWallet.address;
-                    const vaultPrivateKey = vaultWallet.privateKey;
+                    let txHash = '';
 
-                    document.getElementById('sgConfirmText').textContent = 'Sending BOT to vault...';
-                    const amountWei = ethers.parseEther(amount);
-                    const gasBuffer = ethers.parseEther('0.001');
-                    const tx = await systemSigner.sendTransaction({ to: vaultAddress, value: amountWei + gasBuffer });
-                    const receipt = await tx.wait();
-                    if (receipt.status !== 1) throw new Error('Transaction failed on-chain');
+                    if (isSGSolana) {
+                        // === SOLANA SECRET GIFT VAULT ===
+                        document.getElementById('sgConfirmText').textContent = 'Generating vault keypair...';
+                        const vaultKeypair = solanaWeb3.Keypair.generate();
+                        const vaultAddress = vaultKeypair.publicKey.toString();
+                        console.log('[SG-SOL] Vault:', vaultAddress);
 
-                    document.getElementById('sgConfirmText').textContent = 'Encrypting vault...';
-                    const encryptedPK = await encryptAES(vaultPrivateKey, giftCode);
+                        document.getElementById('sgConfirmText').textContent = 'Sending ACE to vault...';
+                        const connection = getSolanaConnection();
+                        const mint = new solanaWeb3.PublicKey(window.ACE_TOKEN.mint);
+                        const senderPub = window.solanaPublicKey;
+                        const vaultPub = vaultKeypair.publicKey;
+                        const amountRaw = Math.floor(parseFloat(amount) * Math.pow(10, window.ACE_TOKEN.decimals));
 
-                    document.getElementById('sgConfirmText').textContent = 'Saving to database...';
-                    await sgStoreGift(giftCode, {
-                        code: giftCode,
-                        amount: parseFloat(amount),
-                        sender: realWalletAddress,
-                        sender_name: senderName || '',
-                        recipient: '',
-                        message: message || '',
-                        image_url: sgUploadedImageData || '',
-                        encrypted_pk: encryptedPK,
-                        claimed: false
-                    });
+                        const senderATA = getAssociatedTokenAddress(mint, senderPub);
+                        const vaultATA = getAssociatedTokenAddress(mint, vaultPub);
 
-                    addGift({
-                        id: 'sg_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8),
-                        sender: realWalletAddress,
-                        senderName: senderName,
-                        recipient: 'Public Voucher',
-                        amount: parseFloat(amount).toString(),
-                        style: 'secretGift',
-                        message: message,
-                        txHash: tx.hash,
-                        timestamp: Date.now(),
-                        claimed: false
-                    });
+                        const tx = new solanaWeb3.Transaction();
 
-                    document.getElementById('sgSuccessCode').textContent = giftCode;
-                    document.getElementById('sgSuccessAmount').textContent = parseFloat(amount).toFixed(4) + ' BOT';
-                    document.getElementById('sgSuccessTx').textContent = tx.hash;
+                        // Create ATA for vault
+                        tx.add(createAssociatedTokenAccountInstruction(senderPub, mint, vaultPub, vaultATA));
+
+                        // Transfer ACE to vault
+                        tx.add(createSplTransferInstruction(senderATA, vaultATA, senderPub, amountRaw));
+
+                        const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
+                        tx.recentBlockhash = blockhash;
+                        tx.feePayer = senderPub;
+
+                        const signedTx = await window.solanaWallet.signTransaction(tx);
+                        txHash = await connection.sendRawTransaction(signedTx.serialize());
+                        await connection.confirmTransaction({ signature: txHash, blockhash, lastValidBlockHeight });
+                        console.log('[SG-SOL] TX confirmed:', txHash);
+
+                        document.getElementById('sgConfirmText').textContent = 'Encrypting vault...';
+                        const vaultSecretKey = Buffer.from(vaultKeypair.secretKey).toString('base64');
+                        const encryptedPK = await encryptAES(vaultSecretKey, giftCode);
+
+                        document.getElementById('sgConfirmText').textContent = 'Saving to database...';
+                        await sgStoreGift(giftCode, {
+                            code: giftCode,
+                            amount: parseFloat(amount),
+                            sender: senderPub.toString(),
+                            sender_name: senderName || '',
+                            recipient: '',
+                            message: message || '',
+                            image_url: sgUploadedImageData || '',
+                            encrypted_pk: encryptedPK,
+                            claimed: false,
+                            chain: 'solana',
+                            token_symbol: 'ACE'
+                        });
+
+                        addGift({
+                            id: 'sg_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8),
+                            sender: senderPub.toString(),
+                            senderName: senderName,
+                            recipient: 'Public Voucher',
+                            amount: parseFloat(amount).toString(),
+                            style: 'secretGift',
+                            message: message,
+                            txHash: txHash,
+                            timestamp: Date.now(),
+                            claimed: false,
+                            chain: 'solana',
+                            token_symbol: 'ACE'
+                        });
+
+                        document.getElementById('sgSuccessCode').textContent = giftCode;
+                        document.getElementById('sgSuccessAmount').textContent = parseFloat(amount).toFixed(2) + ' ACE';
+                        document.getElementById('sgSuccessTx').textContent = txHash;
+
+                    } else {
+                        // === BOT CHAIN SECRET GIFT VAULT (existing) ===
+                        document.getElementById('sgConfirmText').textContent = 'Generating vault wallet...';
+                        const vaultWallet = ethers.Wallet.createRandom();
+                        const vaultAddress = vaultWallet.address;
+                        const vaultPrivateKey = vaultWallet.privateKey;
+
+                        document.getElementById('sgConfirmText').textContent = 'Sending BOT to vault...';
+                        const amountWei = ethers.parseEther(amount);
+                        const gasBuffer = ethers.parseEther('0.001');
+                        const tx = await systemSigner.sendTransaction({ to: vaultAddress, value: amountWei + gasBuffer });
+                        const receipt = await tx.wait();
+                        if (receipt.status !== 1) throw new Error('Transaction failed on-chain');
+
+                        document.getElementById('sgConfirmText').textContent = 'Encrypting vault...';
+                        const encryptedPK = await encryptAES(vaultPrivateKey, giftCode);
+
+                        document.getElementById('sgConfirmText').textContent = 'Saving to database...';
+                        await sgStoreGift(giftCode, {
+                            code: giftCode,
+                            amount: parseFloat(amount),
+                            sender: realWalletAddress,
+                            sender_name: senderName || '',
+                            recipient: '',
+                            message: message || '',
+                            image_url: sgUploadedImageData || '',
+                            encrypted_pk: encryptedPK,
+                            claimed: false,
+                            chain: 'bot',
+                            token_symbol: 'BOT'
+                        });
+
+                        addGift({
+                            id: 'sg_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8),
+                            sender: realWalletAddress,
+                            senderName: senderName,
+                            recipient: 'Public Voucher',
+                            amount: parseFloat(amount).toString(),
+                            style: 'secretGift',
+                            message: message,
+                            txHash: tx.hash,
+                            timestamp: Date.now(),
+                            claimed: false,
+                            chain: 'bot',
+                            token_symbol: 'BOT'
+                        });
+
+                        txHash = tx.hash;
+                        document.getElementById('sgSuccessCode').textContent = giftCode;
+                        document.getElementById('sgSuccessAmount').textContent = parseFloat(amount).toFixed(4) + ' BOT';
+                        document.getElementById('sgSuccessTx').textContent = tx.hash;
+                    }
 
                     if (copyCodeBtn) copyCodeBtn.addEventListener('click', () => {
                         navigator.clipboard.writeText(giftCode).then(() => {
@@ -8055,7 +8693,9 @@ window.convertSbtToBot = convertSbtToBot;
                 console.log('[SG] Showing popup, balance:', balance, 'data:', data);
                 var txH = txHash || data.txHash || '';
                 var amtText = '0.0000';
-                try { amtText = parseFloat(balance).toFixed(4); } catch(e) { amtText = String(balance); }
+                var tokenSym = (data.chain === 'solana') ? 'ACE' : 'BOT';
+                var explorerUrl = (data.chain === 'solana') ? 'https://solscan.io/tx/' : 'https://scan.bohr.life/tx/';
+                try { amtText = (data.chain === 'solana') ? parseFloat(balance).toFixed(2) : parseFloat(balance).toFixed(4); } catch(e) { amtText = String(balance); }
                 var overlay = document.createElement('div');
                 overlay.id = 'secretGiftClaimedPopup';
                 overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);';
@@ -8063,11 +8703,11 @@ window.convertSbtToBot = convertSbtToBot;
                 if (data.imageUrl) html += '<img src="' + data.imageUrl + '" style="width:100%;height:180px;object-fit:cover;border-radius:16px;margin-bottom:16px;" alt="Gift Image">';
                 else html += '<div style="font-size:48px;margin-bottom:16px;">🎉</div>';
                 html += '<h3 style="font-size:22px;font-weight:bold;margin-bottom:8px;color:#f4f4f5;">Secret Gift Claimed!</h3>';
-                html += '<p style="font-size:18px;font-weight:bold;color:#34d399;font-family:monospace;margin-bottom:12px;">+' + amtText + ' BOT</p>';
+                html += '<p style="font-size:18px;font-weight:bold;color:#34d399;font-family:monospace;margin-bottom:12px;">+' + amtText + ' ' + tokenSym + '</p>';
                 if (data.msg) html += '<p style="font-size:12px;color:#a1a1aa;margin-bottom:8px;">' + data.msg + '</p>';
                 if (data.senderName) html += '<p style="font-size:10px;color:#71717a;margin-bottom:12px;">From: ' + data.senderName + '</p>';
                 if (txH) html += '<p style="font-size:10px;color:#52525b;font-family:monospace;word-break:break-all;margin-bottom:4px;">TX: ' + txH + '</p>';
-                if (txH) html += '<a href="https://scan.bohr.life/tx/' + txH + '" target="_blank" style="font-size:10px;color:#34d399;text-decoration:underline;">View on Explorer</a>';
+                if (txH) html += '<a href="' + explorerUrl + txH + '" target="_blank" style="font-size:10px;color:#34d399;text-decoration:underline;">View on Explorer</a>';
                 html += '<button id="sgClaimedCloseBtn" style="width:100%;margin-top:16px;padding:12px;border-radius:12px;background:#10b981;color:#000;border:none;font-weight:bold;font-size:14px;cursor:pointer;">Awesome!</button>';
                 html += '</div>';
                 overlay.innerHTML = html;
@@ -8076,7 +8716,7 @@ window.convertSbtToBot = convertSbtToBot;
                 document.getElementById('sgClaimedCloseBtn').addEventListener('click', function() { overlay.remove(); });
             } catch(e) {
                 console.error('[SG] Popup error:', e);
-                alert('Gift Claimed! +' + balance + ' BOT');
+                alert('Gift Claimed! +' + balance + ' tokens');
             }
         }
 
@@ -8180,7 +8820,7 @@ window.convertSbtToBot = convertSbtToBot;
                     await sgMarkClaimed(code, claimerAddress);
 
                     overlay.remove();
-                    showSecretGiftClaimedPopup({ msg: gift.message, senderName: gift.sender_name, txHash: gift.tx_hash || '', imageUrl: gift.image_url }, gift.amount);
+                    showSecretGiftClaimedPopup({ msg: gift.message, senderName: gift.sender_name, txHash: gift.tx_hash || '', imageUrl: gift.image_url, chain: gift.chain || 'bot' }, gift.amount);
                     await updateRealBalance();
                 } catch (err) {
                     console.error('Secret Gift claim failed:', err);
