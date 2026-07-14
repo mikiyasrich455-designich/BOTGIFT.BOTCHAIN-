@@ -5451,20 +5451,27 @@ async function connectPhantomWallet() {
     }
 
     try {
-        // If already connected, just get the public key
-        if (provider.isConnected && provider.publicKey) {
-            window.solanaWallet = provider;
-            window.solanaPublicKey = provider.publicKey;
-            const address = provider.publicKey.toString();
+        // If our state says we're already connected, use existing session
+        if (window.solanaPublicKey && window.solanaWallet) {
+            const address = window.solanaPublicKey.toString();
             console.log('[SOL] Phantom already connected:', address);
-            provider.on('disconnect', () => {
-                console.log('[SOL] Phantom disconnected');
-                window.solanaWallet = null;
-                window.solanaPublicKey = null;
-            });
             return address;
         }
 
+        // If Phantom thinks it's connected but we don't have state, force fresh session
+        if (provider.isConnected && provider.publicKey) {
+            console.log('[SOL] Phantom has stale session, forcing reconnect...');
+            try {
+                provider.removeAllListeners?.('disconnect');
+            } catch (e) {}
+            try {
+                await provider.disconnect();
+            } catch (e) {}
+            // Small delay for Phantom to process disconnect
+            await new Promise(r => setTimeout(r, 300));
+        }
+
+        // Fresh connect — this shows the Phantom approve popup
         const resp = await provider.connect();
         window.solanaWallet = provider;
         window.solanaPublicKey = resp.publicKey;
@@ -5491,16 +5498,31 @@ async function connectPhantomWallet() {
 
 async function disconnectPhantomWallet() {
     try {
-        if (window.solanaWallet) {
-            await window.solanaWallet.disconnect();
+        // Store provider reference before clearing
+        const provider = window.solanaWallet || window.phantom?.solana;
+        if (provider) {
+            // Force disconnect — this terminates the Phantom extension session
+            try { await provider.disconnect(); } catch (e) { /* ignore */ }
+            // Remove ALL event listeners to prevent ghost callbacks
+            try { provider.removeAllListeners?.('disconnect'); } catch (e) { /* ignore */ }
         }
     } catch (e) {
         console.warn('[SOL] Phantom disconnect error:', e);
     }
     window.solanaWallet = null;
     window.solanaPublicKey = null;
-    // Force clear connection state
     window.solanaConnection = null;
+    // Clear Phantom session from storage so reconnect is fresh
+    try {
+        localStorage.removeItem('phantom_solana_public_key');
+        sessionStorage.removeItem('phantom_solana_public_key');
+        // Clear any phantom wallet session data
+        Object.keys(localStorage).forEach(k => {
+            if (k.includes('phantom') || k.includes('solana')) {
+                try { localStorage.removeItem(k); } catch (e) {}
+            }
+        });
+    } catch (e) {}
 }
 
 // ==========================================
@@ -5515,7 +5537,7 @@ window.selectToken = async function(tokenSymbol) {
         if (tokenSymbol === 'ACE') {
             // Switch to Solana — disconnect MetaMask first, then connect Phantom
             if (prevToken === 'BOT' && window.isWalletConnected) {
-                window.disconnectWallet(true);
+                await window.disconnectWallet(true);
             }
 
             window.CURRENT_TOKEN = 'ACE';
@@ -6649,7 +6671,7 @@ window.convertSbtToBot = convertSbtToBot;
             }
         };
 
-        window.disconnectWallet = function(skipTokenReset) {
+        window.disconnectWallet = async function(skipTokenReset) {
             isWalletConnected = false;
             window.isWalletConnected = false;
             walletAddress = '';
@@ -6657,8 +6679,10 @@ window.convertSbtToBot = convertSbtToBot;
             els.walletConnectedDisplay.classList.add('hidden');
             els.walletDropdown.classList.remove('show');
 
-            // Also disconnect Phantom if connected
-            if (window.solanaWallet) { disconnectPhantomWallet(); }
+            // Also disconnect Phantom if connected (await to fully terminate session)
+            if (window.solanaWallet || window.phantom?.solana?.isConnected) {
+                await disconnectPhantomWallet();
+            }
 
             // Only reset token selector if not switching tokens
             if (!skipTokenReset) {
@@ -6686,6 +6710,12 @@ window.convertSbtToBot = convertSbtToBot;
             if (dpa3) dpa3.textContent = '0x...';
             var dpa4 = document.getElementById('dropdownProfileAvatar');
             if (dpa4) dpa4.innerHTML = '<span>👤</span>';
+
+            // Reset mobile wallet bar
+            const mwb = document.getElementById('mobileWalletBar');
+            if (mwb) { mwb.classList.add('hidden'); mwb.classList.remove('flex'); }
+            const mwbt = document.getElementById('mobileWalletBtnText');
+            if (mwbt) mwbt.textContent = 'Connect Wallet';
 
             if (balanceInterval) clearInterval(balanceInterval);
             if (window._historyRefreshTimer) { clearTimeout(window._historyRefreshTimer); window._historyRefreshTimer = null; }
