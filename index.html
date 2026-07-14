@@ -5475,33 +5475,41 @@ async function connectPhantomWallet() {
             return address;
         }
 
-        // If Phantom thinks it's connected but we don't have state, it's a stale session
-        if (provider.isConnected && provider.publicKey) {
-            const staleAddress = provider.publicKey.toString();
-            console.log('[SOL] Phantom has stale session for:', staleAddress);
+        // Remove old listeners first to prevent MaxListenersExceeded
+        try { provider.removeAllListeners?.('disconnect'); } catch (e) {}
 
-            // Show confirmation modal — let user decide
-            const confirmed = await showPhantomConfirmModal(staleAddress);
+        // ALWAYS check if Phantom has a detected wallet before connecting
+        // After page refresh, isConnected may be false but publicKey still exists
+        // provider.connect() silently reconnects when site is authorized — no popup shown
+        // So we MUST detect this and show our own confirmation modal
+        const detectedPubkey = provider.publicKey;
+        if (detectedPubkey) {
+            const detectedAddress = detectedPubkey.toString();
+            console.log('[SOL] Phantom wallet detected:', detectedAddress);
+
+            // Show confirmation modal — ALWAYS let user confirm before connecting
+            const confirmed = await showPhantomConfirmModal(detectedAddress);
 
             if (confirmed) {
-                // User accepted the stale wallet
+                // User confirmed — use this wallet directly (no provider.connect needed)
                 window.solanaWallet = provider;
-                window.solanaPublicKey = provider.publicKey;
-                console.log('[SOL] Phantom reconnected (user confirmed):', staleAddress);
+                window.solanaPublicKey = detectedPubkey;
+                console.log('[SOL] Phantom connected (user confirmed):', detectedAddress);
                 provider.on('disconnect', () => {
                     console.log('[SOL] Phantom disconnected');
                     window.solanaWallet = null;
                     window.solanaPublicKey = null;
                 });
-                return staleAddress;
+                return detectedAddress;
             } else {
-                // User chose to switch — tell them to do it in Phantom
-                alert('Please switch your wallet in the Phantom extension, then click Connect again.');
+                // User chose not to use this wallet
+                alert('Please switch to the desired wallet in the Phantom extension, then click Connect again.');
                 return false;
             }
         }
 
-        // No stale session — fresh connect (shows Phantom popup)
+        // No wallet detected — fresh connect (shows Phantom popup)
+        console.log('[SOL] No Phantom session detected, requesting fresh connect...');
         const resp = await provider.connect();
         window.solanaWallet = provider;
         window.solanaPublicKey = resp.publicKey;
@@ -6697,8 +6705,11 @@ window.convertSbtToBot = convertSbtToBot;
                     if (balanceInterval) clearInterval(balanceInterval);
                     const balanceIntervalMs = window.CURRENT_TOKEN === 'ACE' ? 30000 : 15000;
                     balanceInterval = setInterval(() => {
+                        // Guard: skip if wallet disconnected or MetaMask not available
+                        if (!isWalletConnected && !window.solanaPublicKey) { clearInterval(balanceInterval); return; }
+                        if (window.CURRENT_TOKEN === 'BOT' && (!window.ethereum || !window.ethereum.selectedAddress)) return;
                         updateRealBalance();
-                        updateSbtBalance();
+                        if (window.CURRENT_TOKEN === 'ACE') updateSbtBalance();
                     }, balanceIntervalMs);
                 } catch (e) {
                     console.error("Balance setup error:", e);
@@ -6846,6 +6857,10 @@ window.convertSbtToBot = convertSbtToBot;
                 return;
             }
             if (!systemProvider || !realWalletAddress) return;
+            // Guard: skip if MetaMask not connected or on wrong chain
+            try {
+                if (!window.ethereum || !window.ethereum.isConnected || !window.ethereum.selectedAddress) return;
+            } catch (e) {}
             try {
                 const bal = await systemProvider.getBalance(realWalletAddress);
                 const formatted = ethers.formatEther(bal);
@@ -7778,6 +7793,16 @@ window.convertSbtToBot = convertSbtToBot;
                 return;
             }
 
+            // Guard: need a wallet address to query history
+            const histAddr = realWalletAddress || (window.solanaPublicKey ? window.solanaPublicKey.toString() : null);
+            if (!histAddr) {
+                if (emptyState) { emptyState.style.display = 'flex'; }
+                if (pendingCountEl) pendingCountEl.textContent = '0';
+                if (sentCountEl) sentCountEl.textContent = '0';
+                if (claimedCountEl) claimedCountEl.textContent = '0';
+                return;
+            }
+
             const loadingEl = document.createElement('div');
             loadingEl.className = 'col-span-full flex items-center justify-center py-16';
             loadingEl.innerHTML = '<div class="flex items-center gap-3 text-zinc-400 text-sm"><div class="w-5 h-5 border-2 border-emerald-500/30 border-t-emerald-400 rounded-full animate-spin"></div>Loading your gift memories...</div>';
@@ -7944,12 +7969,12 @@ window.convertSbtToBot = convertSbtToBot;
                             }
 
                             // Add to received array if this recipient matches
-                            if (evts.some(e => e.args.recipient.toLowerCase() === realWalletAddress.toLowerCase())) {
-                                onChainReceivedGifts.push({ id:'ocr_'+tid, sender, recipient:realWalletAddress, senderName:shortAddr(sender), amount, style, message, image, tokenId:tid, txHash:primaryEvt.transactionHash, timestamp, claimed:isClaimed, unlockTime:unlockTime || undefined, source:'onchain' });
+                            if (evts.some(e => e.args.recipient.toLowerCase() === histAddr.toLowerCase())) {
+                                onChainReceivedGifts.push({ id:'ocr_'+tid, sender, recipient:histAddr, senderName:shortAddr(sender), amount, style, message, image, tokenId:tid, txHash:primaryEvt.transactionHash, timestamp, claimed:isClaimed, unlockTime:unlockTime || undefined, source:'onchain' });
                             }
                             // Add to sent array if this sender matches
-                            if (evts.some(e => e.args.sender.toLowerCase() === realWalletAddress.toLowerCase())) {
-                                onChainSentGifts.push({ id:'ocs_'+tid, sender:realWalletAddress, recipient, senderName:shortAddr(realWalletAddress), amount, style, message, image, tokenId:tid, txHash:primaryEvt.transactionHash, timestamp, claimed:isClaimed, unlockTime:unlockTime || undefined, source:'onchain' });
+                            if (evts.some(e => e.args.sender.toLowerCase() === histAddr.toLowerCase())) {
+                                onChainSentGifts.push({ id:'ocs_'+tid, sender:histAddr, recipient, senderName:shortAddr(histAddr), amount, style, message, image, tokenId:tid, txHash:primaryEvt.transactionHash, timestamp, claimed:isClaimed, unlockTime:unlockTime || undefined, source:'onchain' });
                             }
                             onChainTokenIds.add(tid);
                         }
