@@ -1393,6 +1393,23 @@
         </div>
     </div>
 
+    <!-- Phantom Wallet Confirmation Modal -->
+    <div id="phantomConfirmModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/80 backdrop-blur-sm">
+        <div class="glass-panel rounded-3xl p-8 max-w-sm w-full mx-4 animate-slide-in relative text-center">
+            <button id="closePhantomConfirmBtn" class="absolute top-4 right-4 text-zinc-500 hover:text-zinc-300 text-xl cursor-pointer w-8 h-8 flex items-center justify-center rounded-full hover:bg-zinc-800 transition">×</button>
+            <div class="w-14 h-14 rounded-full bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mx-auto mb-3">
+                <img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783934547/photo_5771752171526360799_y-removebg-preview_pdxfdf.png" class="w-8 h-8 rounded-full" alt="Phantom">
+            </div>
+            <h3 class="text-lg font-bold text-zinc-100 mb-1">Phantom Wallet Detected</h3>
+            <p class="text-xs text-zinc-400 mb-1" id="phantomConfirmAddress">Connected as: </p>
+            <p class="text-[11px] text-zinc-500 mb-5">Is this the right wallet?</p>
+            <div class="flex flex-col gap-2.5">
+                <button id="phantomConfirmUseBtn" class="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-sm font-semibold transition cursor-pointer">Yes, use this wallet</button>
+                <button id="phantomConfirmSwitchBtn" class="w-full py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-sm font-medium transition cursor-pointer border border-zinc-700">Switch wallet in Phantom</button>
+            </div>
+        </div>
+    </div>
+
     <main class="flex-1 max-w-7xl w-full mx-auto px-16 relative z-10">
         <!-- HOME VIEW -->
         <div id="homeView" class="absolute top-12 left-16 w-full max-w-[540px] view-panel-transition overflow-hidden">
@@ -5458,20 +5475,33 @@ async function connectPhantomWallet() {
             return address;
         }
 
-        // If Phantom thinks it's connected but we don't have state, force fresh session
+        // If Phantom thinks it's connected but we don't have state, it's a stale session
         if (provider.isConnected && provider.publicKey) {
-            console.log('[SOL] Phantom has stale session, forcing reconnect...');
-            try {
-                provider.removeAllListeners?.('disconnect');
-            } catch (e) {}
-            try {
-                await provider.disconnect();
-            } catch (e) {}
-            // Small delay for Phantom to process disconnect
-            await new Promise(r => setTimeout(r, 300));
+            const staleAddress = provider.publicKey.toString();
+            console.log('[SOL] Phantom has stale session for:', staleAddress);
+
+            // Show confirmation modal — let user decide
+            const confirmed = await showPhantomConfirmModal(staleAddress);
+
+            if (confirmed) {
+                // User accepted the stale wallet
+                window.solanaWallet = provider;
+                window.solanaPublicKey = provider.publicKey;
+                console.log('[SOL] Phantom reconnected (user confirmed):', staleAddress);
+                provider.on('disconnect', () => {
+                    console.log('[SOL] Phantom disconnected');
+                    window.solanaWallet = null;
+                    window.solanaPublicKey = null;
+                });
+                return staleAddress;
+            } else {
+                // User chose to switch — tell them to do it in Phantom
+                alert('Please switch your wallet in the Phantom extension, then click Connect again.');
+                return false;
+            }
         }
 
-        // Fresh connect — this shows the Phantom approve popup
+        // No stale session — fresh connect (shows Phantom popup)
         const resp = await provider.connect();
         window.solanaWallet = provider;
         window.solanaPublicKey = resp.publicKey;
@@ -5523,6 +5553,42 @@ async function disconnectPhantomWallet() {
             }
         });
     } catch (e) {}
+}
+
+// ==========================================
+// PHANTOM CONFIRMATION MODAL
+// ==========================================
+function showPhantomConfirmModal(address) {
+    return new Promise((resolve) => {
+        const modal = document.getElementById('phantomConfirmModal');
+        const addrEl = document.getElementById('phantomConfirmAddress');
+        const useBtn = document.getElementById('phantomConfirmUseBtn');
+        const switchBtn = document.getElementById('phantomConfirmSwitchBtn');
+        const closeBtn = document.getElementById('closePhantomConfirmBtn');
+        if (!modal) { resolve(true); return; }
+
+        const shortAddr = address.slice(0, 4) + '...' + address.slice(-4);
+        addrEl.textContent = 'Connected as: ' + shortAddr;
+        modal.classList.remove('hidden');
+
+        let resolved = false;
+        const done = (val) => { if (!resolved) { resolved = true; modal.classList.add('hidden'); resolve(val); } };
+
+        useBtn.onclick = () => done(true);
+        switchBtn.onclick = async () => {
+            // Open Phantom extension to switch accounts
+            try {
+                const provider = window.phantom?.solana;
+                if (provider) {
+                    // Try to open Phantom via deep link or extension popup
+                    window.open('https://phantom.app/ul/browse/' + encodeURIComponent(window.location.href), '_blank');
+                }
+            } catch (e) {}
+            done(false);
+        };
+        closeBtn.onclick = () => done(false);
+        modal.addEventListener('click', (e) => { if (e.target === modal) done(false); });
+    });
 }
 
 // ==========================================
