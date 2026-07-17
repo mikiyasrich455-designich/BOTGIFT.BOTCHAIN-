@@ -6,8 +6,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#09090b">
-    <link rel="icon" type="image/jpeg" href="https://res.cloudinary.com/dguexkgjw/image/upload/v1783892195/photo_5949631974416781046_y_kyb3pe.jpg">
-    <link rel="apple-touch-icon" href="https://res.cloudinary.com/dguexkgjw/image/upload/v1783892195/photo_5949631974416781046_y_kyb3pe.jpg">
     <title>GIFT BOT — Web3 Gifting on BOT Chain</title>
     <meta name="description" content="Send on-chain Soulbound NFT gifts with GIFT BOT. Built natively on BOT Chain — 0.75s finality, near-zero fees. 10 gift types, mystery boxes, DAO batch gifting, time-locked vaults, gasless claiming.">
     <meta property="og:title" content="GIFT BOT — Web3 Gifting on BOT Chain">
@@ -20,7 +18,6 @@
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://unpkg.com/@solana/web3.js@1.98.2/lib/index.iife.min.js"></script>
     <style>
         html, body { height: 100vh; width: 100vw; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
         .serif-display { font-family: 'Playfair Display', serif; }
@@ -93,16 +90,6 @@
         .about-card:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 20px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(16, 185, 129, 0.15); }
         @keyframes aboutCardIn { to { opacity: 1; transform: translateY(0) scale(1); } }
         .about-feature { opacity: 0; transform: translateY(16px); animation: aboutCardIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; transition: transform 0.3s ease, box-shadow 0.3s ease; }
-
-        /* Roadmap Animations */
-        .roadmap-phase { opacity: 0; transform: translateY(30px); animation: roadmapSlideIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .roadmap-phase:nth-child(1) { animation-delay: 0.1s; }
-        .roadmap-phase:nth-child(2) { animation-delay: 0.25s; }
-        .roadmap-phase:nth-child(3) { animation-delay: 0.4s; }
-        .roadmap-phase:nth-child(4) { animation-delay: 0.55s; }
-        @keyframes roadmapSlideIn { to { opacity: 1; transform: translateY(0); } }
-        .roadmap-phase .glass-panel { transition: transform 0.3s ease, box-shadow 0.3s ease; }
-        .roadmap-phase .glass-panel:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
         .about-feature:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.25); }
         .about-hero-glow { animation: aboutHeroGlow 3s ease-in-out infinite; }
         @keyframes aboutHeroGlow { 0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.1); } 50% { box-shadow: 0 0 40px rgba(16, 185, 129, 0.25); } }
@@ -1193,9 +1180,9 @@
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 <span class="text-[9px] font-medium">History</span>
             </button>
-            <button id="mNavRoadmap" class="mobile-nav-tab flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all cursor-pointer">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
-                <span class="text-[9px] font-medium">Roadmap</span>
+            <button id="mNavProfile" class="mobile-nav-tab flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all cursor-pointer">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                <span class="text-[9px] font-medium">Profile</span>
             </button>
         </div>
     </div>
@@ -1204,46 +1191,23 @@
     <div id="giftCursorGlow" class="gift-cursor-glow hidden md:block" style="left: -999px; top: -999px;"></div>
     <div id="customGlowFollower" class="w-[320px] h-[320px] rounded-full bg-emerald-500/8 fixed pointer-events-none -translate-x-1/2 -translate-y-1/2 blur-[80px] z-0 transition-transform duration-[0.12s] ease-out will-change-transform hidden md:block" style="left: -999px; top: -999px;"></div>
 
-    <nav class="w-full flex items-center justify-between px-6 md:px-16 py-4 bg-transparent z-20 relative select-none">
-        <div class="flex items-center flex-shrink-0">
-            <video class="w-20 h-20 md:w-28 md:h-28 object-contain mix-blend-screen filter drop-shadow-[0_0_15px_rgba(16,185,129,0.3)]" autoplay loop muted playsinline>
+    <nav class="w-full flex items-center justify-between px-16 py-4 bg-transparent z-20 relative select-none">
+        <div class="flex items-center">
+            <video class="w-28 h-28 object-contain mix-blend-screen filter drop-shadow-[0_0_15px_rgba(16,185,129,0.3)]" autoplay loop muted playsinline>
                 <source src="https://res.cloudinary.com/dguexkgjw/video/upload/v1783069014/925158453d3a4fd487bbdbcdc95ee2e7_acywni.webm" type="video/webm">
             </video>
         </div>
-        <div class="bg-zinc-900/40 border border-zinc-800/40 backdrop-blur-xl rounded-full p-1.5 flex items-center gap-0.5 shadow-[0_4px_24px_rgba(0,0,0,0.4)] flex-shrink">
-            <button id="navHomeBtn" class="premium-nav-pill active-tab text-[11px] md:text-[13px] font-medium tracking-wide px-3 md:px-4 py-2 rounded-full border border-transparent cursor-pointer whitespace-nowrap">Home</button>
-            <button id="navGiftBtn" class="premium-nav-pill text-zinc-400 text-[11px] md:text-[13px] font-medium tracking-wide px-3 md:px-4 py-2 rounded-full border border-transparent cursor-pointer whitespace-nowrap">Gift</button>
-            <button id="navSpecialBtn" class="premium-nav-pill text-zinc-400 text-[11px] md:text-[13px] font-medium tracking-wide px-3 md:px-4 py-2 rounded-full border border-transparent cursor-pointer whitespace-nowrap">Special Gifts</button>
-            <button id="navHistoryBtn" class="premium-nav-pill text-zinc-400 text-[11px] md:text-[13px] font-medium tracking-wide px-3 md:px-4 py-2 rounded-full border border-transparent cursor-pointer whitespace-nowrap">History</button>
-            <button id="navAboutBtn" class="premium-nav-pill text-zinc-400 text-[11px] md:text-[13px] font-medium tracking-wide px-3 md:px-4 py-2 rounded-full border border-transparent cursor-pointer whitespace-nowrap">About</button>
-            <button id="navRoadmapBtn" class="premium-nav-pill text-zinc-400 text-[11px] md:text-[13px] font-medium tracking-wide px-3 md:px-4 py-2 rounded-full border border-transparent cursor-pointer whitespace-nowrap">Roadmap</button>
+        <div class="absolute left-1/2 -translate-x-1/2 bg-zinc-900/40 border border-zinc-800/40 backdrop-blur-xl rounded-full p-1.5 flex items-center gap-1 shadow-[0_4px_24px_rgba(0,0,0,0.4)]">
+            <button id="navHomeBtn" class="premium-nav-pill active-tab text-[13px] font-medium tracking-wide px-6 py-2 rounded-full border border-transparent cursor-pointer">Home</button>
+            <button id="navGiftBtn" class="premium-nav-pill text-zinc-400 text-[13px] font-medium tracking-wide px-6 py-2 rounded-full border border-transparent cursor-pointer">Gift</button>
+            <button id="navSpecialBtn" class="premium-nav-pill text-zinc-400 text-[13px] font-medium tracking-wide px-6 py-2 rounded-full border border-transparent cursor-pointer">Special Gifts</button>
+            <button id="navHistoryBtn" class="premium-nav-pill text-zinc-400 text-[13px] font-medium tracking-wide px-6 py-2 rounded-full border border-transparent cursor-pointer">Gifts History</button>
+            <button id="navAboutBtn" class="premium-nav-pill text-zinc-400 text-[13px] font-medium tracking-wide px-6 py-2 rounded-full border border-transparent cursor-pointer">About</button>
         </div>
-        <div class="flex items-center relative gap-2 flex-shrink-0">
-            <div id="tokenSelectorWrap" class="relative">
-                <button id="tokenSelector" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-900/60 border border-emerald-500/20 cursor-pointer transition-all duration-200 hover:border-emerald-500/40">
-                    <img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783934565/Y9jDf0A3_400x400_1_nppzje.jpg" class="w-5 h-5 rounded-full object-cover" alt="BOT">
-                    <span class="text-xs font-semibold text-emerald-400">$BOT</span>
-                    <svg class="w-3 h-3 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </button>
-                <div id="tokenDropdown" class="hidden absolute right-0 top-full mt-2 w-52 glass-panel rounded-xl overflow-hidden border border-zinc-700/50 z-50 shadow-xl">
-                    <button onclick="window.selectToken('BOT')" class="token-option w-full flex items-center gap-3 px-4 py-3 hover:bg-zinc-800/60 transition cursor-pointer">
-                        <img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783934565/Y9jDf0A3_400x400_1_nppzje.jpg" class="w-8 h-8 rounded-full object-cover" alt="BOT">
-                        <div class="text-left">
-                            <p class="text-sm font-semibold text-zinc-200">$BOT</p>
-                            <p class="text-[10px] text-zinc-500">BOT Chain Testnet</p>
-                        </div>
-                        <span class="ml-auto text-emerald-400 text-xs font-medium">ERC-20</span>
-                    </button>
-                    <div class="border-t border-zinc-700/30"></div>
-                    <button onclick="window.selectToken('ACE')" class="token-option w-full flex items-center gap-3 px-4 py-3 hover:bg-zinc-800/60 transition cursor-pointer">
-                        <img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783934547/photo_5771752171526360799_y-removebg-preview_pdxfdf.png" class="w-8 h-8 rounded-full object-cover" alt="ACE">
-                        <div class="text-left">
-                            <p class="text-sm font-semibold text-zinc-200">$ACE</p>
-                            <p class="text-[10px] text-zinc-500">Solana Mainnet</p>
-                        </div>
-                        <span class="ml-auto text-purple-400 text-xs font-medium">SPL</span>
-                    </button>
-                </div>
+        <div class="flex items-center relative gap-2">
+            <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-950/40 border border-emerald-500/20 text-[10px] text-emerald-400 font-medium">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                BOT Chain
             </div>
             <button id="connectWalletBtn" class="wallet-btn wallet-pulse action-pill-btn premium-nav-pill transition bg-zinc-950 text-zinc-100 px-7 py-2.5 rounded-full text-xs font-medium tracking-wide border border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.15)] flex items-center gap-2 cursor-pointer">
                 <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
@@ -1308,28 +1272,9 @@
             <span class="text-[11px] font-bold text-zinc-200 tracking-wide">GIFT BOT</span>
         </div>
         <div class="flex items-center gap-2">
-            <div id="mobileTokenSelectorWrap" class="relative">
-                <button id="mobileTokenSelector" class="flex items-center gap-1 px-2 py-1 rounded-full bg-zinc-900/60 border border-emerald-500/20 cursor-pointer transition-all">
-                    <img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783934565/Y9jDf0A3_400x400_1_nppzje.jpg" class="w-4 h-4 rounded-full object-cover" alt="BOT">
-                    <span class="text-[10px] font-semibold text-emerald-400">$BOT</span>
-                </button>
-                <div id="mobileTokenDropdown" class="hidden absolute right-0 top-full mt-2 w-48 glass-panel rounded-xl overflow-hidden border border-zinc-700/50 z-50 shadow-xl">
-                    <button onclick="window.selectToken('BOT')" class="token-option w-full flex items-center gap-2 px-3 py-2.5 hover:bg-zinc-800/60 transition cursor-pointer">
-                        <img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783934565/Y9jDf0A3_400x400_1_nppzje.jpg" class="w-6 h-6 rounded-full object-cover" alt="BOT">
-                        <div class="text-left">
-                            <p class="text-xs font-semibold text-zinc-200">$BOT</p>
-                            <p class="text-[9px] text-zinc-500">BOT Chain</p>
-                        </div>
-                    </button>
-                    <div class="border-t border-zinc-700/30"></div>
-                    <button onclick="window.selectToken('ACE')" class="token-option w-full flex items-center gap-2 px-3 py-2.5 hover:bg-zinc-800/60 transition cursor-pointer">
-                        <img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783934547/photo_5771752171526360799_y-removebg-preview_pdxfdf.png" class="w-6 h-6 rounded-full object-cover" alt="ACE">
-                        <div class="text-left">
-                            <p class="text-xs font-semibold text-zinc-200">$ACE</p>
-                            <p class="text-[9px] text-zinc-500">Solana</p>
-                        </div>
-                    </button>
-                </div>
+            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-950/40 border border-emerald-500/20 text-[9px] text-emerald-400 font-medium">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                BOT Chain
             </div>
             <button id="mobileWalletBtn" class="mobile-wallet-btn px-3 py-1.5 rounded-full text-[11px] font-medium border border-emerald-500/30 bg-zinc-950 text-zinc-100 cursor-pointer flex items-center gap-1.5">
                 <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
@@ -1343,11 +1288,11 @@
         <div class="glass-panel rounded-3xl p-8 max-w-md w-full mx-4 animate-slide-in relative">
             <button id="closeWalletModalBtn" class="absolute top-4 right-4 text-zinc-500 hover:text-zinc-300 text-xl cursor-pointer w-8 h-8 flex items-center justify-center rounded-full hover:bg-zinc-800 transition">×</button>
             <div class="text-center mb-6">
-                <div class="w-14 h-14 rounded-full bg-zinc-500/10 border border-zinc-500/20 flex items-center justify-center mx-auto mb-3 overflow-hidden">
-                    <svg class="w-8 h-8 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                <div class="w-14 h-14 rounded-full bg-orange-500/10 border border-orange-500/20 flex items-center justify-center mx-auto mb-3 overflow-hidden">
+                    <img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783409183/download__3_-removebg-preview_qp2okz.png" alt="MetaMask" class="w-10 h-10 object-contain">
                 </div>
                 <h3 class="text-xl font-bold text-zinc-100">Connect Wallet</h3>
-                <p class="text-xs text-zinc-500 mt-1">Choose your wallet</p>
+                <p class="text-xs text-zinc-500 mt-1">Continue with MetaMask</p>
             </div>
             <div class="space-y-3">
                 <button id="connectMetaMaskBtn" class="wallet-option w-full flex items-center gap-4 p-4 rounded-xl bg-zinc-950/50 border border-zinc-800/60 hover:border-emerald-500/30 transition cursor-pointer group">
@@ -1356,23 +1301,18 @@
                     </div>
                     <div class="text-left flex-1">
                         <p class="text-sm font-medium text-zinc-200 group-hover:text-emerald-400 transition">MetaMask</p>
-                        <p class="text-[10px] text-zinc-500">BOT Chain — $BOT token</p>
+                        <p class="text-[10px] text-zinc-500">Browser Extension & Mobile</p>
                     </div>
                     <svg class="w-4 h-4 text-zinc-600 group-hover:text-emerald-400 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                 </button>
-                <button id="connectPhantomBtn" class="wallet-option w-full flex items-center gap-4 p-4 rounded-xl bg-zinc-950/50 border border-zinc-800/60 hover:border-purple-500/30 transition cursor-pointer group">
-                    <div class="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center overflow-hidden">
-                        <img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783934547/photo_5771752171526360799_y-removebg-preview_pdxfdf.png" alt="Phantom" class="w-8 h-8 object-contain">
-                    </div>
-                    <div class="text-left flex-1">
-                        <p class="text-sm font-medium text-zinc-200 group-hover:text-purple-400 transition">Phantom</p>
-                        <p class="text-[10px] text-zinc-500">Solana — $ACE token</p>
-                    </div>
-                    <svg class="w-4 h-4 text-zinc-600 group-hover:text-purple-400 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                </button>
             </div>
             <div class="mt-4 pt-4 border-t border-zinc-800/40">
-                <p class="text-[10px] text-zinc-600 text-center">Supports BOT Chain + Solana</p>
+                <p class="text-[10px] text-zinc-600 text-center">More wallets coming soon</p>
+                <div class="flex items-center justify-center gap-3 mt-2.5 opacity-30">
+                    <div class="w-7 h-7 rounded-md bg-zinc-800/50 flex items-center justify-center text-xs">🔗</div>
+                    <div class="w-7 h-7 rounded-md bg-zinc-800/50 flex items-center justify-center text-xs">🔵</div>
+                    <div class="w-7 h-7 rounded-md bg-zinc-800/50 flex items-center justify-center text-xs">👻</div>
+                </div>
             </div>
             <p class="text-[10px] text-zinc-600 text-center mt-3">By connecting, you agree to the Terms of Service</p>
         </div>
@@ -1390,23 +1330,6 @@
                 </div>
             </div>
             <p class="text-[10px] text-zinc-600">Or open <a href="#" class="text-emerald-400 hover:underline">this link</a> on your mobile device</p>
-        </div>
-    </div>
-
-    <!-- Phantom Wallet Confirmation Modal -->
-    <div id="phantomConfirmModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/80 backdrop-blur-sm">
-        <div class="glass-panel rounded-3xl p-8 max-w-sm w-full mx-4 animate-slide-in relative text-center">
-            <button id="closePhantomConfirmBtn" class="absolute top-4 right-4 text-zinc-500 hover:text-zinc-300 text-xl cursor-pointer w-8 h-8 flex items-center justify-center rounded-full hover:bg-zinc-800 transition">×</button>
-            <div class="w-14 h-14 rounded-full bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mx-auto mb-3">
-                <img src="https://res.cloudinary.com/dguexkgjw/image/upload/v1783934547/photo_5771752171526360799_y-removebg-preview_pdxfdf.png" class="w-8 h-8 rounded-full" alt="Phantom">
-            </div>
-            <h3 class="text-lg font-bold text-zinc-100 mb-1">Phantom Wallet Detected</h3>
-            <p class="text-xs text-zinc-400 mb-1" id="phantomConfirmAddress">Connected as: </p>
-            <p class="text-[11px] text-zinc-500 mb-5">Is this the right wallet?</p>
-            <div class="flex flex-col gap-2.5">
-                <button id="phantomConfirmUseBtn" class="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-sm font-semibold transition cursor-pointer">Yes, use this wallet</button>
-                <button id="phantomConfirmSwitchBtn" class="w-full py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-sm font-medium transition cursor-pointer border border-zinc-700">Switch wallet in Phantom</button>
-            </div>
         </div>
     </div>
 
@@ -1533,7 +1456,7 @@
                     <div class="space-y-2">
                         <label class="text-[11px] tracking-wide text-zinc-400 font-medium block uppercase">Recipient Address</label>
                         <div class="relative">
-                            <input type="text" id="recipientInput" placeholder="Recipient address" class="w-full bg-zinc-950/80 border border-zinc-700/50 rounded-xl p-3.5 pl-10 text-xs text-zinc-100 focus:outline-none focus:border-emerald-500/50 input-glow transition font-mono">
+                            <input type="text" id="recipientInput" placeholder="0x..." class="w-full bg-zinc-950/80 border border-zinc-700/50 rounded-xl p-3.5 pl-10 text-xs text-zinc-100 focus:outline-none focus:border-emerald-500/50 input-glow transition font-mono">
                             <div class="absolute left-3.5 top-1/2 -translate-y-1/2">
                                 <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                             </div>
@@ -1555,7 +1478,7 @@
                         <div class="relative">
                             <input type="number" id="amountInput" placeholder="0.0" step="0.001" class="w-full bg-zinc-950/80 border border-zinc-700/50 rounded-xl p-3.5 pr-16 text-xs text-zinc-100 focus:outline-none focus:border-emerald-500/50 input-glow transition font-mono text-lg">
                             <div class="absolute right-3.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                                <span class="text-xs text-emerald-400 font-medium gift-amount-token">$BOT</span>
+                                <span class="text-xs text-emerald-400 font-medium">$BOT</span>
                             </div>
                         </div>
                         <div class="flex items-center justify-between text-[10px] text-zinc-500">
@@ -1616,7 +1539,7 @@
                                 <span class="text-[10px] text-emerald-400/70 uppercase tracking-wider font-medium">Amount</span>
                                 <div class="flex items-baseline gap-1">
                                     <span id="cryptoCardAmountDisplay" class="crypto-amount-text text-2xl font-bold text-emerald-400 font-mono tracking-tight">0.0</span>
-                                    <span class="text-xs text-emerald-500/60 font-medium gift-amount-token">$BOT</span>
+                                    <span class="text-xs text-emerald-500/60 font-medium">$BOT</span>
                                 </div>
                             </div>
                         </div>
@@ -1667,7 +1590,7 @@
                         <div class="relative">
                             <input type="number" id="cryptoAmountInput" placeholder="0.0" step="0.001" class="w-full bg-zinc-950/80 border border-zinc-700/50 rounded-xl p-3.5 pr-16 text-xs text-zinc-100 focus:outline-none focus:border-emerald-500/50 crypto-input-glow transition font-mono text-lg">
                             <div class="absolute right-3.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                                <span class="text-xs text-emerald-400 font-medium gift-amount-token">$BOT</span>
+                                <span class="text-xs text-emerald-400 font-medium">$BOT</span>
                             </div>
                         </div>
                         <div class="flex items-center justify-between text-[10px] text-zinc-500">
@@ -2388,7 +2311,7 @@
                                 <div class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-black/40 border border-orange-500/20 backdrop-blur-sm mb-3">
                                     <span class="text-xs text-orange-300 font-medium">Amount</span>
                                     <span id="sgPreviewAmount" class="text-xl font-bold text-orange-400 font-mono tracking-tight">0.0</span>
-                                    <span class="text-[10px] text-orange-400/60 sg-token-label">$BOT</span>
+                                    <span class="text-[10px] text-orange-400/60">$BOT</span>
                                 </div>
                                 <p id="sgPreviewMessage" class="text-white/80 text-xs font-medium leading-relaxed italic min-h-[1.5em]">Your secret message here...</p>
                             </div>
@@ -2402,10 +2325,10 @@
                             <p class="text-[9px] text-orange-400/60 mt-0.5">Anyone with the claim code can redeem this gift</p>
                         </div>
                         <div class="space-y-2">
-                            <label class="text-[11px] tracking-wide text-zinc-400 font-medium block uppercase sg-amount-label">Amount ($BOT)</label>
+                            <label class="text-[11px] tracking-wide text-zinc-400 font-medium block uppercase">Amount ($BOT)</label>
                             <div class="relative">
                                 <input type="number" id="sgAmount" placeholder="0.0" step="0.001" class="w-full bg-zinc-950/80 border border-zinc-700/50 rounded-xl p-3.5 pr-16 text-xs text-zinc-100 focus:outline-none focus:border-orange-500/50 input-glow transition font-mono text-lg">
-                                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-zinc-500 font-medium sg-token-label">$BOT</span>
+                                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-zinc-500 font-medium">$BOT</span>
                             </div>
                             <p class="text-[10px] text-zinc-600">Est: <span id="sgUsdEstimate" class="text-zinc-500">$0.00</span></p>
                         </div>
@@ -2428,7 +2351,7 @@
                         <div class="glass-panel rounded-xl p-4 space-y-2">
                             <div class="flex items-center justify-between">
                                 <span class="text-[11px] text-zinc-500">Network</span>
-                                <span class="text-[11px] text-zinc-300 font-medium">BOT Chain Testnet</span>
+                                <span class="text-[11px] text-zinc-300 font-medium">BOT Chain Mainnet</span>
                             </div>
                             <div class="flex items-center justify-between">
                                 <span class="text-[11px] text-zinc-500">Type</span>
@@ -2510,7 +2433,7 @@
                             <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between">
                                 <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/50 border border-orange-500/20 backdrop-blur-sm">
                                     <span class="text-sm font-bold text-orange-400 font-mono" id="sgFinalAmount">0.0</span>
-                                    <span class="text-[9px] text-orange-400/60 sg-token-label">$BOT</span>
+                                    <span class="text-[9px] text-orange-400/60">$BOT</span>
                                 </div>
                                 <span class="text-xs px-2.5 py-1 rounded-lg bg-orange-500/20 border border-orange-500/30 text-orange-300 font-medium">🔐 Secret Gift</span>
                             </div>
@@ -2534,7 +2457,7 @@
                         </div>
                         <div class="flex justify-between items-center py-1.5">
                             <span class="text-[11px] text-zinc-500">Est. Gas</span>
-                            <span class="text-[10px] text-zinc-400 font-mono" id="sgEstGas">~0.0001 BOT</span>
+                            <span class="text-[10px] text-zinc-400 font-mono">~0.0001 BOT</span>
                         </div>
                     </div>
                     <div class="flex gap-3">
@@ -2623,7 +2546,7 @@
                     <input type="text" id="gaslessRecipient" placeholder="0x..." class="w-full bg-zinc-950/80 border border-zinc-700/50 rounded-xl p-3.5 text-xs text-zinc-100 focus:outline-none focus:border-emerald-500/50 input-glow transition font-mono">
                 </div>
                 <div class="space-y-2">
-                    <label class="text-[11px] tracking-wide text-zinc-400 font-medium block uppercase sg-amount-label">Amount ($BOT)</label>
+                    <label class="text-[11px] tracking-wide text-zinc-400 font-medium block uppercase">Amount ($BOT)</label>
                     <input type="number" id="gaslessAmount" placeholder="0.0" step="0.001" class="w-full bg-zinc-950/80 border border-zinc-700/50 rounded-xl p-3.5 text-xs text-zinc-100 focus:outline-none focus:border-emerald-500/50 input-glow transition font-mono text-lg">
                 </div>
                 <div class="space-y-2">
@@ -2688,7 +2611,7 @@
                 <div id="mysteryRevealPanel" class="hidden bg-zinc-950/50 rounded-2xl p-6 border border-zinc-700/30 text-center mb-6">
                     <div class="text-[10px] text-amber-400/60 uppercase tracking-widest mb-2">VRF Randomness Verified</div>
                     <div id="mysteryResultAmount" class="text-4xl font-bold text-amber-400 font-mono mb-1">0.00</div>
-                    <div class="text-xs text-zinc-400 mb-3"><span class="mystery-result-token">$BOT</span> + <span id="mysteryResultGift" class="text-white font-medium">Diamond Hands</span> NFT</div>
+                    <div class="text-xs text-zinc-400 mb-3">$BOT + <span id="mysteryResultGift" class="text-white font-medium">Diamond Hands</span> NFT</div>
                     <div class="text-[10px] text-zinc-600 font-mono break-all" id="mysteryVrfProof">0x...</div>
                 </div>
 
@@ -2859,7 +2782,7 @@
                 </div>
                 <!-- Amount -->
                 <div class="space-y-2">
-                    <label class="text-[11px] tracking-wide text-zinc-400 font-medium block uppercase sg-amount-label">Amount ($BOT)</label>
+                    <label class="text-[11px] tracking-wide text-zinc-400 font-medium block uppercase">Amount ($BOT)</label>
                     <input type="number" id="timeAmount" placeholder="0.0" step="0.001" class="w-full bg-zinc-950/80 border border-zinc-700/50 rounded-xl p-3.5 text-xs text-zinc-100 focus:outline-none focus:border-slate-500/50 input-glow transition font-mono text-lg">
                 </div>
 
@@ -3146,193 +3069,6 @@
         </div>
     </main>
 
-    <!-- ====== ROADMAP VIEW ====== -->
-    <div id="roadmapView" class="w-full max-w-4xl mx-auto view-panel-transition hidden pb-16 relative z-10 overflow-y-auto max-h-[calc(100vh-140px)] custom-scrollbar">
-        <div class="text-center mb-14 animate-slide-in">
-            <div class="inline-block rounded-3xl p-1 mb-6">
-                <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-emerald-500/30 to-emerald-900/20 border border-emerald-500/30 flex items-center justify-center text-4xl mx-auto">🗺️</div>
-            </div>
-            <h1 class="text-4xl md:text-5xl font-bold text-zinc-100 mb-3 tracking-tight">Our Roadmap</h1>
-            <p class="text-sm text-zinc-400 max-w-lg mx-auto leading-relaxed">Building the future of on-chain gifting, one milestone at a time.</p>
-        </div>
-
-        <!-- Timeline -->
-        <div class="relative">
-            <!-- Vertical Line -->
-            <div class="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-emerald-500/60 via-emerald-500/20 to-transparent"></div>
-
-            <!-- Phase 1: COMPLETED -->
-            <div class="relative mb-14 roadmap-phase">
-                <div class="flex items-center justify-center mb-6">
-                    <div class="w-12 h-12 rounded-full bg-emerald-500/20 border-2 border-emerald-400 flex items-center justify-center z-10 shadow-[0_0_20px_rgba(16,185,129,0.3)]">
-                        <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
-                    </div>
-                </div>
-                <div class="md:w-full">
-                    <div class="glass-panel rounded-2xl p-6 md:p-8 border border-emerald-500/20 relative overflow-hidden group">
-                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 to-emerald-600"></div>
-                        <div class="flex flex-wrap items-center gap-3 mb-4">
-                            <span class="px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-[10px] font-bold text-emerald-400 uppercase tracking-wider">Phase 1</span>
-                            <span class="px-3 py-1 rounded-full bg-emerald-500/10 text-[10px] font-bold text-emerald-400 uppercase tracking-wider">Completed</span>
-                            <span class="text-[10px] text-zinc-500">Q1 2026</span>
-                        </div>
-                        <h3 class="text-xl font-bold text-zinc-100 mb-3">Testnet Launch</h3>
-                        <div class="space-y-2.5">
-                            <div class="flex items-start gap-3">
-                                <span class="mt-0.5 w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0"><svg class="w-3 h-3 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg></span>
-                                <span class="text-sm text-zinc-300">BOT Chain Testnet deployment</span>
-                            </div>
-                            <div class="flex items-start gap-3">
-                                <span class="mt-0.5 w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0"><svg class="w-3 h-3 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg></span>
-                                <span class="text-sm text-zinc-300">10+ gift types (Crypto Bro, Mystery, Time Lock, etc.)</span>
-                            </div>
-                            <div class="flex items-start gap-3">
-                                <span class="mt-0.5 w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0"><svg class="w-3 h-3 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg></span>
-                                <span class="text-sm text-zinc-300">Soulbound NFT minting with custom artwork</span>
-                            </div>
-                            <div class="flex items-start gap-3">
-                                <span class="mt-0.5 w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0"><svg class="w-3 h-3 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg></span>
-                                <span class="text-sm text-zinc-300">Secret Gift vault system with AES-256 encryption</span>
-                            </div>
-                            <div class="flex items-start gap-3">
-                                <span class="mt-0.5 w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0"><svg class="w-3 h-3 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg></span>
-                                <span class="text-sm text-zinc-300">Multi-chain support (BOT Chain + Solana)</span>
-                            </div>
-                            <div class="flex items-start gap-3">
-                                <span class="mt-0.5 w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0"><svg class="w-3 h-3 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg></span>
-                                <span class="text-sm text-zinc-300">Full responsive mobile + desktop UI</span>
-                            </div>
-                            <div class="flex items-start gap-3">
-                                <span class="mt-0.5 w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0"><svg class="w-3 h-3 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg></span>
-                                <span class="text-sm text-zinc-300">MetaMask + Phantom wallet integration</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Phase 2: IN PROGRESS -->
-            <div class="relative mb-14 roadmap-phase">
-                <div class="flex items-center justify-center mb-6">
-                    <div class="w-12 h-12 rounded-full bg-amber-500/20 border-2 border-amber-400 flex items-center justify-center z-10 shadow-[0_0_20px_rgba(245,158,11,0.3)]">
-                        <div class="w-3 h-3 rounded-full bg-amber-400 animate-pulse"></div>
-                    </div>
-                </div>
-                <div class="md:w-full">
-                    <div class="glass-panel rounded-2xl p-6 md:p-8 border border-amber-500/20 relative overflow-hidden group">
-                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-400 to-amber-600"></div>
-                        <div class="flex flex-wrap items-center gap-3 mb-4">
-                            <span class="px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-[10px] font-bold text-amber-400 uppercase tracking-wider">Phase 2</span>
-                            <span class="px-3 py-1 rounded-full bg-amber-500/10 text-[10px] font-bold text-amber-400 uppercase tracking-wider animate-pulse">In Progress</span>
-                            <span class="text-[10px] text-zinc-500">Q2 2026</span>
-                        </div>
-                        <h3 class="text-xl font-bold text-zinc-100 mb-3">Mainnet Launch & Funding</h3>
-                        <div class="space-y-2.5">
-                            <div class="flex items-start gap-3">
-                                <span class="mt-0.5 w-5 h-5 rounded-full bg-amber-500/20 flex items-center justify-center flex-shrink-0"><div class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></div></span>
-                                <span class="text-sm text-zinc-300">Secure first $5K funding for mainnet deployment</span>
-                            </div>
-                            <div class="flex items-start gap-3">
-                                <span class="mt-0.5 w-5 h-5 rounded-full bg-zinc-700/50 flex items-center justify-center flex-shrink-0"><div class="w-2 h-2 rounded-full bg-zinc-500"></div></span>
-                                <span class="text-sm text-zinc-400">Deploy smart contracts to mainnet</span>
-                            </div>
-                            <div class="flex items-start gap-3">
-                                <span class="mt-0.5 w-5 h-5 rounded-full bg-zinc-700/50 flex items-center justify-center flex-shrink-0"><div class="w-2 h-2 rounded-full bg-zinc-500"></div></span>
-                                <span class="text-sm text-zinc-400">Security audit of gift vault & SBT contracts</span>
-                            </div>
-                            <div class="flex items-start gap-3">
-                                <span class="mt-0.5 w-5 h-5 rounded-full bg-zinc-700/50 flex items-center justify-center flex-shrink-0"><div class="w-2 h-2 rounded-full bg-zinc-500"></div></span>
-                                <span class="text-sm text-zinc-400">Launch $ACE token on Solana mainnet</span>
-                            </div>
-                            <div class="flex items-start gap-3">
-                                <span class="mt-0.5 w-5 h-5 rounded-full bg-zinc-700/50 flex items-center justify-center flex-shrink-0"><div class="w-2 h-2 rounded-full bg-zinc-500"></div></span>
-                                <span class="text-sm text-zinc-400">Landing page + pitch deck for investors</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Phase 3: UPCOMING -->
-            <div class="relative mb-14 roadmap-phase">
-                <div class="flex items-center justify-center mb-6">
-                    <div class="w-12 h-12 rounded-full bg-blue-500/20 border-2 border-blue-400/50 flex items-center justify-center z-10">
-                        <span class="text-lg">🚀</span>
-                    </div>
-                </div>
-                <div class="md:w-full">
-                    <div class="glass-panel rounded-2xl p-6 md:p-8 border border-blue-500/10 relative overflow-hidden group">
-                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400/50 to-blue-600/50"></div>
-                        <div class="flex flex-wrap items-center gap-3 mb-4">
-                            <span class="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-[10px] font-bold text-blue-400 uppercase tracking-wider">Phase 3</span>
-                            <span class="text-[10px] text-zinc-500">Q3 2026</span>
-                        </div>
-                        <h3 class="text-xl font-bold text-zinc-100 mb-3">Growth & Ecosystem</h3>
-                        <div class="space-y-2.5">
-                            <div class="flex items-start gap-3">
-                                <span class="mt-0.5 w-5 h-5 rounded-full bg-zinc-700/50 flex items-center justify-center flex-shrink-0"><div class="w-2 h-2 rounded-full bg-zinc-500"></div></span>
-                                <span class="text-sm text-zinc-400">Launch gifting campaigns & airdrop events</span>
-                            </div>
-                            <div class="flex items-start gap-3">
-                                <span class="mt-0.5 w-5 h-5 rounded-full bg-zinc-700/50 flex items-center justify-center flex-shrink-0"><div class="w-2 h-2 rounded-full bg-zinc-500"></div></span>
-                                <span class="text-sm text-zinc-400">Partner with NFT projects for co-branded gifts</span>
-                            </div>
-                            <div class="flex items-start gap-3">
-                                <span class="mt-0.5 w-5 h-5 rounded-full bg-zinc-700/50 flex items-center justify-center flex-shrink-0"><div class="w-2 h-2 rounded-full bg-zinc-500"></div></span>
-                                <span class="text-sm text-zinc-400">Community governance — vote on new gift types</span>
-                            </div>
-                            <div class="flex items-start gap-3">
-                                <span class="mt-0.5 w-5 h-5 rounded-full bg-zinc-700/50 flex items-center justify-center flex-shrink-0"><div class="w-2 h-2 rounded-full bg-zinc-500"></div></span>
-                                <span class="text-sm text-zinc-400">Gift subscriptions & recurring gifting</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Phase 4: VISION -->
-            <div class="relative mb-14 roadmap-phase">
-                <div class="flex items-center justify-center mb-6">
-                    <div class="w-12 h-12 rounded-full bg-purple-500/20 border-2 border-purple-400/50 flex items-center justify-center z-10">
-                        <span class="text-lg">🌐</span>
-                    </div>
-                </div>
-                <div class="md:w-full">
-                    <div class="glass-panel rounded-2xl p-6 md:p-8 border border-purple-500/10 relative overflow-hidden group">
-                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-400/50 to-purple-600/50"></div>
-                        <div class="flex flex-wrap items-center gap-3 mb-4">
-                            <span class="px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-[10px] font-bold text-purple-400 uppercase tracking-wider">Phase 4</span>
-                            <span class="text-[10px] text-zinc-500">Q4 2026+</span>
-                        </div>
-                        <h3 class="text-xl font-bold text-zinc-100 mb-3">Expansion & Mass Adoption</h3>
-                        <div class="space-y-2.5">
-                            <div class="flex items-start gap-3">
-                                <span class="mt-0.5 w-5 h-5 rounded-full bg-zinc-700/50 flex items-center justify-center flex-shrink-0"><div class="w-2 h-2 rounded-full bg-zinc-500"></div></span>
-                                <span class="text-sm text-zinc-400">Multi-chain expansion (Ethereum, Base, Polygon)</span>
-                            </div>
-                            <div class="flex items-start gap-3">
-                                <span class="mt-0.5 w-5 h-5 rounded-full bg-zinc-700/50 flex items-center justify-center flex-shrink-0"><div class="w-2 h-2 rounded-full bg-zinc-500"></div></span>
-                                <span class="text-sm text-zinc-400">Gift BOT mobile app (iOS & Android)</span>
-                            </div>
-                            <div class="flex items-start gap-3">
-                                <span class="mt-0.5 w-5 h-5 rounded-full bg-zinc-700/50 flex items-center justify-center flex-shrink-0"><div class="w-2 h-2 rounded-full bg-zinc-500"></div></span>
-                                <span class="text-sm text-zinc-400">Enterprise gifting API for brands & projects</span>
-                            </div>
-                            <div class="flex items-start gap-3">
-                                <span class="mt-0.5 w-5 h-5 rounded-full bg-zinc-700/50 flex items-center justify-center flex-shrink-0"><div class="w-2 h-2 rounded-full bg-zinc-500"></div></span>
-                                <span class="text-sm text-zinc-400">Gift cards integration (Visa, Amazon, etc.)</span>
-                            </div>
-                            <div class="flex items-start gap-3">
-                                <span class="mt-0.5 w-5 h-5 rounded-full bg-zinc-700/50 flex items-center justify-center flex-shrink-0"><div class="w-2 h-2 rounded-full bg-zinc-500"></div></span>
-                                <span class="text-sm text-zinc-400">Cross-chain gift bridging</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Success Modal for Special Gifts -->
     <div id="specialSuccessModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/80 backdrop-blur-sm">
         <div class="glass-panel border-emerald-500/30 rounded-3xl p-8 max-w-sm w-full mx-4 text-center space-y-4 success-pop relative overflow-hidden">
@@ -3484,13 +3220,11 @@
             navSpecialBtn: document.getElementById('navSpecialBtn'),
             navHistoryBtn: document.getElementById('navHistoryBtn'),
             navAboutBtn: document.getElementById('navAboutBtn'),
-            navRoadmapBtn: document.getElementById('navRoadmapBtn'),
             homeView: document.getElementById('homeView'),
             giftView: document.getElementById('giftView'),
             specialGiftsView: document.getElementById('specialGiftsView'),
             historyView: document.getElementById('historyView'),
             aboutView: document.getElementById('aboutView'),
-            roadmapView: document.getElementById('roadmapView'),
             globalBody: document.getElementById('globalBody'),
             giftBgOverlay: document.getElementById('giftBgOverlay'),
             particlesContainer: document.getElementById('particlesContainer'),
@@ -3753,21 +3487,16 @@
             els.walletDropdown.classList.remove('show');
         }
         function viewOnExplorer() {
-            var addr = window.CURRENT_TOKEN === 'ACE' && window.solanaPublicKey ? window.solanaPublicKey.toString() : walletAddress;
-            if (addr) window.open(getExplorerUrl('address', addr), '_blank');
+            window.open('https://scan.botchain.ai/address/' + walletAddress, '_blank');
             els.walletDropdown.classList.remove('show');
         }
-        function disconnectWallet(skipTokenReset) {
+        function disconnectWallet() {
             isWalletConnected = false;
             window.isWalletConnected = false;
             walletAddress = '';
             els.connectWalletBtn.classList.remove('hidden');
             els.walletConnectedDisplay.classList.add('hidden');
             els.walletDropdown.classList.remove('show');
-            if (!skipTokenReset) {
-                window.CURRENT_TOKEN = 'BOT';
-                updateTokenSelectorUI();
-            }
         }
 
         els.connectWalletBtn.addEventListener('click', () => {
@@ -3777,49 +3506,11 @@
                 toggleWalletDropdown();
             }
         });
-        // Token dropdown toggles
-        var tokenSelBtn = document.getElementById('tokenSelector');
-        var tokenDrop = document.getElementById('tokenDropdown');
-        var mobileTokenSelBtn = document.getElementById('mobileTokenSelector');
-        var mobileTokenDrop = document.getElementById('mobileTokenDropdown');
-        if (tokenSelBtn && tokenDrop) {
-            tokenSelBtn.addEventListener('click', (e) => { e.stopPropagation(); tokenDrop.classList.toggle('hidden'); if (mobileTokenDrop) mobileTokenDrop.classList.add('hidden'); });
-        }
-        if (mobileTokenSelBtn && mobileTokenDrop) {
-            mobileTokenSelBtn.addEventListener('click', (e) => { e.stopPropagation(); mobileTokenDrop.classList.toggle('hidden'); if (tokenDrop) tokenDrop.classList.add('hidden'); });
-        }
-        document.addEventListener('click', (e) => {
-            if (tokenDrop && !tokenSelBtn?.contains(e.target) && !tokenDrop.contains(e.target)) tokenDrop.classList.add('hidden');
-            if (mobileTokenDrop && !mobileTokenSelBtn?.contains(e.target) && !mobileTokenDrop.contains(e.target)) mobileTokenDrop.classList.add('hidden');
-        });
         els.closeWalletModalBtn.addEventListener('click', closeWalletModal);
         els.closeWalletConnectModalBtn.addEventListener('click', closeWalletConnectModal);
         els.connectMetaMaskBtn.addEventListener('click', () => {
             console.log('[Web3GiftHub] MetaMask button clicked, window.connectMetaMask=' + typeof window.connectMetaMask);
-            window.CURRENT_TOKEN = 'BOT';
-            updateTokenSelectorUI();
             if (window.connectMetaMask) window.connectMetaMask(); else connectMetaMask();
-        });
-        var connectPhantomBtnEl = document.getElementById('connectPhantomBtn');
-        if (connectPhantomBtnEl) connectPhantomBtnEl.addEventListener('click', async () => {
-            console.log('[Web3GiftHub] Phantom button clicked');
-            // Directly connect Phantom without going through selectToken
-            // (selectToken would return early if CURRENT_TOKEN already matches)
-            if (window.solanaPublicKey) {
-                // Already connected
-                window.CURRENT_TOKEN = 'ACE';
-                updateTokenSelectorUI();
-                return;
-            }
-            window.CURRENT_TOKEN = 'ACE';
-            updateTokenSelectorUI();
-            const addr = await connectPhantomWallet();
-            if (addr) {
-                await handleSolanaWalletConnected();
-            } else {
-                window.CURRENT_TOKEN = 'BOT';
-                updateTokenSelectorUI();
-            }
         });
         // Mobile wallet button
         var mobileWalletBtn = document.getElementById('mobileWalletBtn');
@@ -3858,8 +3549,8 @@
             });
             window.ethereum.on('chainChanged', (chainId) => {
                 console.log("Chain changed to:", chainId);
-                if (chainId !== BOT_CHAIN_TESTNET.chainId) {
-                    alert("⚠️ Network switched! Please switch back to BOT Chain Testnet (Chain ID: 968).");
+                if (chainId !== BOT_CHAIN_MAINNET.chainId) {
+                    alert("⚠️ Network switched! Please switch back to BOT Chain Mainnet (Chain ID: 677).");
                 } else {
                     // Refresh data on correct chain
                     if (realWalletAddress) {
@@ -4032,7 +3723,7 @@
                 }
                 els.finalGiftTitle.textContent = gift.title;
                 els.finalRecipient.textContent = recipient.slice(0, 6) + '...' + recipient.slice(-4);
-                els.finalAmount.textContent = amount + ' $' + (window.CURRENT_TOKEN || 'BOT');
+                els.finalAmount.textContent = amount + ' $BOT';
                 els.finalMessage.textContent = message || 'No message';
                 const feeMain = document.getElementById('networkFeeMain');
                 const finalFee = document.getElementById('finalNetworkFee');
@@ -4151,7 +3842,7 @@
                 return;
             }
             if (!sbtContractInstance || !systemSigner) {
-                alert("Please connect your wallet to BOT Chain Testnet first.");
+                alert("Please connect your wallet to BOT Chain Mainnet first.");
                 return;
             }
             dispatchRealGift();
@@ -4216,12 +3907,12 @@
         function switchLayoutTab(activeButton, viewToShow, bgMode) {
             // Save current view for restoration on reload
             try {
-                const viewMap = { [els.homeView.id]: 'home', [els.giftView.id]: 'gift', [els.specialGiftsView.id]: 'special', [els.historyView.id]: 'history', [els.aboutView.id]: 'about', [els.roadmapView.id]: 'roadmap' };
+                const viewMap = { [els.homeView.id]: 'home', [els.giftView.id]: 'gift', [els.specialGiftsView.id]: 'special', [els.historyView.id]: 'history', [els.aboutView.id]: 'about' };
                 const currentViewId = viewToShow ? viewToShow.id : 'home';
                 sessionStorage.setItem('web3gift_current_view', viewMap[currentViewId] || 'home');
             } catch (e) {}
 
-            [els.navHomeBtn, els.navGiftBtn, els.navSpecialBtn, els.navHistoryBtn, els.navAboutBtn, els.navRoadmapBtn].forEach(btn => {
+            [els.navHomeBtn, els.navGiftBtn, els.navSpecialBtn, els.navHistoryBtn, els.navAboutBtn].forEach(btn => {
                 if (btn === activeButton) {
                     btn.classList.add('active-tab');
                     btn.classList.remove('text-zinc-400');
@@ -4230,7 +3921,7 @@
                     btn.classList.add('text-zinc-400');
                 }
             });
-            [els.homeView, els.giftView, els.specialGiftsView, els.historyView, els.aboutView, els.roadmapView].forEach(view => {
+            [els.homeView, els.giftView, els.specialGiftsView, els.historyView, els.aboutView].forEach(view => {
                 if (view === viewToShow) {
                     view.classList.remove('hidden');
                     setTimeout(() => view.style.opacity = '1', 10);
@@ -4298,9 +3989,6 @@
             switchLayoutTab(els.navAboutBtn, els.aboutView, 'about');
             initAboutAnimations();
         });
-        els.navRoadmapBtn.addEventListener('click', () => {
-            switchLayoutTab(els.navRoadmapBtn, els.roadmapView, 'about');
-        });
 
         // === MOBILE BOTTOM NAV ===
         function switchMobileTab(tab) {
@@ -4311,12 +3999,15 @@
         const mNavGift = document.getElementById('mNavGift');
         const mNavSpecial = document.getElementById('mNavSpecial');
         const mNavHistory = document.getElementById('mNavHistory');
-        const mNavRoadmap = document.getElementById('mNavRoadmap');
+        const mNavProfile = document.getElementById('mNavProfile');
         if (mNavHome) mNavHome.addEventListener('click', () => { switchMobileTab(mNavHome); switchLayoutTab(els.navHomeBtn, els.homeView, 'home'); });
         if (mNavGift) mNavGift.addEventListener('click', () => { switchMobileTab(mNavGift); switchLayoutTab(els.navGiftBtn, els.giftView, 'gift'); });
         if (mNavSpecial) mNavSpecial.addEventListener('click', () => { switchMobileTab(mNavSpecial); switchLayoutTab(els.navSpecialBtn, els.specialGiftsView, 'special'); });
         if (mNavHistory) mNavHistory.addEventListener('click', () => { switchMobileTab(mNavHistory); switchLayoutTab(els.navHistoryBtn, els.historyView, 'gift'); if (typeof loadOnChainHistory === 'function') loadOnChainHistory(); });
-        if (mNavRoadmap) mNavRoadmap.addEventListener('click', () => { switchMobileTab(mNavRoadmap); switchLayoutTab(els.navRoadmapBtn, els.roadmapView, 'about'); });
+        if (mNavProfile) mNavProfile.addEventListener('click', () => {
+            switchMobileTab(mNavProfile);
+            if (isWalletConnected) { openWalletModal(); } else { openWalletModal(); }
+        });
 
         // ==========================================
         // SPECIAL GIFTS LOGIC
@@ -4399,11 +4090,11 @@
         document.getElementById('mySbtGiftsBtn').addEventListener('click', () => {
             els.walletDropdown.classList.remove('show');
             // Hide all views
-            [els.homeView, els.giftView, els.specialGiftsView, els.historyView, els.aboutView, els.roadmapView].forEach(v => v.classList.add('hidden'));
+            [els.homeView, els.giftView, els.specialGiftsView, els.historyView, els.aboutView].forEach(v => v.classList.add('hidden'));
             Object.values(specialViews).forEach(v => v.classList.add('hidden'));
             document.getElementById('mySbtGiftsView').classList.remove('hidden');
             // Update nav
-            [els.navHomeBtn, els.navGiftBtn, els.navSpecialBtn, els.navHistoryBtn, els.navAboutBtn, els.navRoadmapBtn].forEach(btn => {
+            [els.navHomeBtn, els.navGiftBtn, els.navSpecialBtn, els.navHistoryBtn, els.navAboutBtn].forEach(btn => {
                 btn.classList.remove('active-tab');
                 btn.classList.add('text-zinc-400');
             });
@@ -4445,7 +4136,7 @@
         document.getElementById('openMysteryBoxBtn').addEventListener('click', async () => {
             if (!selectedMysteryTier) return;
             if (!isWalletConnected) { openWalletModal(); return; }
-            if (!sbtContractInstance || !systemSigner) { alert("Connect wallet to BOT Chain Testnet first."); return; }
+            if (!sbtContractInstance || !systemSigner) { alert("Connect wallet to BOT Chain Mainnet first."); return; }
 
             const box = document.getElementById('mysteryBoxVisual');
             const btn = document.getElementById('openMysteryBoxBtn');
@@ -4479,7 +4170,7 @@
                         { trait_type: 'Amount', value: parseFloat(mysteryReward), display_type: 'number' },
                         { trait_type: 'Sender', value: mysteryAddr },
                         { trait_type: mysteryTheme.traitName, value: mysteryTheme.traitValue() },
-                        { trait_type: 'Chain', value: 'BOT Chain Testnet' }
+                        { trait_type: 'Chain', value: 'BOT Chain Mainnet' }
                     ]
                 };
 
@@ -4597,7 +4288,7 @@
         var executeDaoBtn = document.getElementById('executeDaoBtn');
         if (executeDaoBtn) executeDaoBtn.addEventListener('click', async () => {
             if (!isWalletConnected) { openWalletModal(); return; }
-            if (!sbtContractInstance || !systemSigner) { alert("Connect wallet to BOT Chain Testnet first."); return; }
+            if (!sbtContractInstance || !systemSigner) { alert("Connect wallet to BOT Chain Mainnet first."); return; }
             const valid = parseDaoAddresses();
             if (valid.length === 0) { alert('Add valid 0x addresses (one per line)'); return; }
             const perAmount = daoAmountPer.value ? parseFloat(daoAmountPer.value) : (parseFloat(daoAmountTotal.value) / valid.length);
@@ -4626,7 +4317,7 @@
                             { trait_type: 'Amount', value: parseFloat(perAmount), display_type: 'number' },
                             { trait_type: 'Sender', value: realWalletAddress },
                             { trait_type: daoTheme.traitName, value: daoTheme.traitValue() },
-                            { trait_type: 'Chain', value: 'BOT Chain Testnet' }
+                            { trait_type: 'Chain', value: 'BOT Chain Mainnet' }
                         ]
                     };
                 const metaHash = await uploadMetadataToPinata(metadata);
@@ -4825,7 +4516,7 @@
         // Send designer card
         document.getElementById('sendDesignerCardBtn').addEventListener('click', async () => {
             if (!isWalletConnected) { openWalletModal(); return; }
-            if (!sbtContractInstance || !systemSigner) { alert("Connect wallet to BOT Chain Testnet first."); return; }
+            if (!sbtContractInstance || !systemSigner) { alert("Connect wallet to BOT Chain Mainnet first."); return; }
             const recipient = document.getElementById('designerRecipient').value.trim();
             const amount = document.getElementById('designerAmount').value.trim();
             if (!recipient || !recipient.startsWith('0x') || recipient.length !== 42) { alert('Enter a valid recipient address'); return; }
@@ -4860,7 +4551,7 @@
                         { trait_type: 'Amount', value: parseFloat(amount), display_type: 'number' },
                         { trait_type: 'Sender', value: realWalletAddress },
                         { trait_type: designerTheme.traitName, value: designerTheme.traitValue() },
-                        { trait_type: 'Chain', value: 'BOT Chain Testnet' }
+                        { trait_type: 'Chain', value: 'BOT Chain Mainnet' }
                     ]
                 };
                 const metaHash = await uploadMetadataToPinata(metadata);
@@ -4962,7 +4653,7 @@
 
         document.getElementById('lockGiftBtn').addEventListener('click', async () => {
             if (!isWalletConnected) { openWalletModal(); return; }
-            if (!sbtContractInstance || !systemSigner) { alert("Connect wallet to BOT Chain Testnet first."); return; }
+            if (!sbtContractInstance || !systemSigner) { alert("Connect wallet to BOT Chain Mainnet first."); return; }
             if (!timeUnlock.value) { alert('Select unlock time'); return; }
 
             const recipient = document.getElementById('timeRecipient').value.trim();
@@ -4997,7 +4688,7 @@
                         { trait_type: 'Sender', value: realWalletAddress },
                         { trait_type: 'Message', value: message },
                         { trait_type: timelockTheme.traitName, value: timelockTheme.traitValue() },
-                        { trait_type: 'Chain', value: 'BOT Chain Testnet' }
+                        { trait_type: 'Chain', value: 'BOT Chain Mainnet' }
                     ]
                 };
                 const metaHash = await uploadMetadataToPinata(metadata);
@@ -5098,7 +4789,7 @@
 // SOULBOUND SBT - REAL NFT MINTING WITH PINATA + CONTRACT V2
 // ==========================================
 
-const SBT_CONTRACT_ADDRESS = "0x740e1ce98364EfF4d5e3d89b2b1fa513e0F75b16";
+const SBT_CONTRACT_ADDRESS = "0x29F624c97FF1623697592EEe5c63Eb657A2DC9F3";
 const CLAIM_PAGE_BASE = window.location.origin + '/gifts/claim/';
 const CLAIM_GAS_GRANT = '0.02'; // BOT sent directly to recipient to cover claim gas
 window.SBT_CONTRACT_ADDRESS = SBT_CONTRACT_ADDRESS;
@@ -5165,7 +4856,7 @@ const SBT_CONTRACT_ABI = [
 ];
 window.SBT_CONTRACT_ABI = SBT_CONTRACT_ABI;
 
-// PINATA CONFIG — Demo/testnet key for IPFS pinning (Builder Challenge)
+// PINATA CONFIG — IPFS pinning (Production)
 const PINATA_JWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJjMTU0ZjBlMS1lOTdkLTRmYmYtODAxOS02ZjYwNTk0NzEzMTEiLCJlbWFpbCI6Im1pa2l5YXNyaWNoNDU1QGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaW5fcG9saWN5Ijp7InJlZ2lvbnMiOlt7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6IkZSQTEifSx7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6Ik5ZQzEifV0sInZlcnNpb24iOjF9LCJtZmFfZW5hYmxlZCI6ZmFsc2UsInN0YXR1cyI6IkFDVElWRSJ9LCJhdXRoZW50aWNhdGlvblR5cGUiOiJzY29wZWRLZXkiLCJzY29wZWRLZXlLZXkiOiI5ODRjY2JmNmEyMzMwNmYzYWNiMyIsInNjb3BlZEtleVNlY3JldCI6IjkxZmQ2N2E4MmQwNzdlOWRkNzlhNTQ5ZTJmMDU2NDc4ODIwZGE5ZGY3OWQ1MjhiZDM1YjkxMmYwNzUxY2QyNDUiLCJleHAiOjE4MTUwMDA4MTl9.cSTrsI-psdGuOXqQnzeNkny2eZnTXDojQR7LoIcI3sw";
 const PINATA_GATEWAY = "https://gateway.pinata.cloud/ipfs/";
 
@@ -5192,609 +4883,6 @@ function initSbtContract() {
         window.sbtContractInstance = sbtContractInstance;
         console.log("SBT Contract initialized:", addr);
     }
-}
-
-// ==========================================
-// MULTI-CHAIN CONFIG — BOT Chain + Solana
-// ==========================================
-window.SOLANA_CONFIG = {
-    rpcs: [
-        'https://solana.publicnode.com',
-        'https://api.mainnet-beta.solana.com'
-    ],
-    explorer: 'https://solscan.io',
-    commitment: 'confirmed'
-};
-window.ACE_TOKEN = {
-    mint: 'GnHpRsrcyfHSMZNzmpjAzTFQA26vnbRMzbKQ11ZKpump',
-    decimals: 6,
-    symbol: 'ACE',
-    name: 'Ace Data Cloud',
-    logo: 'https://res.cloudinary.com/dguexkgjw/image/upload/v1783934547/photo_5771752171526360799_y-removebg-preview_pdxfdf.png'
-};
-window.BOT_LOGO = 'https://res.cloudinary.com/dguexkgjw/image/upload/v1783934565/Y9jDf0A3_400x400_1_nppzje.jpg';
-window.CURRENT_TOKEN = 'BOT';
-window.solanaConnection = null;
-window.solanaWallet = null;
-window.solanaPublicKey = null;
-
-// SPL Token Program IDs
-const SPL_TOKEN_PROGRAM_ID = new solanaWeb3.PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
-const ASSOCIATED_TOKEN_PROGRAM_ID = new solanaWeb3.PublicKey('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL');
-
-function getSolanaConnection() {
-    if (!window.solanaConnection) {
-        window.solanaConnection = getCachedConnection(
-            window.SOLANA_CONFIG.rpcs[0],
-            window.SOLANA_CONFIG.commitment
-        );
-    }
-    return window.solanaConnection;
-}
-
-function getSolanaConnectionRetry() {
-    var rpcs = window.SOLANA_CONFIG.rpcs;
-    return {
-        rpcs: rpcs,
-        commitment: window.SOLANA_CONFIG.commitment
-    };
-}
-
-function isValidSolanaAddress(address) {
-    try {
-        if (!address || typeof address !== 'string') return false;
-        if (address.length < 32 || address.length > 44) return false;
-        if (!/^[1-9A-HJ-NP-Za-km-z]+$/.test(address)) return false;
-        new solanaWeb3.PublicKey(address);
-        return true;
-    } catch (e) { return false; }
-}
-
-function isValidAddressForChain(address, chain) {
-    if (chain === 'solana') return isValidSolanaAddress(address);
-    if (chain === 'bot') return address && address.startsWith('0x') && address.length === 42;
-    return false;
-}
-
-function getAssociatedTokenAddress(mint, owner) {
-    return solanaWeb3.PublicKey.findProgramAddressSync(
-        [owner.toBuffer(), SPL_TOKEN_PROGRAM_ID.toBuffer(), mint.toBuffer()],
-        ASSOCIATED_TOKEN_PROGRAM_ID
-    )[0];
-}
-
-function createAssociatedTokenAccountInstruction(payer, mint, owner, ata) {
-    const keys = [
-        { pubkey: payer, isSigner: true, isWritable: true },
-        { pubkey: ata, isSigner: false, isWritable: true },
-        { pubkey: owner, isSigner: false, isWritable: false },
-        { pubkey: mint, isSigner: false, isWritable: false },
-        { pubkey: solanaWeb3.SystemProgram.programId, isSigner: false, isWritable: false },
-        { pubkey: SPL_TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
-        { pubkey: solanaWeb3.SYSVAR_RENT_PUBKEY, isSigner: false, isWritable: false }
-    ];
-    return new solanaWeb3.TransactionInstruction({
-        keys,
-        programId: ASSOCIATED_TOKEN_PROGRAM_ID,
-        data: new Uint8Array(0)
-    });
-}
-
-function createSplTransferInstruction(source, destination, owner, amount) {
-    const data = new Uint8Array(9);
-    data[0] = 3;
-    const amountBig = BigInt(amount);
-    for (let i = 0; i < 8; i++) {
-        data[1 + i] = Number((amountBig >> BigInt(i * 8)) & 0xFFn);
-    }
-    const keys = [
-        { pubkey: source, isSigner: false, isWritable: true },
-        { pubkey: destination, isSigner: false, isWritable: true },
-        { pubkey: owner, isSigner: true, isWritable: false }
-    ];
-    return new solanaWeb3.TransactionInstruction({
-        keys,
-        programId: SPL_TOKEN_PROGRAM_ID,
-        data
-    });
-}
-
-// === MAINNET SAFETY: Shared Solana helpers for fund safety ===
-
-var _solanaConnCache = {};
-function getCachedConnection(rpcUrl, commitment) {
-    var key = rpcUrl + '|' + (commitment || 'confirmed');
-    if (!_solanaConnCache[key]) {
-        _solanaConnCache[key] = new solanaWeb3.Connection(rpcUrl, commitment || 'confirmed');
-    }
-    return _solanaConnCache[key];
-}
-
-async function solanaRpcCall(method, params, commitment) {
-    var rpcs = window.SOLANA_CONFIG.rpcs;
-    for (var i = 0; i < rpcs.length; i++) {
-        try {
-            var conn = getCachedConnection(rpcs[i], commitment || 'confirmed');
-            var result = await conn[method](params);
-            return result;
-        } catch (e) {
-            console.warn('[SOL-RPC] ' + method + ' failed on RPC[' + i + ']:', e.message);
-        }
-    }
-    throw new Error('All Solana RPCs failed for ' + method);
-}
-
-async function confirmSolanaTx(txHash, blockhash, lastValidBlockHeight, statusEl, statusMsg) {
-    var rpcs = window.SOLANA_CONFIG.rpcs;
-    for (var r = 0; r < rpcs.length; r++) {
-        try {
-            if (statusEl && statusMsg) statusEl.textContent = statusMsg + ' (node ' + (r+1) + '/' + rpcs.length + ')...';
-            var conn = getCachedConnection(rpcs[r], 'confirmed');
-            await conn.confirmTransaction({ signature: txHash, blockhash: blockhash, lastValidBlockHeight: lastValidBlockHeight }, 'confirmed');
-            console.log('[SOL-CONFIRM] TX confirmed via RPC[' + r + ']:', txHash);
-            return { confirmed: true, txHash: txHash };
-        } catch (confErr) {
-            console.warn('[SOL-CONFIRM] RPC[' + r + '] confirm failed:', confErr.message);
-            if (confErr.name === 'TransactionExpiredBlockheightExceededError' || (confErr.message && confErr.message.includes('block height exceeded'))) {
-                try {
-                    var status = await conn.getSignatureStatus(txHash);
-                    if (status && status.value && !status.value.err) {
-                        console.log('[SOL-CONFIRM] TX succeeded (detected via getSignatureStatus):', txHash);
-                        return { confirmed: true, txHash: txHash };
-                    }
-                    if (status && status.value && status.value.err) {
-                        console.error('[SOL-CONFIRM] TX failed on-chain:', status.value.err);
-                        return { confirmed: false, txHash: txHash, error: JSON.stringify(status.value.err) };
-                    }
-                } catch (statusErr) {
-                    console.warn('[SOL-CONFIRM] getSignatureStatus failed:', statusErr.message);
-                }
-            }
-        }
-    }
-    try {
-        var finalConn = getCachedConnection(rpcs[0], 'finalized');
-        var finalStatus = await finalConn.getSignatureStatus(txHash);
-        if (finalStatus && finalStatus.value && !finalStatus.value.err) {
-            console.log('[SOL-CONFIRM] TX confirmed as finalized:', txHash);
-            return { confirmed: true, txHash: txHash };
-        }
-        if (finalStatus && finalStatus.value && finalStatus.value.err) {
-            return { confirmed: false, txHash: txHash, error: JSON.stringify(finalStatus.value.err) };
-        }
-    } catch (e) { console.warn('[SOL-CONFIRM] Finalized check failed:', e.message); }
-    return { confirmed: false, txHash: txHash, error: 'Confirmation timed out across all RPCs. TX may still have succeeded — check Solscan.' };
-}
-
-// Pending Solana TX recovery — saves unsaved gifts to Supabase after timeout
-function getPendingSolanaTxs() {
-    try { return JSON.parse(localStorage.getItem('giftbot_pending_solana_txs') || '[]'); } catch(e) { return []; }
-}
-function savePendingSolanaTx(txData) {
-    var pending = getPendingSolanaTxs();
-    pending.push({ ...txData, timestamp: Date.now() });
-    localStorage.setItem('giftbot_pending_solana_txs', JSON.stringify(pending));
-}
-function removePendingSolanaTx(txHash) {
-    var pending = getPendingSolanaTxs().filter(function(t) { return t.txHash !== txHash; });
-    localStorage.setItem('giftbot_pending_solana_txs', JSON.stringify(pending));
-}
-async function recoverPendingSolanaTxs() {
-    var pending = getPendingSolanaTxs();
-    if (!pending.length) return;
-    console.log('[RECOVER] Checking', pending.length, 'pending Solana txs...');
-    for (var i = 0; i < pending.length; i++) {
-        var tx = pending[i];
-        try {
-            var statusConn = getCachedConnection(window.SOLANA_CONFIG.rpcs[0], 'confirmed');
-            var status = await statusConn.getSignatureStatus(tx.txHash);
-            if (status && status.value) {
-                if (!status.value.err) {
-                    console.log('[RECOVER] TX', tx.txHash, 'succeeded — saving gift to DB');
-                    if (tx.type === 'secretGift' && tx.giftData) {
-                        try {
-                            var existing = await sgLookupGift(tx.giftCode);
-                            if (!existing) {
-                                await sgStoreGift(tx.giftCode, tx.giftData);
-                            } else {
-                                console.log('[RECOVER] Gift already in DB:', tx.giftCode);
-                            }
-                        } catch(e) { console.warn('[RECOVER] sgStoreGift failed:', e.message); }
-                    }
-                    removePendingSolanaTx(tx.txHash);
-                } else {
-                    console.warn('[RECOVER] TX', tx.txHash, 'failed on-chain:', status.value.err);
-                    removePendingSolanaTx(tx.txHash);
-                }
-            }
-        } catch(e) {
-            console.warn('[RECOVER] Status check failed for', tx.txHash, ':', e.message);
-        }
-    }
-}
-
-async function getTokenBalanceSolana(mintAddress, walletAddress) {
-    var rpcs = window.SOLANA_CONFIG.rpcs;
-    var mint = new solanaWeb3.PublicKey(mintAddress);
-    var owner = new solanaWeb3.PublicKey(walletAddress);
-    var ata = getAssociatedTokenAddress(mint, owner);
-
-    for (var i = 0; i < rpcs.length; i++) {
-        try {
-            console.log('[SOL] Trying RPC[' + i + ']:', rpcs[i]);
-            var conn = getCachedConnection(rpcs[i], 'confirmed');
-            var balance = await conn.getTokenAccountBalance(ata, 'confirmed');
-            if (balance && balance.value) {
-                console.log('[SOL] ACE balance:', balance.value.uiAmount, '(via RPC[' + i + '])');
-                return {
-                    amount: balance.value.amount,
-                    uiAmount: balance.value.uiAmount || 0,
-                    decimals: balance.value.decimals
-                };
-            }
-        } catch (e) {
-            console.error('[SOL] RPC[' + i + '] failed:', e.message || e);
-        }
-    }
-
-    console.error('[SOL] ALL RPCs failed for balance');
-    return { amount: '0', uiAmount: 0, decimals: 6 };
-}
-
-async function getSOLBalance(walletAddress) {
-    var rpcs = window.SOLANA_CONFIG.rpcs;
-    for (var i = 0; i < rpcs.length; i++) {
-        try {
-            var conn = new solanaWeb3.Connection(rpcs[i], 'confirmed');
-            var pubkey = new solanaWeb3.PublicKey(walletAddress);
-            var lamports = await conn.getBalance(pubkey);
-            return lamports / solanaWeb3.LAMPORTS_PER_SOL;
-        } catch (e) {
-            console.error('[SOL] SOL balance RPC[' + i + '] failed:', e.message);
-        }
-    }
-    return 0;
-}
-
-// ==========================================
-// PHANTOM WALLET CONNECTION
-// ==========================================
-async function connectPhantomWallet() {
-    const provider = window.phantom?.solana;
-    if (!provider || !provider.isPhantom) {
-        alert('Phantom Wallet not found!\n\nInstall it from https://phantom.app');
-        window.open('https://phantom.app', '_blank');
-        return false;
-    }
-
-    try {
-        // If our state says we're already connected, use existing session
-        if (window.solanaPublicKey && window.solanaWallet) {
-            const address = window.solanaPublicKey.toString();
-            console.log('[SOL] Phantom already connected:', address);
-            return address;
-        }
-
-        // Remove old listeners first to prevent MaxListenersExceeded
-        try { provider.removeAllListeners?.('disconnect'); } catch (e) {}
-
-        // ALWAYS check if Phantom has a detected wallet before connecting
-        // After page refresh, isConnected may be false but publicKey still exists
-        // provider.connect() silently reconnects when site is authorized — no popup shown
-        // So we MUST detect this and show our own confirmation modal
-        const detectedPubkey = provider.publicKey;
-        if (detectedPubkey) {
-            const detectedAddress = detectedPubkey.toString();
-            console.log('[SOL] Phantom wallet detected:', detectedAddress);
-
-            // Show confirmation modal — ALWAYS let user confirm before connecting
-            const confirmed = await showPhantomConfirmModal(detectedAddress);
-
-            if (confirmed) {
-                // User confirmed — use this wallet directly (no provider.connect needed)
-                window.solanaWallet = provider;
-                window.solanaPublicKey = detectedPubkey;
-                console.log('[SOL] Phantom connected (user confirmed):', detectedAddress);
-                provider.on('disconnect', () => {
-                    console.log('[SOL] Phantom disconnected');
-                    window.solanaWallet = null;
-                    window.solanaPublicKey = null;
-                });
-                return detectedAddress;
-            } else {
-                // User chose not to use this wallet
-                alert('Please switch to the desired wallet in the Phantom extension, then click Connect again.');
-                return false;
-            }
-        }
-
-        // No wallet detected — fresh connect (shows Phantom popup)
-        console.log('[SOL] No Phantom session detected, requesting fresh connect...');
-        const resp = await provider.connect();
-        window.solanaWallet = provider;
-        window.solanaPublicKey = resp.publicKey;
-        const address = resp.publicKey.toString();
-        console.log('[SOL] Phantom connected:', address);
-
-        provider.on('disconnect', () => {
-            console.log('[SOL] Phantom disconnected');
-            window.solanaWallet = null;
-            window.solanaPublicKey = null;
-        });
-
-        return address;
-    } catch (err) {
-        console.error('[SOL] Phantom connect error:', err);
-        if (err.code === 4001) {
-            alert('Connection rejected. Please approve in Phantom.');
-        } else {
-            alert('Phantom connection failed: ' + (err.message || err));
-        }
-        return false;
-    }
-}
-
-async function disconnectPhantomWallet() {
-    try {
-        // Store provider reference before clearing
-        const provider = window.solanaWallet || window.phantom?.solana;
-        if (provider) {
-            // Force disconnect — this terminates the Phantom extension session
-            try { await provider.disconnect(); } catch (e) { /* ignore */ }
-            // Remove ALL event listeners to prevent ghost callbacks
-            try { provider.removeAllListeners?.('disconnect'); } catch (e) { /* ignore */ }
-        }
-    } catch (e) {
-        console.warn('[SOL] Phantom disconnect error:', e);
-    }
-    window.solanaWallet = null;
-    window.solanaPublicKey = null;
-    window.solanaConnection = null;
-    // Clear Phantom session from storage so reconnect is fresh
-    try {
-        localStorage.removeItem('phantom_solana_public_key');
-        sessionStorage.removeItem('phantom_solana_public_key');
-        // Clear any phantom wallet session data
-        Object.keys(localStorage).forEach(k => {
-            if (k.includes('phantom') || k.includes('solana')) {
-                try { localStorage.removeItem(k); } catch (e) {}
-            }
-        });
-    } catch (e) {}
-}
-
-// ==========================================
-// PHANTOM CONFIRMATION MODAL
-// ==========================================
-function showPhantomConfirmModal(address) {
-    return new Promise((resolve) => {
-        const modal = document.getElementById('phantomConfirmModal');
-        const addrEl = document.getElementById('phantomConfirmAddress');
-        const useBtn = document.getElementById('phantomConfirmUseBtn');
-        const switchBtn = document.getElementById('phantomConfirmSwitchBtn');
-        const closeBtn = document.getElementById('closePhantomConfirmBtn');
-        if (!modal) { resolve(true); return; }
-
-        const shortAddr = address.slice(0, 4) + '...' + address.slice(-4);
-        addrEl.textContent = 'Connected as: ' + shortAddr;
-        modal.classList.remove('hidden');
-
-        let resolved = false;
-        const done = (val) => { if (!resolved) { resolved = true; modal.classList.add('hidden'); resolve(val); } };
-
-        useBtn.onclick = () => done(true);
-        switchBtn.onclick = async () => {
-            // Open Phantom extension to switch accounts
-            try {
-                const provider = window.phantom?.solana;
-                if (provider) {
-                    // Try to open Phantom via deep link or extension popup
-                    window.open('https://phantom.app/ul/browse/' + encodeURIComponent(window.location.href), '_blank');
-                }
-            } catch (e) {}
-            done(false);
-        };
-        closeBtn.onclick = () => done(false);
-        modal.addEventListener('click', (e) => { if (e.target === modal) done(false); });
-    });
-}
-
-// ==========================================
-// TOKEN SELECTOR
-// ==========================================
-window.selectToken = async function(tokenSymbol) {
-    if (window.CURRENT_TOKEN === tokenSymbol) return;
-    const prevToken = window.CURRENT_TOKEN;
-    console.log('[TOKEN] Switching from', prevToken, 'to', tokenSymbol);
-
-    try {
-        if (tokenSymbol === 'ACE') {
-            // Switch to Solana — disconnect MetaMask first, then connect Phantom
-            if (prevToken === 'BOT' && window.isWalletConnected) {
-                await window.disconnectWallet(true);
-            }
-
-            window.CURRENT_TOKEN = 'ACE';
-            updateTokenSelectorUI();
-
-            if (!window.solanaPublicKey) {
-                const addr = await connectPhantomWallet();
-                if (!addr) {
-                    window.CURRENT_TOKEN = 'BOT';
-                    updateTokenSelectorUI();
-                    return;
-                }
-            }
-            await handleSolanaWalletConnected();
-        } else {
-            // Switch to BOT — disconnect Phantom, connect MetaMask
-            if (window.solanaWallet) {
-                await disconnectPhantomWallet();
-            }
-
-            window.CURRENT_TOKEN = 'BOT';
-            updateTokenSelectorUI();
-
-            if (!window.isWalletConnected) {
-                if (window.connectMetaMask) await window.connectMetaMask();
-            }
-        }
-        await updateAllBalances();
-        updateRecipientValidation();
-    } catch (err) {
-        console.error('[TOKEN] Switch error:', err);
-        // Revert on error
-        window.CURRENT_TOKEN = prevToken;
-        updateTokenSelectorUI();
-    }
-};
-
-function updateTokenSelectorUI() {
-    const sel = document.getElementById('tokenSelector');
-    const selMobile = document.getElementById('mobileTokenSelector');
-    const badge = document.getElementById('chainBadge');
-    const badgeMobile = document.getElementById('mobileChainBadge');
-    const isACE = window.CURRENT_TOKEN === 'ACE';
-    const symbol = isACE ? 'ACE' : 'BOT';
-    const logo = isACE ? window.ACE_TOKEN.logo : window.BOT_LOGO;
-    const chainLabel = isACE ? 'Solana' : 'BOT Chain';
-    const color = isACE ? '#a855f7' : '#10b981';
-
-    [sel, selMobile].forEach(el => {
-        if (!el) return;
-        el.innerHTML = '<img src="' + logo + '" class="w-5 h-5 rounded-full object-cover" alt="' + symbol + '"><span class="text-xs font-semibold" style="color:' + color + '">$' + symbol + '</span><svg class="w-3 h-3" style="color:' + color + '" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>';
-        el.style.borderColor = color + '40';
-    });
-
-    [badge, badgeMobile].forEach(el => {
-        if (!el) return;
-        el.innerHTML = '<span class="w-1.5 h-1.5 rounded-full animate-pulse" style="background:' + color + '"></span>' + chainLabel;
-        el.style.borderColor = color + '33';
-        el.style.color = color;
-        el.style.backgroundColor = color + '0a';
-    });
-
-    // Update form labels with current token
-    var tokenSym = '$' + symbol;
-    document.querySelectorAll('[id="sgFinalAmountDetail"]').forEach(el => { el.textContent = '0.0 ' + tokenSym; });
-    document.querySelectorAll('[id="claimAmountDisplay"]').forEach(el => { el.textContent = '0 ' + tokenSym; });
-    document.querySelectorAll('[id="claimSuccessAmount"]').forEach(el => { el.textContent = '0 ' + tokenSym; });
-    // Update "Amount ($BOT)" labels
-    document.querySelectorAll('label').forEach(el => {
-        if (el.textContent.includes('Amount ($BOT)') || el.textContent.includes('Amount ($ACE)')) {
-            el.textContent = el.textContent.replace(/Amount \(\$[A-Z]+\)/, 'Amount (' + tokenSym + ')');
-        }
-    });
-    // Update gift form amount token label
-    document.querySelectorAll('.gift-amount-token').forEach(el => { el.textContent = tokenSym; });
-    // Update Secret Gift form labels
-    document.querySelectorAll('.sg-token-label').forEach(el => { el.textContent = tokenSym; });
-    document.querySelectorAll('.sg-amount-label').forEach(el => { el.textContent = 'Amount (' + tokenSym + ')'; });
-    document.querySelectorAll('.mystery-result-token').forEach(el => { el.textContent = tokenSym; });
-    // Update recipient placeholder
-    var rp = document.getElementById('recipientInput');
-    if (rp) rp.placeholder = isACE ? 'Solana wallet address' : '0x...';
-    var crp = document.getElementById('cryptoRecipientInput');
-    if (crp) crp.placeholder = isACE ? 'Solana wallet address' : '0x...';
-    // Update network fee label
-    var feeMain = document.getElementById('networkFeeMain');
-    var feeCrypto = document.getElementById('networkFeeCrypto');
-    var sgEstGas = document.getElementById('sgEstGas');
-    if (isACE) {
-        if (feeMain) feeMain.textContent = '~0.000005 SOL';
-        if (feeCrypto) feeCrypto.textContent = '~0.000005 SOL';
-        if (sgEstGas) sgEstGas.textContent = '~0.000005 SOL';
-    } else {
-        if (feeMain) feeMain.textContent = '~0.0001 BOT';
-        if (feeCrypto) feeCrypto.textContent = '~0.0001 BOT';
-        if (sgEstGas) sgEstGas.textContent = '~0.0001 BOT';
-    }
-    // Update available balance label
-    var abLabel = document.querySelector('#availableBalanceMain')?.parentElement;
-    if (abLabel) {
-        var spans = abLabel.querySelectorAll('span');
-        spans.forEach(s => { if (s.id !== 'availableBalanceMain' && s.textContent.includes('$')) s.textContent = '$' + symbol; });
-    }
-}
-
-async function handleSolanaWalletConnected() {
-    const addr = window.solanaPublicKey ? window.solanaPublicKey.toString() : '';
-    if (!addr) {
-        console.warn('[SOL] No public key, skipping wallet display update');
-        return;
-    }
-
-    isWalletConnected = true;
-    window.isWalletConnected = true;
-    realWalletAddress = addr;
-    window.realWalletAddress = addr;
-
-    try { closeWalletModal(); } catch(e) {}
-    try { closeWalletConnectModal(); } catch(e) {}
-
-    if (els.connectWalletBtn) els.connectWalletBtn.classList.add('hidden');
-    if (els.walletConnectedDisplay) els.walletConnectedDisplay.classList.remove('hidden');
-    if (els.connectedAddress) els.connectedAddress.textContent = addr.slice(0, 4) + '...' + addr.slice(-4);
-    var wbt = document.getElementById('walletBtnText');
-    if (wbt) wbt.textContent = addr.slice(0, 4) + '...' + addr.slice(-4);
-    var npn = document.getElementById('navProfileName');
-    if (npn) { npn.textContent = addr.slice(0, 4) + '...' + addr.slice(-4); npn.classList.remove('hidden'); }
-    var dpa = document.getElementById('dropdownProfileAddress');
-    if (dpa) dpa.textContent = addr.slice(0, 4) + '...' + addr.slice(-4);
-
-    // Update mobile wallet bar
-    var mwt = document.getElementById('mobileWalletText');
-    if (mwt) mwt.textContent = addr.slice(0, 4) + '...' + addr.slice(-4);
-    var mwb = document.getElementById('mobileWalletBtn');
-    if (mwb) { mwb.style.borderColor = 'rgba(168,85,247,0.5)'; mwb.style.color = '#c084fc'; }
-
-    // Update explorer link for Solana
-    var veb = document.getElementById('viewExplorerBtn');
-    if (veb) veb.onclick = () => { window.open('https://solscan.io/address/' + addr, '_blank'); els.walletDropdown.classList.remove('show'); };
-
-    updateTokenSelectorUI();
-
-    try {
-        await updateAllBalances();
-    } catch(e) {
-        console.error('[SOL] Balance update error:', e);
-    }
-}
-
-async function updateAllBalances() {
-    try {
-        if (window.CURRENT_TOKEN === 'ACE' && window.solanaPublicKey) {
-            const addr = window.solanaPublicKey.toString();
-            const aceBal = await getTokenBalanceSolana(window.ACE_TOKEN.mint, addr);
-            const wb = document.getElementById('walletBalanceDisplay');
-            if (wb) wb.innerHTML = aceBal.uiAmount.toFixed(2) + ' <span class="text-xs text-zinc-500">$ACE</span>';
-            const am = document.getElementById('availableBalanceMain');
-            if (am) am.textContent = aceBal.uiAmount.toFixed(2);
-            const ac = document.getElementById('availableBalanceCrypto');
-            if (ac) ac.textContent = aceBal.uiAmount.toFixed(2);
-            console.log('[BALANCE] ACE displayed:', aceBal.uiAmount);
-        } else if (window.CURRENT_TOKEN === 'BOT') {
-            await updateRealBalance();
-        }
-    } catch (e) {
-        console.error('[BALANCE] updateAllBalances error:', e);
-    }
-}
-
-function getExplorerUrl(type, hashOrAddress, chain) {
-    var c = chain || window.CURRENT_TOKEN || 'BOT';
-    if (c === 'ACE') {
-        if (type === 'tx') return 'https://solscan.io/tx/' + hashOrAddress;
-        if (type === 'address') return 'https://solscan.io/address/' + hashOrAddress;
-        return 'https://solscan.io';
-    }
-    if (type === 'tx') return 'https://scan.bohr.life/tx/' + hashOrAddress;
-    if (type === 'address') return 'https://scan.bohr.life/address/' + hashOrAddress;
-    return 'https://scan.bohr.life';
-}
-
-function updateRecipientValidation() {
-    // Placeholder — actual validation happens at gift creation time
 }
 
 // ==========================================
@@ -5925,7 +5013,7 @@ if (mintSbtBtn) mintSbtBtn.addEventListener('click', async () => {
                 { trait_type: "Sender", value: realWalletAddress || walletAddress },
                 { trait_type: "Sender Name", value: sbtSenderName && sbtSenderName.value.trim() ? sbtSenderName.value.trim() : (realWalletAddress ? realWalletAddress.slice(0,6)+'...'+realWalletAddress.slice(-4) : 'Anonymous') },
                 { trait_type: "Message", value: sbtMessage.value || "" },
-                { trait_type: "Chain", value: "BOT Chain Testnet" }
+                { trait_type: "Chain", value: "BOT Chain Mainnet" }
             ]
         };
         sbtIpfsMetadataHash = await uploadMetadataToPinata(metadata);
@@ -5937,8 +5025,8 @@ if (mintSbtBtn) mintSbtBtn.addEventListener('click', async () => {
         const reviewSenderName = sbtSenderName && sbtSenderName.value.trim() ? sbtSenderName.value.trim() : (realWalletAddress ? realWalletAddress.slice(0,6)+'...'+realWalletAddress.slice(-4) : 'Anonymous');
         const senderNameEl = document.getElementById('soulboundFinalSenderName');
         if (senderNameEl) senderNameEl.textContent = reviewSenderName;
-        soulboundFinalAmountDetail.textContent = (sbtAmount.value || '0.0') + ' $' + window.CURRENT_TOKEN;
-        soulboundFinalFee.textContent = sbtNetworkFee ? sbtNetworkFee.textContent : '~0.0000 ' + window.CURRENT_TOKEN;
+        soulboundFinalAmountDetail.textContent = (sbtAmount.value || '0.0') + ' $BOT';
+        soulboundFinalFee.textContent = sbtNetworkFee ? sbtNetworkFee.textContent : '~0.0000 BOT';
         const grid = document.querySelector('#soulboundView > .grid');
         if (grid) {
             grid.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
@@ -6119,7 +5207,7 @@ function showSoulboundSuccess(hash, tokenId) {
                     <svg class="w-10 h-10 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                 </div>
                 <h3 class="text-2xl font-bold text-zinc-100 mb-2">Soulbound NFT Minted!</h3>
-                <p class="text-xs text-zinc-400 mb-1">Your NFT is now permanently on IPFS & BOT Chain Testnet.</p>
+                <p class="text-xs text-zinc-400 mb-1">Your NFT is now permanently on IPFS & BOT Chain Mainnet.</p>
                 <p class="text-[10px] text-indigo-400/60 font-mono">Token ID: #${tokenId}</p>
             </div>
             <div class="relative z-10 bg-zinc-950/60 rounded-2xl p-4 border border-zinc-700/30 max-w-xs mx-auto">
@@ -6143,7 +5231,7 @@ function showSoulboundSuccess(hash, tokenId) {
             </div>
             <div class="relative z-10 flex gap-3 max-w-xs mx-auto">
                 <button id="sbtSuccessCloseBtn" class="flex-1 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-indigo-400 py-3 rounded-xl font-medium text-xs transition cursor-pointer hover:scale-[1.02]">Awesome</button>
-                <a href="https://scan.bohr.life/tx/${hash}" target="_blank" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl font-medium text-xs transition cursor-pointer hover:scale-[1.02] flex items-center justify-center gap-1">
+                <a href="https://scan.botchain.ai/tx/${hash}" target="_blank" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl font-medium text-xs transition cursor-pointer hover:scale-[1.02] flex items-center justify-center gap-1">
                     <span>View Tx</span>
                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                 </a>
@@ -6447,13 +5535,13 @@ window.convertSbtToBot = convertSbtToBot;
     <script>
             console.log('[Web3GiftHub] Script 7 loaded');
         // ==========================================
-        // BOHR TESTNET REAL SYSTEM INTEGRATION
+        // BOT CHAIN MAINNET REAL SYSTEM INTEGRATION
         // ==========================================
         // Safety: ensure contract refs available across script blocks
-        if (!window.SBT_CONTRACT_ADDRESS) window.SBT_CONTRACT_ADDRESS = "0x740e1ce98364EfF4d5e3d89b2b1fa513e0F75b16";
+        if (!window.SBT_CONTRACT_ADDRESS) window.SBT_CONTRACT_ADDRESS = "0x29F624c97FF1623697592EEe5c63Eb657A2DC9F3";
         if (!window.SBT_CONTRACT_ABI) window.SBT_CONTRACT_ABI = [{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"approve","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_tokenId","type":"uint256"}],"name":"convertToBot","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"address","name":"sender","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"address","name":"owner","type":"address"}],"name":"ERC721IncorrectOwner","type":"error"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ERC721NonexistentToken","type":"error"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ownerOf","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_recipient","type":"address"},{"internalType":"string","name":"_tokenURI","type":"string"},{"internalType":"string","name":"_message","type":"string"}],"name":"mintSoulboundGift","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"tokenURI","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"tokenCounter","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_tokenId","type":"uint256"}],"name":"getGiftData","outputs":[{"internalType":"address","name":"sender","type":"address"},{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"string","name":"message","type":"string"},{"internalType":"uint256","name":"timestamp","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"string","name":"tokenURI","type":"string"}],"name":"claimSbt","outputs":[],"stateMutability":"nonpayable","type":"function"}];
         if (!window.CLAIM_GAS_GRANT) window.CLAIM_GAS_GRANT = '0.02';
-        const CONTRACT_ADDRESS = "0xd8b934580fcE35a11B58C6D73aDeE468a2833fa8";
+        const CONTRACT_ADDRESS = "0x29F624c97FF1623697592EEe5c63Eb657A2DC9F3";
         window.VAULT_CONTRACT_ADDRESS = CONTRACT_ADDRESS;
         const CONTRACT_ABI = [
             {
@@ -6508,26 +5596,26 @@ window.convertSbtToBot = convertSbtToBot;
         var realWalletAddress = null;
         var balanceInterval = null;
 
-        // BOT Chain Testnet Configuration
-        const BOT_CHAIN_TESTNET = {
-            chainId: '0x3C8', // 968 in hex
-            chainName: 'BOT Chain Testnet',
+        // BOT Chain Mainnet Configuration
+        const BOT_CHAIN_MAINNET = {
+            chainId: '0x2A5', // 677 in hex
+            chainName: 'BOT Chain Mainnet',
             nativeCurrency: {
                 name: 'BOT',
                 symbol: 'BOT',
                 decimals: 18
             },
-            rpcUrls: ['https://rpc.bohr.life'],
-            blockExplorerUrls: ['https://scan.bohr.life']
+            rpcUrls: ['https://rpc.botchain.ai'],
+            blockExplorerUrls: ['https://scan.botchain.ai']
         };
 
-        async function switchToBotChainTestnet() {
+        async function switchToBotChainMainnet() {
             if (!window.ethereum) return false;
             try {
-                // Try switching to BOT Chain Testnet
+                // Try switching to BOT Chain Mainnet
                 await window.ethereum.request({
                     method: 'wallet_switchEthereumChain',
-                    params: [{ chainId: BOT_CHAIN_TESTNET.chainId }]
+                    params: [{ chainId: BOT_CHAIN_MAINNET.chainId }]
                 });
                 return true;
             } catch (switchError) {
@@ -6536,11 +5624,11 @@ window.convertSbtToBot = convertSbtToBot;
                     try {
                         await window.ethereum.request({
                             method: 'wallet_addEthereumChain',
-                            params: [BOT_CHAIN_TESTNET]
+                            params: [BOT_CHAIN_MAINNET]
                         });
                         return true;
                     } catch (addError) {
-                        console.error("Failed to add BOT Chain Testnet:", addError);
+                        console.error("Failed to add BOT Chain Mainnet:", addError);
                         return false;
                     }
                 } else {
@@ -6661,10 +5749,10 @@ window.convertSbtToBot = convertSbtToBot;
             // Check if on correct network
             try {
                 const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-                if (chainId !== BOT_CHAIN_TESTNET.chainId) {
-                    console.warn("Not on Bohr Testnet. Current chain:", chainId);
+                if (chainId !== BOT_CHAIN_MAINNET.chainId) {
+                    console.warn("Not on Bohr Mainnet. Current chain:", chainId);
                     // Try to switch
-                    await switchToBotChainTestnet();
+                    await switchToBotChainMainnet();
                 }
             } catch (e) {
                 console.warn("Could not check chain ID:", e);
@@ -6703,17 +5791,17 @@ window.convertSbtToBot = convertSbtToBot;
                     await updateRealBalance();
                     updateSbtBalance();
                     if (balanceInterval) clearInterval(balanceInterval);
-                    const balanceIntervalMs = window.CURRENT_TOKEN === 'ACE' ? 30000 : 15000;
                     balanceInterval = setInterval(() => {
-                        // Guard: skip if wallet disconnected or MetaMask not available
-                        if (!isWalletConnected && !window.solanaPublicKey) { clearInterval(balanceInterval); return; }
-                        if (window.CURRENT_TOKEN === 'BOT' && (!window.ethereum || !window.ethereum.selectedAddress)) return;
                         updateRealBalance();
-                        if (window.CURRENT_TOKEN === 'ACE') updateSbtBalance();
-                    }, balanceIntervalMs);
+                        updateSbtBalance();
+                    }, 15000);
                 } catch (e) {
                     console.error("Balance setup error:", e);
                 }
+
+                await updateRealBalance();
+                if (balanceInterval) clearInterval(balanceInterval);
+                balanceInterval = setInterval(updateRealBalance, 8000);
 
                 await loadOnChainHistory();
 
@@ -6748,28 +5836,13 @@ window.convertSbtToBot = convertSbtToBot;
             }
         };
 
-        window.disconnectWallet = async function(skipTokenReset) {
+        window.disconnectWallet = function() {
             isWalletConnected = false;
             window.isWalletConnected = false;
             walletAddress = '';
             els.connectWalletBtn.classList.remove('hidden');
             els.walletConnectedDisplay.classList.add('hidden');
             els.walletDropdown.classList.remove('show');
-
-            // Also disconnect Phantom if connected (await to fully terminate session)
-            if (window.solanaWallet || window.phantom?.solana?.isConnected) {
-                await disconnectPhantomWallet();
-            }
-
-            // Only reset token selector if not switching tokens
-            if (!skipTokenReset) {
-                window.CURRENT_TOKEN = 'BOT';
-                updateTokenSelectorUI();
-            }
-
-            // Reset explorer link
-            var veb2 = document.getElementById('viewExplorerBtn');
-            if (veb2) veb2.onclick = viewOnExplorer;
 
             // Clear wallet button text
             var wbt3 = document.getElementById('walletBtnText');
@@ -6788,12 +5861,6 @@ window.convertSbtToBot = convertSbtToBot;
             var dpa4 = document.getElementById('dropdownProfileAvatar');
             if (dpa4) dpa4.innerHTML = '<span>👤</span>';
 
-            // Reset mobile wallet bar
-            const mwb = document.getElementById('mobileWalletBar');
-            if (mwb) { mwb.classList.add('hidden'); mwb.classList.remove('flex'); }
-            const mwbt = document.getElementById('mobileWalletBtnText');
-            if (mwbt) mwbt.textContent = 'Connect Wallet';
-
             if (balanceInterval) clearInterval(balanceInterval);
             if (window._historyRefreshTimer) { clearTimeout(window._historyRefreshTimer); window._historyRefreshTimer = null; }
             if (window._giftTransferCleanup) { window._giftTransferCleanup(); window._giftTransferCleanup = null; }
@@ -6805,7 +5872,7 @@ window.convertSbtToBot = convertSbtToBot;
 
             // Clear all displayed data
             const wb = document.getElementById('walletBalanceDisplay');
-            if (wb) wb.innerHTML = `0.0000 <span class="text-xs text-zinc-500">$` + (window.CURRENT_TOKEN === 'ACE' ? 'ACE' : 'BOT') + `</span>`;
+            if (wb) wb.innerHTML = `0.0000 <span class="text-xs text-zinc-500">$BOT</span>`;
             const am = document.getElementById('availableBalanceMain');
             if (am) am.textContent = '0.0000';
             const ac = document.getElementById('availableBalanceCrypto');
@@ -6832,10 +5899,7 @@ window.convertSbtToBot = convertSbtToBot;
             if (sbtContainer) sbtContainer.innerHTML = '<div class="text-center text-zinc-500 text-xs py-8">No Soulbound Gifts yet</div>';
 
             // Mark as explicitly disconnected so we don't auto-reconnect
-            // Only when fully disconnecting, NOT when switching tokens
-            if (!skipTokenReset) {
-                try { sessionStorage.setItem('web3gift_explicit_disconnect', 'true'); } catch (e) {}
-            }
+            try { sessionStorage.setItem('web3gift_explicit_disconnect', 'true'); } catch (e) {}
         };
 
         window.copyAddress = function() {
@@ -6846,28 +5910,21 @@ window.convertSbtToBot = convertSbtToBot;
         };
 
         window.viewOnExplorer = function() {
-            var addr = window.CURRENT_TOKEN === 'ACE' && window.solanaPublicKey ? window.solanaPublicKey.toString() : (realWalletAddress || walletAddress);
-            if (addr) window.open(getExplorerUrl('address', addr), '_blank');
+            const addr = realWalletAddress || walletAddress;
+            const url = addr ? `https://scan.botchain.ai/address/${addr}` : `https://scan.botchain.ai`;
+            window.open(url, '_blank');
             els.walletDropdown.classList.remove('show');
         };
 
         async function updateRealBalance() {
-            if (window.CURRENT_TOKEN === 'ACE') {
-                await updateAllBalances();
-                return;
-            }
             if (!systemProvider || !realWalletAddress) return;
-            // Guard: skip if MetaMask not connected or on wrong chain
-            try {
-                if (!window.ethereum || !window.ethereum.isConnected || !window.ethereum.selectedAddress) return;
-            } catch (e) {}
             try {
                 const bal = await systemProvider.getBalance(realWalletAddress);
                 const formatted = ethers.formatEther(bal);
                 const num = parseFloat(formatted);
 
                 const wb = document.getElementById('walletBalanceDisplay');
-                if (wb) wb.innerHTML = `${num.toFixed(4)} <span class="text-xs text-zinc-500">${window.CURRENT_TOKEN === 'ACE' ? '$ACE' : '$BOT'}</span>`;
+                if (wb) wb.innerHTML = `${num.toFixed(4)} <span class="text-xs text-zinc-500">$BOT</span>`;
                 const am = document.getElementById('availableBalanceMain');
                 if (am) am.textContent = num.toFixed(4);
                 const ac = document.getElementById('availableBalanceCrypto');
@@ -6878,14 +5935,6 @@ window.convertSbtToBot = convertSbtToBot;
         }
 
         async function estimateNetworkFee() {
-            if (window.CURRENT_TOKEN === 'ACE') {
-                const feeStr = '~0.000005 SOL (~$0.001)';
-                const fm = document.getElementById('networkFeeMain');
-                const fc = document.getElementById('networkFeeCrypto');
-                if (fm) fm.textContent = feeStr;
-                if (fc) fc.textContent = feeStr;
-                return;
-            }
             if (!sbtContractInstance || !systemProvider) return;
             try {
                 const recipient = (els.recipientInput.value || els.cryptoRecipientInput.value || '0x0000000000000000000000000000000000000000').trim();
@@ -6893,11 +5942,7 @@ window.convertSbtToBot = convertSbtToBot;
                 const message = (els.messageInput.value || els.cryptoMessageInput.value || '').trim();
                 const amount = (els.amountInput.value || els.cryptoAmountInput.value || '0').trim();
 
-                if (window.CURRENT_TOKEN === 'ACE') {
-                    if (!isValidSolanaAddress(recipient)) return;
-                } else {
-                    if (!recipient.startsWith('0x') || recipient.length !== 42) return;
-                }
+                if (!recipient.startsWith('0x') || recipient.length !== 42) return;
                 if (!amount || parseFloat(amount) <= 0) return;
 
                 const gasLimit = await sbtContractInstance.mintSoulboundGift.estimateGas(recipient, 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxIiBoZWlnaHQ9IjEiLz4=', message, {
@@ -6925,12 +5970,8 @@ window.convertSbtToBot = convertSbtToBot;
             });
         });
 
-        window.setMaxAmount = async function() {
-            if (window.CURRENT_TOKEN === 'ACE' && window.solanaPublicKey) {
-                const bal = await getTokenBalanceSolana(window.ACE_TOKEN.mint, window.solanaPublicKey.toString());
-                els.amountInput.value = bal.uiAmount.toString();
-                updateForm();
-            } else if (systemProvider && realWalletAddress) {
+        window.setMaxAmount = function() {
+            if (systemProvider && realWalletAddress) {
                 systemProvider.getBalance(realWalletAddress).then(bal => {
                     const formatted = ethers.formatEther(bal);
                     els.amountInput.value = parseFloat(formatted).toString();
@@ -6943,13 +5984,8 @@ window.convertSbtToBot = convertSbtToBot;
             }
         };
 
-        window.setCryptoMaxAmount = async function() {
-            if (window.CURRENT_TOKEN === 'ACE' && window.solanaPublicKey) {
-                const bal = await getTokenBalanceSolana(window.ACE_TOKEN.mint, window.solanaPublicKey.toString());
-                els.cryptoAmountInput.value = bal.uiAmount.toString();
-                updateCryptoCardPreview();
-                validateCryptoForm();
-            } else if (systemProvider && realWalletAddress) {
+        window.setCryptoMaxAmount = function() {
+            if (systemProvider && realWalletAddress) {
                 systemProvider.getBalance(realWalletAddress).then(bal => {
                     const formatted = ethers.formatEther(bal);
                     els.cryptoAmountInput.value = parseFloat(formatted).toString();
@@ -7004,7 +6040,7 @@ window.convertSbtToBot = convertSbtToBot;
             }
             const metadata = {
                 name: theme.successIcon + ' ' + (giftTypes[style] ? giftTypes[style].title : 'Gift') + ' from ' + senderAddr.slice(0,6) + '...' + senderAddr.slice(-4),
-                description: message || 'A gift on BOT Chain Testnet',
+                description: message || 'A gift on BOT Chain Mainnet',
                 image: imageDataUrl,
                 external_url: window.location.origin,
                 attributes: [
@@ -7013,7 +6049,7 @@ window.convertSbtToBot = convertSbtToBot;
                     { trait_type: 'Sender', value: senderAddr },
                     { trait_type: 'Message', value: message || '' },
                     { trait_type: theme.traitName, value: theme.traitValue() },
-                    { trait_type: 'Chain', value: 'BOT Chain Testnet' }
+                    { trait_type: 'Chain', value: 'BOT Chain Mainnet' }
                 ]
             };
             const ipfsHash = await uploadMetadataToPinata(metadata);
@@ -7184,7 +6220,7 @@ window.convertSbtToBot = convertSbtToBot;
 
         async function claimGiftByTokenId(tokenId) {
             if (!sbtContractInstance) {
-                alert("Connect your wallet to BOT Chain Testnet first.");
+                alert("Connect your wallet to BOT Chain Mainnet first.");
                 return;
             }
             const modal = document.getElementById('giftClaimModal');
@@ -7391,25 +6427,20 @@ window.convertSbtToBot = convertSbtToBot;
             const amount = els.amountInput.value.trim();
             const message = els.messageInput.value.trim();
             const style = selectedGiftType || 'gift';
-            const isSolana = window.CURRENT_TOKEN === 'ACE';
 
-            if (!isValidAddressForChain(recipient, isSolana ? 'solana' : 'bot')) {
-                alert(isSolana ? "Invalid Solana address. Must be a valid base58 address." : "Invalid recipient address.");
+            if (!recipient.startsWith('0x') || recipient.length !== 42) {
+                alert("Invalid recipient address.");
                 return;
             }
             if (!amount || parseFloat(amount) <= 0) {
                 alert("Amount must be greater than 0.");
                 return;
             }
-            if (isSolana) {
-                if (!window.solanaPublicKey) { alert("Connect Phantom wallet first."); return; }
-                if (recipient === window.solanaPublicKey.toString()) { alert("You cannot send a gift to yourself."); return; }
-            } else {
-                if (!realWalletAddress) { alert("Connect MetaMask wallet first."); return; }
-                if (recipient.toLowerCase() === realWalletAddress.toLowerCase()) { alert("You cannot send a gift to yourself."); return; }
+            if (recipient.toLowerCase() === realWalletAddress.toLowerCase()) {
+                alert("You cannot send a gift to yourself.");
+                return;
             }
-            if (isSolana && !window.solanaWallet) { alert("Solana wallet not connected."); return; }
-            if (!isSolana && !sbtContractInstance) { alert("SBT contract not initialized. Please reconnect wallet."); return; }
+            if (!sbtContractInstance) { alert("SBT contract not initialized. Please reconnect wallet."); return; }
 
             const btn = els.sendFinalBtn;
             btn.disabled = true;
@@ -7419,90 +6450,51 @@ window.convertSbtToBot = convertSbtToBot;
             try {
                 const giftId = 'gift_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
 
-                if (isSolana) {
-                    // === SOLANA SPL TOKEN TRANSFER ===
-                    els.finalBtnText.textContent = 'Checking balances...';
-                    const connection = getSolanaConnection();
-                    const mint = new solanaWeb3.PublicKey(window.ACE_TOKEN.mint);
-                    const senderPub = window.solanaPublicKey;
-                    const recipientPub = new solanaWeb3.PublicKey(recipient);
-                    const amountRaw = Math.floor(parseFloat(amount) * Math.pow(10, window.ACE_TOKEN.decimals));
+                els.finalBtnText.textContent = 'Uploading to IPFS...';
+                const tokenURIHash = await createGiftMetadata(realWalletAddress, style, message, amount, sbtUploadedImageData);
+                const tokenURI = 'ipfs://' + tokenURIHash;
 
-                    // Check SOL balance for gas + potential ATA rent
-                    const solBal = await connection.getBalance(senderPub);
-                    const solNeeded = 0.003 * solanaWeb3.LAMPORTS_PER_SOL;
-                    if (solBal < solNeeded) {
-                        const solHave = (solBal / solanaWeb3.LAMPORTS_PER_SOL).toFixed(4);
-                        alert('Insufficient SOL for gas!\n\nYou have: ' + solHave + ' SOL\nYou need: ~0.003 SOL\n\nPlease fund your wallet with more SOL and try again.');
-                        btn.disabled = false;
-                        els.finalBtnText.textContent = 'Send Gift';
-                        els.finalBtnIcon.textContent = '🎁';
-                        return;
-                    }
+                els.finalBtnText.textContent = 'Minting NFT...';
+                const amountWei = ethers.parseEther(amount);
+                const tx = await sbtContractInstance.mintSoulboundGift(recipient, tokenURI, message, { value: amountWei });
 
-                    els.finalBtnText.textContent = 'Preparing SPL transfer...';
+                els.finalBtnText.textContent = 'Confirming...';
+                const receipt = await tx.wait();
 
-                    // Get or create ATAs
-                    const senderATA = getAssociatedTokenAddress(mint, senderPub);
-                    const recipientATA = getAssociatedTokenAddress(mint, recipientPub);
-
-                    const tx = new solanaWeb3.Transaction();
-
-                    // Check if recipient ATA exists
-                    var recipientATAInfo = null;
-                    try { recipientATAInfo = await connection.getAccountInfo(recipientATA); } catch(e) {}
-                    if (!recipientATAInfo) {
-                        // Create ATA for recipient
-                        tx.add(createAssociatedTokenAccountInstruction(senderPub, mint, recipientPub, recipientATA));
-                    }
-
-                    // Add transfer instruction
-                    tx.add(createSplTransferInstruction(senderATA, recipientATA, senderPub, amountRaw));
-
-                    // Get recent blockhash
-                    const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
-                    tx.recentBlockhash = blockhash;
-                    tx.feePayer = senderPub;
-
-                    els.finalBtnText.textContent = 'Approve in Phantom...';
-                    const signedTx = await window.solanaWallet.signTransaction(tx);
-                    const rawTx = signedTx.serialize();
-
-                    els.finalBtnText.textContent = 'Sending...';
-                    const txHash = await connection.sendRawTransaction(rawTx, { skipPreflight: false, maxRetries: 5, preflightCommitment: 'processed' });
-
-                    els.finalBtnText.textContent = 'Confirming...';
-                    var giftConfirmResult = await confirmSolanaTx(txHash, blockhash, lastValidBlockHeight, els.finalBtnText, 'Confirming');
-                    if (!giftConfirmResult.confirmed) {
-                        console.warn('[GIFT-SOL] TX unconfirmed, checking status... Solscan:', txHash);
+                if (receipt.status === 1) {
+                    let mintedTokenId = '---';
+                    const event = receipt.logs.find(log => {
+                        try { const parsed = sbtContractInstance.interface.parseLog(log); return parsed && parsed.name === "SoulboundGiftMinted"; } catch (e) { return false; }
+                    });
+                    if (event) {
+                        const parsed = sbtContractInstance.interface.parseLog(event);
+                        mintedTokenId = parsed.args.tokenId.toString();
                     }
 
                     addGift({
                         id: giftId,
-                        sender: senderPub.toString(),
-                        senderName: (document.getElementById('senderNameInput') && document.getElementById('senderNameInput').value.trim()) || (document.getElementById('cryptoSenderNameInput') && document.getElementById('cryptoSenderNameInput').value.trim()) || senderPub.toString().slice(0, 4) + '...' + senderPub.toString().slice(-4),
+                        sender: realWalletAddress,
+                        senderName: (document.getElementById('senderNameInput') && document.getElementById('senderNameInput').value.trim()) || (document.getElementById('cryptoSenderNameInput') && document.getElementById('cryptoSenderNameInput').value.trim()) || realWalletAddress.slice(0,6) + '...' + realWalletAddress.slice(-4),
                         recipient: recipient,
                         amount: parseFloat(amount).toString(),
                         style: style,
                         message: message,
-                        tokenId: 'spl-' + txHash.slice(0, 8),
-                        txHash: txHash,
+                        tokenId: mintedTokenId,
+                        txHash: tx.hash,
                         timestamp: Date.now(),
-                        claimed: false,
-                        chain: 'solana',
-                        token_symbol: 'ACE'
+                        claimed: false
                     });
 
-                    els.txHash.textContent = txHash;
-                    els.successAmount.textContent = amount + ' $ACE';
+                    els.txHash.textContent = tx.hash;
+                    els.successAmount.textContent = amount + ' $BOT';
                     const theme = getGiftTheme(style);
-                    const claimUrl = window.location.origin + window.location.pathname + '?gift=' + txHash;
+                    const claimUrl = window.location.origin + window.location.pathname + '?gift=' + mintedTokenId;
                     const claimLinkInput = document.getElementById('claimLinkInput');
                     if (claimLinkInput) { claimLinkInput.value = claimUrl; }
                     const copyBtn = document.getElementById('copyClaimLinkBtn');
-                    if (copyBtn) { copyBtn.onclick = () => { navigator.clipboard.writeText(claimUrl).then(() => { copyBtn.textContent = 'Copied!'; setTimeout(() => { copyBtn.textContent = 'Copy'; }, 2000); }).catch(() => { claimLinkInput.select(); document.execCommand('copy'); }); }; }
-                    const shareBtn2 = document.getElementById('shareClaimLinkBtn');
-                    if (shareBtn2) { shareBtn2.onclick = () => { if (navigator.share) { navigator.share({ title: theme.successIcon + ' Gift for you!', text: 'You received ' + amount + ' $ACE as a gift!', url: claimUrl }); } else { navigator.clipboard.writeText(claimUrl); } }; }
+                    if (copyBtn) { copyBtn.onclick = () => { navigator.clipboard.writeText(claimUrl).then(() => { copyBtn.textContent = 'Copied!'; setTimeout(() => { copyBtn.textContent = 'Copy'; }, 2000); }).catch(() => { claimLinkInput.select(); document.execCommand('copy'); copyBtn.textContent = 'Copied!'; setTimeout(() => { copyBtn.textContent = 'Copy'; }, 2000); }); }; }
+                    const shareBtn = document.getElementById('shareClaimLinkBtn');
+                    if (shareBtn) { shareBtn.onclick = () => { if (navigator.share) { navigator.share({ title: theme.successIcon + ' Gift for you!', text: 'You received ' + amount + ' $BOT as a gift! Click to claim:', url: claimUrl }); } else { navigator.clipboard.writeText(claimUrl).then(() => { shareBtn.textContent = 'Copied!'; setTimeout(() => { shareBtn.textContent = 'Share'; }, 2000); }); } }; }
                     const shareSection = document.getElementById('giftShareSection');
                     if (shareSection) shareSection.classList.remove('hidden');
                     els.confettiContainer.innerHTML = '';
@@ -7517,77 +6509,12 @@ window.convertSbtToBot = convertSbtToBot;
                         els.confettiContainer.appendChild(c);
                     }
                     els.successOverlay.classList.remove('hidden');
-                    await updateAllBalances();
+
+                    await updateRealBalance();
+                    grantGasToRecipient(recipient);
+                    if (typeof loadOnChainHistory === 'function') await loadOnChainHistory();
                 } else {
-                    // === BOT CHAIN NFT MINT (existing) ===
-                    els.finalBtnText.textContent = 'Creating NFT metadata...';
-                    const tokenURIHash = await createGiftMetadata(realWalletAddress, style, message, amount, sbtUploadedImageData);
-                    const tokenURI = 'ipfs://' + tokenURIHash;
-
-                    els.finalBtnText.textContent = 'Minting NFT...';
-                    const amountWei = ethers.parseEther(amount);
-                    const tx = await sbtContractInstance.mintSoulboundGift(recipient, tokenURI, message, { value: amountWei });
-
-                    els.finalBtnText.textContent = 'Confirming...';
-                    const receipt = await tx.wait();
-
-                    if (receipt.status === 1) {
-                        let mintedTokenId = '---';
-                        const event = receipt.logs.find(log => {
-                            try { const parsed = sbtContractInstance.interface.parseLog(log); return parsed && parsed.name === "SoulboundGiftMinted"; } catch (e) { return false; }
-                        });
-                        if (event) {
-                            const parsed = sbtContractInstance.interface.parseLog(event);
-                            mintedTokenId = parsed.args.tokenId.toString();
-                        }
-
-                        addGift({
-                            id: giftId,
-                            sender: realWalletAddress,
-                            senderName: (document.getElementById('senderNameInput') && document.getElementById('senderNameInput').value.trim()) || (document.getElementById('cryptoSenderNameInput') && document.getElementById('cryptoSenderNameInput').value.trim()) || realWalletAddress.slice(0,6) + '...' + realWalletAddress.slice(-4),
-                            recipient: recipient,
-                            amount: parseFloat(amount).toString(),
-                            style: style,
-                            message: message,
-                            tokenId: mintedTokenId,
-                            txHash: tx.hash,
-                            timestamp: Date.now(),
-                            claimed: false,
-                            chain: 'bot',
-                            token_symbol: 'BOT'
-                        });
-
-                        els.txHash.textContent = tx.hash;
-                        els.successAmount.textContent = amount + ' $' + (window.CURRENT_TOKEN || 'BOT');
-                        const theme = getGiftTheme(style);
-                        const claimUrl = window.location.origin + window.location.pathname + '?gift=' + mintedTokenId;
-                        const claimLinkInput2 = document.getElementById('claimLinkInput');
-                        if (claimLinkInput2) { claimLinkInput2.value = claimUrl; }
-                        const copyBtn2 = document.getElementById('copyClaimLinkBtn');
-                        if (copyBtn2) { copyBtn2.onclick = () => { navigator.clipboard.writeText(claimUrl).then(() => { copyBtn2.textContent = 'Copied!'; setTimeout(() => { copyBtn2.textContent = 'Copy'; }, 2000); }).catch(() => { claimLinkInput2.select(); document.execCommand('copy'); copyBtn2.textContent = 'Copied!'; setTimeout(() => { copyBtn2.textContent = 'Copy'; }, 2000); }); }; }
-                        const shareBtn3 = document.getElementById('shareClaimLinkBtn');
-                        if (shareBtn3) { shareBtn3.onclick = () => { if (navigator.share) { navigator.share({ title: theme.successIcon + ' Gift for you!', text: 'You received ' + amount + ' $' + (window.CURRENT_TOKEN || 'BOT') + ' as a gift! Click to claim:', url: claimUrl }); } else { navigator.clipboard.writeText(claimUrl).then(() => { shareBtn3.textContent = 'Copied!'; setTimeout(() => { shareBtn3.textContent = 'Share'; }, 2000); }); } }; }
-                        const shareSection2 = document.getElementById('giftShareSection');
-                        if (shareSection2) shareSection2.classList.remove('hidden');
-                        els.confettiContainer.innerHTML = '';
-                        for (let i = 0; i < 30; i++) {
-                            const c = document.createElement('div');
-                            c.className = 'confetti-piece confetti-fall';
-                            c.style.left = Math.random() * 100 + '%';
-                            c.style.animationDelay = Math.random() * 0.5 + 's';
-                            c.style.backgroundColor = theme.confetti[Math.floor(Math.random()*theme.confetti.length)];
-                            c.style.width = (Math.random() * 8 + 4) + 'px';
-                            c.style.height = (Math.random() * 8 + 4) + 'px';
-                            els.confettiContainer.appendChild(c);
-                        }
-                        els.successOverlay.classList.remove('hidden');
-
-                        await updateRealBalance();
-                        grantGasToRecipient(recipient);
-                        if (typeof loadOnChainHistory === 'function') await loadOnChainHistory();
-                    } else {
-                        alert("Transaction failed on-chain.");
-                    }
+                    alert("Transaction failed on-chain.");
                 }
             } catch (err) {
                 console.error("Tx failed:", err);
@@ -7636,12 +6563,12 @@ window.convertSbtToBot = convertSbtToBot;
                                 <span class="hist-tag">SENT</span>
                             </div>
                             <div style="font-size:11px;color:#71717a;margin-bottom:2px;">${style}${msg ? ' • ' + msg.slice(0,22) + (msg.length>22?'...':'') : ''}</div>
-                            <a href="${getExplorerUrl('tx', hash, window.CURRENT_TOKEN)}" target="_blank" style="font-size:10px;color:#10b981;text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">View Tx →</a>
+                            <a href="https://scan.botchain.ai/tx/${hash}" target="_blank" style="font-size:10px;color:#10b981;text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">View Tx →</a>
                         </div>
                     </div>
                     <div style="text-align:right;flex-shrink:0;">
                         <div class="hist-amount">-${parseFloat(amount).toFixed(4)}</div>
-                        <div style="font-size:10px;color:#71717a;">${window.CURRENT_TOKEN === 'ACE' ? '$ACE' : '$BOT'}</div>
+                        <div style="font-size:10px;color:#71717a;">$BOT</div>
                     </div>
                 </div>
             `;
@@ -7678,7 +6605,7 @@ window.convertSbtToBot = convertSbtToBot;
                     </div>
                     <div class="relative z-10 flex gap-3 max-w-xs mx-auto">
                         <button id="redeemSuccessCloseBtn" class="flex-1 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 py-3 rounded-xl font-medium text-xs transition cursor-pointer hover:scale-[1.02]">Awesome!</button>
-                        <a href="https://scan.bohr.life/tx/${hash}" target="_blank" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl font-medium text-xs transition cursor-pointer hover:scale-[1.02] flex items-center justify-center gap-1">
+                        <a href="https://scan.botchain.ai/tx/${hash}" target="_blank" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl font-medium text-xs transition cursor-pointer hover:scale-[1.02] flex items-center justify-center gap-1">
                             <span>View Tx</span>
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                         </a>
@@ -7785,17 +6712,7 @@ window.convertSbtToBot = convertSbtToBot;
             grid.querySelectorAll('.history-gift-card').forEach(r => r.remove());
             if (emptyState) emptyState.style.display = 'none';
 
-            if (!systemProvider && !window.solanaPublicKey) {
-                if (emptyState) { emptyState.style.display = 'flex'; }
-                if (pendingCountEl) pendingCountEl.textContent = '0';
-                if (sentCountEl) sentCountEl.textContent = '0';
-                if (claimedCountEl) claimedCountEl.textContent = '0';
-                return;
-            }
-
-            // Guard: need a wallet address to query history
-            const histAddr = realWalletAddress || (window.solanaPublicKey ? window.solanaPublicKey.toString() : null);
-            if (!histAddr) {
+            if (!systemProvider || !realWalletAddress) {
                 if (emptyState) { emptyState.style.display = 'flex'; }
                 if (pendingCountEl) pendingCountEl.textContent = '0';
                 if (sentCountEl) sentCountEl.textContent = '0';
@@ -7866,7 +6783,7 @@ window.convertSbtToBot = convertSbtToBot;
             let onChainSentGifts = [];
             let onChainTokenIds = new Set();
             try {
-                const sbtAddr = window.SBT_CONTRACT_ADDRESS || '0x740e1ce98364EfF4d5e3d89b2b1fa513e0F75b16';
+                const sbtAddr = window.SBT_CONTRACT_ADDRESS || '0x29F624c97FF1623697592EEe5c63Eb657A2DC9F3';
                 const sbtAbi = window.SBT_CONTRACT_ABI;
                 if (sbtAddr && sbtAbi && systemProvider) {
                     const sbtRead = new ethers.Contract(sbtAddr, sbtAbi, systemProvider);
@@ -7969,41 +6886,18 @@ window.convertSbtToBot = convertSbtToBot;
                             }
 
                             // Add to received array if this recipient matches
-                            if (evts.some(e => e.args.recipient.toLowerCase() === histAddr.toLowerCase())) {
-                                onChainReceivedGifts.push({ id:'ocr_'+tid, sender, recipient:histAddr, senderName:shortAddr(sender), amount, style, message, image, tokenId:tid, txHash:primaryEvt.transactionHash, timestamp, claimed:isClaimed, unlockTime:unlockTime || undefined, source:'onchain' });
+                            if (evts.some(e => e.args.recipient.toLowerCase() === realWalletAddress.toLowerCase())) {
+                                onChainReceivedGifts.push({ id:'ocr_'+tid, sender, recipient:realWalletAddress, senderName:shortAddr(sender), amount, style, message, image, tokenId:tid, txHash:primaryEvt.transactionHash, timestamp, claimed:isClaimed, unlockTime:unlockTime || undefined, source:'onchain' });
                             }
                             // Add to sent array if this sender matches
-                            if (evts.some(e => e.args.sender.toLowerCase() === histAddr.toLowerCase())) {
-                                onChainSentGifts.push({ id:'ocs_'+tid, sender:histAddr, recipient, senderName:shortAddr(histAddr), amount, style, message, image, tokenId:tid, txHash:primaryEvt.transactionHash, timestamp, claimed:isClaimed, unlockTime:unlockTime || undefined, source:'onchain' });
+                            if (evts.some(e => e.args.sender.toLowerCase() === realWalletAddress.toLowerCase())) {
+                                onChainSentGifts.push({ id:'ocs_'+tid, sender:realWalletAddress, recipient, senderName:shortAddr(realWalletAddress), amount, style, message, image, tokenId:tid, txHash:primaryEvt.transactionHash, timestamp, claimed:isClaimed, unlockTime:unlockTime || undefined, source:'onchain' });
                             }
                             onChainTokenIds.add(tid);
                         }
                     }
                 }
             } catch (e) { console.error('[History] SBT event query failed:', e.message || e); }
-
-            // ===== QUERY SUPABASE FOR SOLANA SECRET GIFTS =====
-            let sgSentGifts = [];
-            let sgReceivedGifts = [];
-            try {
-                const currentAddr = window.solanaPublicKey ? window.solanaPublicKey.toString() : (realWalletAddress || '');
-                if (currentAddr && window.sgDB) {
-                    const [sentRes, recvRes] = await Promise.all([
-                        window.sgDB.from('secret_gifts').select('*').eq('sender', currentAddr).order('created_at', { ascending: false }).limit(50),
-                        window.sgDB.from('secret_gifts').select('*').eq('recipient', currentAddr).order('created_at', { ascending: false }).limit(50)
-                    ]);
-                    if (sentRes.data) sgSentGifts = sentRes.data;
-                    if (recvRes.data) sgReceivedGifts = recvRes.data;
-                    // Also check claimed_by for received
-                    const claimedRes = await window.sgDB.from('secret_gifts').select('*').eq('claimed_by', currentAddr).order('claimed_at', { ascending: false }).limit(50);
-                    if (claimedRes.data) {
-                        claimedRes.data.forEach(g => {
-                            if (!sgReceivedGifts.find(r => r.code === g.code)) sgReceivedGifts.push(g);
-                        });
-                    }
-                    console.log('[History] Solana SG gifts: sent=' + sgSentGifts.length + ' received=' + sgReceivedGifts.length);
-                }
-            } catch (e) { console.error('[History] Solana SG query failed:', e.message || e); }
 
             // Merge localStorage with on-chain data
             const localSent = getGiftsSentBy(realWalletAddress);
@@ -8057,57 +6951,6 @@ window.convertSbtToBot = convertSbtToBot;
             const stillPending = localPending.filter(g => !g.claimed);
             localPending.length = 0;
             stillPending.forEach(g => localPending.push(g));
-
-            // ===== MERGE SOLANA SECRET GIFTS INTO HISTORY =====
-            sgSentGifts.forEach(g => {
-                const ts = g.created_at ? new Date(g.created_at).getTime() : Date.now();
-                const isClaimed = g.claimed === true;
-                const amountStr = parseFloat(g.amount || 0).toFixed(2);
-                localSent.push({
-                    id: 'sgs_' + g.code,
-                    sender: g.sender || '',
-                    recipient: g.recipient || '',
-                    senderName: g.sender_name || shortAddr(g.sender),
-                    amount: amountStr,
-                    style: 'secretGift',
-                    message: g.message || '',
-                    image: g.image_url || '',
-                    tokenId: '',
-                    txHash: '',
-                    timestamp: ts,
-                    claimed: isClaimed,
-                    chain: 'solana',
-                    tokenSymbol: 'ACE',
-                    source: 'supabase'
-                });
-            });
-            sgReceivedGifts.forEach(g => {
-                const ts = g.created_at ? new Date(g.created_at).getTime() : Date.now();
-                const isClaimed = g.claimed === true;
-                const amountStr = parseFloat(g.amount || 0).toFixed(2);
-                const entry = {
-                    id: 'sgr_' + g.code,
-                    sender: g.sender || '',
-                    recipient: g.recipient || g.claimed_by || '',
-                    senderName: g.sender_name || shortAddr(g.sender),
-                    amount: amountStr,
-                    style: 'secretGift',
-                    message: g.message || '',
-                    image: g.image_url || '',
-                    tokenId: '',
-                    txHash: '',
-                    timestamp: ts,
-                    claimed: isClaimed,
-                    chain: 'solana',
-                    tokenSymbol: 'ACE',
-                    source: 'supabase'
-                };
-                if (isClaimed) {
-                    localClaimed.push(entry);
-                } else {
-                    localPending.push(entry);
-                }
-            });
 
             const lockData = JSON.parse(localStorage.getItem('web3gift_timelocks') || '[]');
 
@@ -8175,14 +7018,14 @@ window.convertSbtToBot = convertSbtToBot;
                                     <div style="font-size:10px;color:#71717a;margin-bottom:2px;">Sent ${timeAgo(gift.timestamp * (gift.timestamp < 1e12 ? 1000 : 1))}</div>
                                     ${gift.message ? '<div style="font-size:11px;color:#d4d4d8;font-style:italic;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:4px;padding:6px 10px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid rgba(255,255,255,0.05);">"' + gift.message.slice(0,60) + (gift.message.length>60?'...':'') + '"</div>' : ''}
                                     ${extraInfo}
-                                    ${gift.txHash ? '<a href="' + getExplorerUrl('tx', gift.txHash, gift.chain || 'BOT') + '" target="_blank" style="font-size:10px;color:#10b981;text-decoration:none;margin-top:3px;display:inline-block;">View Tx →</a>' : ''}
+                                    ${gift.txHash ? '<a href="https://scan.botchain.ai/tx/' + gift.txHash + '" target="_blank" style="font-size:10px;color:#10b981;text-decoration:none;margin-top:3px;display:inline-block;">View Tx →</a>' : ''}
                                     ${gift.tokenId && gift.tokenId !== '---' ? '<div style="font-size:10px;color:#52525b;font-family:monospace;margin-top:3px;">Token #' + gift.tokenId + '</div>' : ''}
                                     ${makeClaimLink(gift.tokenId, true)}
                                 </div>
                             </div>
                             <div data-action-wrap style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0;">
                                 <div class="hist-amount">${parseFloat(gift.amount).toFixed(4)}</div>
-                                <div style="font-size:10px;color:#71717a;">${gift.chain === 'solana' ? '$ACE' : '$BOT'}</div>
+                                <div style="font-size:10px;color:#71717a;">$BOT</div>
                                 ${actionHtml}
                             </div>
                         </div>
@@ -8221,13 +7064,13 @@ window.convertSbtToBot = convertSbtToBot;
                                     ${gift.message ? '<div style="font-size:11px;color:#d4d4d8;font-style:italic;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:4px;padding:6px 10px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid rgba(255,255,255,0.05);">"' + gift.message.slice(0,60) + (gift.message.length>60?'...':'') + '"</div>' : ''}
                                     ${gift.tokenId ? '<div style="font-size:10px;color:#52525b;font-family:monospace;margin-top:3px;">Token #' + gift.tokenId + '</div>' : ''}
                                     ${sentExtra}
-                                    ${gift.txHash ? '<a href="' + getExplorerUrl('tx', gift.txHash, gift.chain || 'BOT') + '" target="_blank" style="font-size:10px;color:#10b981;text-decoration:none;margin-top:3px;display:inline-block;">View Tx →</a>' : ''}
+                                    ${gift.txHash ? '<a href="https://scan.botchain.ai/tx/' + gift.txHash + '" target="_blank" style="font-size:10px;color:#10b981;text-decoration:none;margin-top:3px;display:inline-block;">View Tx →</a>' : ''}
                                     ${makeClaimLink(gift.tokenId, !isClaimed)}
                                 </div>
                             </div>
                             <div style="text-align:right;flex-shrink:0;">
                                 <div class="hist-amount">-${parseFloat(gift.amount).toFixed(4)}</div>
-                                <div style="font-size:10px;color:#71717a;">${gift.chain === 'solana' ? '$ACE' : '$BOT'}</div>
+                                <div style="font-size:10px;color:#71717a;">$BOT</div>
                             </div>
                         </div>
                     `);
@@ -8250,13 +7093,13 @@ window.convertSbtToBot = convertSbtToBot;
                                     </div>
                                     <div style="font-size:12px;color:#a1a1aa;margin-bottom:2px;font-weight:500;text-transform:capitalize;">${gift.style || 'Gift'} • ${timeAgo(gift.timestamp * (gift.timestamp < 1e12 ? 1000 : 1))}</div>
                                     ${gift.message ? '<div style="font-size:11px;color:#a1a1aa;font-style:italic;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:4px;padding:6px 10px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid rgba(255,255,255,0.05);">"' + gift.message.slice(0,60) + (gift.message.length>60?'...':'') + '"</div>' : ''}
-                                    ${gift.txHash ? '<a href="' + getExplorerUrl('tx', gift.txHash, gift.chain || 'BOT') + '" target="_blank" style="font-size:10px;color:#10b981;text-decoration:none;margin-top:3px;display:inline-block;">View Tx →</a>' : ''}
+                                    ${gift.txHash ? '<a href="https://scan.botchain.ai/tx/' + gift.txHash + '" target="_blank" style="font-size:10px;color:#10b981;text-decoration:none;margin-top:3px;display:inline-block;">View Tx →</a>' : ''}
                                     ${makeClaimLink(gift.tokenId, false)}
                                 </div>
                             </div>
                             <div style="text-align:right;flex-shrink:0;">
                                 <div class="hist-amount">+${parseFloat(gift.amount).toFixed(4)}</div>
-                                <div style="font-size:10px;color:#71717a;">${gift.chain === 'solana' ? '$ACE' : '$BOT'} claimed</div>
+                                <div style="font-size:10px;color:#71717a;">$BOT claimed</div>
                             </div>
                         </div>
                     `);
@@ -8310,7 +7153,7 @@ window.convertSbtToBot = convertSbtToBot;
                         if (actionWrap) {
                             const tokenId = el.dataset.tokenId;
                             if (tokenId) {
-                                actionWrap.innerHTML = '<div class="hist-amount">' + (card.querySelector('.hist-amount') ? card.querySelector('.hist-amount').textContent : '') + '</div><div style="font-size:10px;color:#71717a;">' + (window.CURRENT_TOKEN === 'ACE' ? '$ACE' : '$BOT') + '</div><button onclick="claimGiftByTokenId(' + tokenId + ')" class="hist-claim-btn">Claim Now 🎉</button>';
+                                actionWrap.innerHTML = '<div class="hist-amount">' + (card.querySelector('.hist-amount') ? card.querySelector('.hist-amount').textContent : '') + '</div><div style="font-size:10px;color:#71717a;">$BOT</div><button onclick="claimGiftByTokenId(' + tokenId + ')" class="hist-claim-btn">Claim Now 🎉</button>';
                             }
                         }
                         el.textContent = '🔓 Unlocked!';
@@ -8369,9 +7212,6 @@ window.convertSbtToBot = convertSbtToBot;
 
         window.addEventListener('load', () => {
             setTimeout(async () => {
-                // MAINNET SAFETY: Recover any pending Solana secret gifts from previous timeout
-                try { await recoverPendingSolanaTxs(); } catch (e) { console.warn('[RECOVER] Recovery check failed:', e.message); }
-
                 // Check if coming back from MetaMask mobile deep link
                 let mmPending = false;
                 try { mmPending = sessionStorage.getItem('web3gift_mm_pending') === 'true'; } catch (e) {}
@@ -8410,8 +7250,7 @@ window.convertSbtToBot = convertSbtToBot;
                             'gift': els.navGiftBtn,
                             'special': els.navSpecialBtn,
                             'history': els.navHistoryBtn,
-                            'about': els.navAboutBtn,
-                            'roadmap': els.navRoadmapBtn
+                            'about': els.navAboutBtn
                         };
                         const btn = viewBtnMap[savedView];
                         if (btn) {
@@ -8420,8 +7259,7 @@ window.convertSbtToBot = convertSbtToBot;
                                 'gift': [els.giftView, 'gift'],
                                 'special': [els.specialGiftsView, 'special'],
                                 'history': [els.historyView, 'gift'],
-                                'about': [els.aboutView, 'about'],
-                                'roadmap': [els.roadmapView, 'about']
+                                'about': [els.aboutView, 'about']
                             };
                             const v = viewMap[savedView];
                             if (v) switchLayoutTab(btn, v[0], v[1]);
@@ -8649,7 +7487,7 @@ window.convertSbtToBot = convertSbtToBot;
 
         async function createGiveaway() {
             if (!isWalletConnected) { openWalletModal(); return; }
-            if (!systemProvider || !systemSigner) { alert("Connect wallet to BOT Chain Testnet first."); return; }
+            if (!systemProvider || !systemSigner) { alert("Connect wallet to BOT Chain Mainnet first."); return; }
 
             const amount = prompt('Enter BOT amount for the giveaway:');
             if (!amount || parseFloat(amount) <= 0) return;
@@ -8726,7 +7564,7 @@ window.convertSbtToBot = convertSbtToBot;
 
         async function claimGiveaway(code) {
             if (!isWalletConnected) { openWalletModal(); return; }
-            if (!systemProvider || !systemSigner) { alert("Connect wallet to BOT Chain Testnet first."); return; }
+            if (!systemProvider || !systemSigner) { alert("Connect wallet to BOT Chain Mainnet first."); return; }
 
             let data;
             try {
@@ -8786,7 +7624,7 @@ window.convertSbtToBot = convertSbtToBot;
                             '<p class="text-[10px] text-zinc-500 mb-1">Transaction Hash</p>' +
                             '<p class="text-xs text-zinc-300 font-mono truncate">' + tx.hash + '</p>' +
                         '</div>' +
-                        '<a href="https://scan.bohr.life/tx/' + tx.hash + '" target="_blank" class="text-[10px] text-emerald-400/80 hover:underline">View on Explorer →</a>' +
+                        '<a href="https://scan.botchain.ai/tx/' + tx.hash + '" target="_blank" class="text-[10px] text-emerald-400/80 hover:underline">View on Explorer →</a>' +
                         '<button id="giveawayClaimClose" class="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 py-3 rounded-xl font-bold text-sm transition cursor-pointer mt-2">Awesome!</button>' +
                     '</div>';
                     document.body.appendChild(overlay);
@@ -8908,21 +7746,13 @@ window.convertSbtToBot = convertSbtToBot;
             const claimCodeInput = document.getElementById('sgClaimCode');
             const claimCodeStatus = document.getElementById('sgClaimCodeStatus');
 
-            // Claim code availability check — debounced (500ms)
-            let sgCodeCheckTimer = null;
-            if (claimCodeInput) claimCodeInput.addEventListener('input', () => {
+            // Claim code availability check
+            if (claimCodeInput) claimCodeInput.addEventListener('input', async () => {
                 const val = claimCodeInput.value.trim().toUpperCase();
                 if (val.length < 3) { claimCodeStatus.textContent = 'A short code the receiver will enter to claim'; claimCodeStatus.className = 'text-[10px] text-zinc-500'; return; }
-                claimCodeStatus.textContent = 'Checking...';
-                claimCodeStatus.className = 'text-[10px] text-zinc-400';
-                clearTimeout(sgCodeCheckTimer);
-                sgCodeCheckTimer = setTimeout(async () => {
-                    try {
-                        const existing = await sgLookupGift(val);
-                        if (existing) { claimCodeStatus.textContent = '⚠️ This code is already taken!'; claimCodeStatus.className = 'text-[10px] text-red-400 font-medium'; }
-                        else { claimCodeStatus.textContent = '✅ Code is available!'; claimCodeStatus.className = 'text-[10px] text-emerald-400'; }
-                    } catch(e) { claimCodeStatus.textContent = 'Could not verify — proceed with caution'; claimCodeStatus.className = 'text-[10px] text-zinc-400'; }
-                }, 500);
+                const existing = await sgLookupGift(val);
+                if (existing) { claimCodeStatus.textContent = '⚠️ This code is already taken!'; claimCodeStatus.className = 'text-[10px] text-red-400 font-medium'; }
+                else { claimCodeStatus.textContent = '✅ Code is available!'; claimCodeStatus.className = 'text-[10px] text-emerald-400'; }
             });
 
             // === CHOICE PANEL HANDLERS ===
@@ -8971,9 +7801,7 @@ window.convertSbtToBot = convertSbtToBot;
                         redeemPreview.classList.remove('hidden');
                         var ri2 = document.getElementById('sgRedeemImage');
                         if (ri2 && gift.image_url) { ri2.src = gift.image_url; ri2.classList.remove('hidden'); } else if (ri2) { ri2.classList.add('hidden'); }
-                        var sgTokLabel = (gift.chain === 'solana') ? ' ACE' : ' BOT';
-                        var sgAmtDisp = (gift.chain === 'solana') ? parseFloat(gift.amount).toFixed(2) : parseFloat(gift.amount).toFixed(4);
-                        document.getElementById('sgRedeemAmount').textContent = sgAmtDisp + sgTokLabel;
+                        document.getElementById('sgRedeemAmount').textContent = parseFloat(gift.amount).toFixed(4) + ' BOT';
                         document.getElementById('sgRedeemMsg').textContent = '"' + (gift.message || 'A secret gift') + '"';
                         document.getElementById('sgRedeemSender').textContent = gift.sender_name || 'Anonymous';
                         redeemStatus.classList.add('hidden');
@@ -9012,108 +7840,35 @@ window.convertSbtToBot = convertSbtToBot;
                         } catch(e) {
                             throw new Error('Wrong claim code — could not decrypt vault.');
                         }
+                        if (!vaultPrivateKey || !vaultPrivateKey.startsWith('0x')) throw new Error('Invalid vault key.');
 
-                        const isSGSolana = gift.chain === 'solana';
+                        redeemStatus.textContent = 'Sweeping funds from vault...';
+                        const provider = systemProvider || new ethers.JsonRpcProvider('https://rpc.botchain.ai');
+                        const vaultWallet = new ethers.Wallet(vaultPrivateKey, provider);
+                        const vaultBalance = await provider.getBalance(vaultWallet.address);
+                        if (vaultBalance === 0n) throw new Error('Vault is empty — funds may have already been swept.');
 
-                        if (isSGSolana) {
-                            // === SOLANA VAULT SWEEP ===
-                            if (!window.solanaPublicKey) {
-                                redeemStatus.textContent = 'Connect Phantom to claim...';
-                                await connectPhantomWallet();
-                                if (!window.solanaPublicKey) throw new Error('Phantom wallet required to claim Solana gift.');
-                            }
+                        const feeData = await provider.getFeeData();
+                        const gasPrice = feeData.gasPrice || ethers.parseUnits('1', 'gwei');
+                        const gasLimit = 21000n;
+                        const gasCost = gasLimit * gasPrice;
+                        const sendable = vaultBalance - gasCost;
+                        if (sendable <= 0n) throw new Error('Vault balance too low to cover gas.');
 
-                            redeemStatus.textContent = 'Sweeping ACE from vault...';
-                            const connection = getSolanaConnection();
-                            const vaultSecretKey = Uint8Array.from(atob(vaultPrivateKey), c => c.charCodeAt(0));
-                            const vaultKeypair = solanaWeb3.Keypair.fromSecretKey(vaultSecretKey);
-                            const mint = new solanaWeb3.PublicKey(window.ACE_TOKEN.mint);
-                            const claimerPub = window.solanaPublicKey;
-                            const vaultPub = vaultKeypair.publicKey;
+                        const sweepTx = await vaultWallet.sendTransaction({ to: claimerAddress, value: sendable, gasLimit: gasLimit, gasPrice: gasPrice });
+                        console.log('[SG] Sweep tx sent:', sweepTx.hash);
+                        const sweepReceipt = await sweepTx.wait();
+                        console.log('[SG] Sweep confirmed in block:', sweepReceipt.blockNumber);
 
-                            const vaultATA = getAssociatedTokenAddress(mint, vaultPub);
-                            const claimerATA = getAssociatedTokenAddress(mint, claimerPub);
+                        redeemStatus.textContent = 'Marking as claimed...';
+                        await sgMarkClaimed(codeVal, claimerAddress);
+                        console.log('[SG] Marked as claimed in DB');
 
-                            // Check vault ATA balance
-                            let vaultBalance;
-                            try {
-                                vaultBalance = await connection.getTokenAccountBalance(vaultATA);
-                            } catch(e) {
-                                throw new Error('Vault is empty — funds may have already been swept.');
-                            }
-                            const balanceRaw = BigInt(vaultBalance.value.amount);
-                            if (balanceRaw === 0n) throw new Error('Vault is empty — funds may have already been swept.');
-
-                            const tx = new solanaWeb3.Transaction();
-
-                            // Check if claimer ATA exists
-                            var claimerATAInfo = null;
-                            try { claimerATAInfo = await connection.getAccountInfo(claimerATA); } catch (e) {}
-                            if (!claimerATAInfo || !claimerATAInfo.value) {
-                                tx.add(createAssociatedTokenAccountInstruction(claimerPub, mint, claimerPub, claimerATA));
-                            }
-
-                            // Transfer all ACE to claimer
-                            tx.add(createSplTransferInstruction(vaultATA, claimerATA, vaultKeypair.publicKey, balanceRaw));
-
-                            const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
-                            tx.recentBlockhash = blockhash;
-                            tx.feePayer = claimerPub;
-
-                            redeemStatus.textContent = 'Approve in Phantom...';
-                            const signedTx = await window.solanaWallet.signTransaction(tx);
-                            const sweepRawTx = signedTx.serialize();
-
-                            redeemStatus.textContent = 'Sending sweep...';
-                            const sweepHash = await connection.sendRawTransaction(sweepRawTx, { skipPreflight: false, maxRetries: 5, preflightCommitment: 'processed' });
-                            console.log('[SG-SOL] Sweep sent:', sweepHash);
-
-                            redeemStatus.textContent = 'Confirming sweep...';
-                            var sweepConfirmResult = await confirmSolanaTx(sweepHash, blockhash, lastValidBlockHeight, redeemStatus, 'Confirming sweep');
-                            if (!sweepConfirmResult.confirmed) {
-                                console.warn('[SG-SOL] Sweep unconfirmed, may need manual check. Tx:', sweepHash);
-                            }
-
-                            redeemStatus.textContent = 'Marking as claimed...';
-                            await sgMarkClaimed(codeVal, claimerPub.toString());
-
-                            document.getElementById('secretGiftRedeemPanel').classList.add('hidden');
-                            document.getElementById('secretGiftChoicePanel').classList.remove('hidden');
-                            await updateAllBalances();
-                            showSecretGiftClaimedPopup({ msg: gift.message, senderName: gift.sender_name, txHash: sweepHash, imageUrl: gift.image_url, chain: 'solana' }, gift.amount);
-
-                        } else {
-                            // === BOT CHAIN VAULT SWEEP (existing) ===
-                            if (!vaultPrivateKey || !vaultPrivateKey.startsWith('0x')) throw new Error('Invalid vault key.');
-
-                            redeemStatus.textContent = 'Sweeping funds from vault...';
-                            const provider = systemProvider || new ethers.JsonRpcProvider('https://rpc.bohr.life');
-                            const vaultWallet = new ethers.Wallet(vaultPrivateKey, provider);
-                            const vaultBalance = await provider.getBalance(vaultWallet.address);
-                            if (vaultBalance === 0n) throw new Error('Vault is empty — funds may have already been swept.');
-
-                            const feeData = await provider.getFeeData();
-                            const gasPrice = feeData.gasPrice || ethers.parseUnits('1', 'gwei');
-                            const gasLimit = 21000n;
-                            const gasCost = gasLimit * gasPrice;
-                            const sendable = vaultBalance - gasCost;
-                            if (sendable <= 0n) throw new Error('Vault balance too low to cover gas.');
-
-                            const sweepTx = await vaultWallet.sendTransaction({ to: claimerAddress, value: sendable, gasLimit: gasLimit, gasPrice: gasPrice });
-                            console.log('[SG] Sweep tx sent:', sweepTx.hash);
-                            const sweepReceipt = await sweepTx.wait();
-                            console.log('[SG] Sweep confirmed in block:', sweepReceipt.blockNumber);
-
-                            redeemStatus.textContent = 'Marking as claimed...';
-                            await sgMarkClaimed(codeVal, claimerAddress);
-                            console.log('[SG] Marked as claimed in DB');
-
-                            document.getElementById('secretGiftRedeemPanel').classList.add('hidden');
-                            document.getElementById('secretGiftChoicePanel').classList.remove('hidden');
-                            await updateRealBalance();
-                            console.log('[SG] Balance updated');
-                            showSecretGiftClaimedPopup({ msg: gift.message, senderName: gift.sender_name, txHash: sweepTx.hash, imageUrl: gift.image_url, chain: 'bot' }, gift.amount);
-                        }
+                        document.getElementById('secretGiftRedeemPanel').classList.add('hidden');
+                        document.getElementById('secretGiftChoicePanel').classList.remove('hidden');
+                        await updateRealBalance();
+                        console.log('[SG] Balance updated');
+                        showSecretGiftClaimedPopup({ msg: gift.message, senderName: gift.sender_name, txHash: sweepTx.hash, imageUrl: gift.image_url }, gift.amount);
                     } else {
                         redeemStatus.textContent = 'Open MetaMask to confirm...';
                         try {
@@ -9127,7 +7882,7 @@ window.convertSbtToBot = convertSbtToBot;
                         document.getElementById('secretGiftRedeemPanel').classList.add('hidden');
                         document.getElementById('secretGiftChoicePanel').classList.remove('hidden');
                         await updateRealBalance();
-                        showSecretGiftClaimedPopup({ msg: gift.message, senderName: gift.sender_name, txHash: gift.tx_hash || '', imageUrl: gift.image_url, chain: gift.chain || 'bot' }, gift.amount);
+                        showSecretGiftClaimedPopup({ msg: gift.message, senderName: gift.sender_name, txHash: gift.tx_hash || '', imageUrl: gift.image_url }, gift.amount);
                     }
                 } catch(err) {
                     console.error('[SG] Claim failed:', err);
@@ -9168,10 +7923,8 @@ window.convertSbtToBot = convertSbtToBot;
             }
 
             if (createBtn) createBtn.addEventListener('click', async () => {
-                const isSGSolana = window.CURRENT_TOKEN === 'ACE';
-                if (isSGSolana && !window.solanaPublicKey) { alert('Connect Phantom wallet first.'); return; }
-                if (!isSGSolana && !isWalletConnected) { openWalletModal(); return; }
-                if (!isSGSolana && !systemSigner) { alert('Connect wallet to BOT Chain Testnet first.'); return; }
+                if (!isWalletConnected) { openWalletModal(); return; }
+                if (!systemSigner) { alert('Connect wallet to BOT Chain Mainnet first.'); return; }
                 const amount = amountInput.value.trim();
                 const message = messageInput.value.trim();
                 const senderName = document.getElementById('sgSenderName').value.trim();
@@ -9185,12 +7938,10 @@ window.convertSbtToBot = convertSbtToBot;
                 if (existing) { alert('This claim code is already taken. Use a different one.'); return; }
 
                 document.getElementById('sgFinalImage').src = sgUploadedImageData;
-                var sgFormToken = window.CURRENT_TOKEN === 'ACE' ? ' ACE' : ' BOT';
-                var sgFormAmt = window.CURRENT_TOKEN === 'ACE' ? parseFloat(amount).toFixed(2) : parseFloat(amount).toFixed(4);
-                document.getElementById('sgFinalAmount').textContent = sgFormAmt + sgFormToken;
+                document.getElementById('sgFinalAmount').textContent = parseFloat(amount).toFixed(4) + ' BOT';
                 document.getElementById('sgFinalMessage').textContent = '"' + (message || 'A secret gift for you') + '"';
-                document.getElementById('sgFinalSender').textContent = senderName || (isSGSolana ? window.solanaPublicKey.toString().slice(0, 4) + '...' + window.solanaPublicKey.toString().slice(-4) : realWalletAddress.slice(0, 6) + '...' + realWalletAddress.slice(-4));
-                document.getElementById('sgFinalAmountDetail').textContent = sgFormAmt + ' $' + window.CURRENT_TOKEN;
+                document.getElementById('sgFinalSender').textContent = senderName || realWalletAddress.slice(0, 6) + '...' + realWalletAddress.slice(-4);
+                document.getElementById('sgFinalAmountDetail').textContent = parseFloat(amount).toFixed(4) + ' $BOT';
                 document.getElementById('sgFinalClaimCode').textContent = claimCodeVal;
 
                 document.getElementById('secretGiftFormPanel').classList.add('hidden');
@@ -9203,9 +7954,7 @@ window.convertSbtToBot = convertSbtToBot;
             });
 
             if (confirmBtn) confirmBtn.addEventListener('click', async () => {
-                const isSGSolana = window.CURRENT_TOKEN === 'ACE';
-                if (isSGSolana && !window.solanaPublicKey) { alert('Connect Phantom wallet first.'); return; }
-                if (!isSGSolana && !systemSigner) { alert('Please connect your wallet first.'); return; }
+                if (!systemSigner) { alert('Please connect your wallet first.'); return; }
                 confirmBtn.disabled = true;
                 document.getElementById('sgConfirmText').textContent = 'Creating...';
                 document.getElementById('sgConfirmIcon').textContent = '⏳';
@@ -9213,173 +7962,55 @@ window.convertSbtToBot = convertSbtToBot;
                 try {
                     const amount = amountInput.value.trim();
                     const message = messageInput.value.trim();
-                    const senderName = document.getElementById('sgSenderName').value.trim() || (isSGSolana ? window.solanaPublicKey.toString().slice(0, 4) + '...' + window.solanaPublicKey.toString().slice(-4) : realWalletAddress.slice(0, 6) + '...' + realWalletAddress.slice(-4));
+                    const senderName = document.getElementById('sgSenderName').value.trim() || realWalletAddress.slice(0, 6) + '...' + realWalletAddress.slice(-4);
                     const claimCodeVal = claimCodeInput ? claimCodeInput.value.trim().toUpperCase() : '';
+
                     const giftCode = claimCodeVal || await sgGenerateCode();
 
-                    let txHash = '';
+                    document.getElementById('sgConfirmText').textContent = 'Generating vault wallet...';
+                    const vaultWallet = ethers.Wallet.createRandom();
+                    const vaultAddress = vaultWallet.address;
+                    const vaultPrivateKey = vaultWallet.privateKey;
 
-                    if (isSGSolana) {
-                        // === SOLANA SECRET GIFT VAULT ===
+                    document.getElementById('sgConfirmText').textContent = 'Sending BOT to vault...';
+                    const amountWei = ethers.parseEther(amount);
+                    const gasBuffer = ethers.parseEther('0.001');
+                    const tx = await systemSigner.sendTransaction({ to: vaultAddress, value: amountWei + gasBuffer });
+                    const receipt = await tx.wait();
+                    if (receipt.status !== 1) throw new Error('Transaction failed on-chain');
 
-                        // Check SOL balance first — need ~0.003 SOL for ATA rent + tx fee
-                        document.getElementById('sgConfirmText').textContent = 'Checking SOL balance...';
-                        const connection = getSolanaConnection();
-                        const senderPub = window.solanaPublicKey;
-                        const solBalance = await connection.getBalance(senderPub);
-                        const solNeeded = 0.003 * solanaWeb3.LAMPORTS_PER_SOL;
-                        if (solBalance < solNeeded) {
-                            const solHave = (solBalance / solanaWeb3.LAMPORTS_PER_SOL).toFixed(4);
-                            const solNeed = (solNeeded / solanaWeb3.LAMPORTS_PER_SOL).toFixed(4);
-                            alert('Insufficient SOL for gas!\n\nYou have: ' + solHave + ' SOL\nYou need: ~' + solNeed + ' SOL\n\nThe vault token account requires ~0.002 SOL rent + ~0.000005 SOL tx fee.\n\nPlease fund your wallet with more SOL and try again.');
-                            document.getElementById('sgConfirmText').textContent = '';
-                            confirmBtn.disabled = false;
-                            confirmBtn.innerHTML = '<span>Confirm & Create 🔐</span>';
-                            return;
-                        }
+                    document.getElementById('sgConfirmText').textContent = 'Encrypting vault...';
+                    const encryptedPK = await encryptAES(vaultPrivateKey, giftCode);
 
-                        document.getElementById('sgConfirmText').textContent = 'Generating vault keypair...';
-                        const vaultKeypair = solanaWeb3.Keypair.generate();
-                        const vaultAddress = vaultKeypair.publicKey.toString();
-                        console.log('[SG-SOL] Vault:', vaultAddress);
+                    document.getElementById('sgConfirmText').textContent = 'Saving to database...';
+                    await sgStoreGift(giftCode, {
+                        code: giftCode,
+                        amount: parseFloat(amount),
+                        sender: realWalletAddress,
+                        sender_name: senderName || '',
+                        recipient: '',
+                        message: message || '',
+                        image_url: sgUploadedImageData || '',
+                        encrypted_pk: encryptedPK,
+                        claimed: false
+                    });
 
-                        document.getElementById('sgConfirmText').textContent = 'Sending ACE to vault...';
-                        const mint = new solanaWeb3.PublicKey(window.ACE_TOKEN.mint);
-                        const vaultPub = vaultKeypair.publicKey;
-                        const amountRaw = Math.floor(parseFloat(amount) * Math.pow(10, window.ACE_TOKEN.decimals));
+                    addGift({
+                        id: 'sg_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8),
+                        sender: realWalletAddress,
+                        senderName: senderName,
+                        recipient: 'Public Voucher',
+                        amount: parseFloat(amount).toString(),
+                        style: 'secretGift',
+                        message: message,
+                        txHash: tx.hash,
+                        timestamp: Date.now(),
+                        claimed: false
+                    });
 
-                        const senderATA = getAssociatedTokenAddress(mint, senderPub);
-                        const vaultATA = getAssociatedTokenAddress(mint, vaultPub);
-
-                        const tx = new solanaWeb3.Transaction();
-
-                        // Create ATA for vault
-                        tx.add(createAssociatedTokenAccountInstruction(senderPub, mint, vaultPub, vaultATA));
-
-                        // Transfer ACE to vault
-                        tx.add(createSplTransferInstruction(senderATA, vaultATA, senderPub, amountRaw));
-
-                        const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
-                        tx.recentBlockhash = blockhash;
-                        tx.feePayer = senderPub;
-
-                        const signedTx = await window.solanaWallet.signTransaction(tx);
-                        const rawTx = signedTx.serialize();
-
-                        document.getElementById('sgConfirmText').textContent = 'Sending ACE to vault...';
-                        txHash = await connection.sendRawTransaction(rawTx, { skipPreflight: false, maxRetries: 5, preflightCommitment: 'processed' });
-                        console.log('[SG-SOL] TX sent:', txHash);
-
-                        // Save to pending recovery IMMEDIATELY before confirmation (safety net)
-                        var sgVaultSecretKeyBase64 = btoa(String.fromCharCode.apply(null, vaultKeypair.secretKey));
-                        var sgEncryptedPKey = await encryptAES(sgVaultSecretKeyBase64, giftCode);
-                        var sgGiftRecord = {
-                            code: giftCode,
-                            amount: parseFloat(amount),
-                            sender: senderPub.toString(),
-                            sender_name: senderName || '',
-                            recipient: '',
-                            message: message || '',
-                            image_url: sgUploadedImageData || '',
-                            encrypted_pk: sgEncryptedPKey,
-                            claimed: false,
-                            chain: 'solana',
-                            token_symbol: 'ACE'
-                        };
-                        savePendingSolanaTx({ txHash: txHash, type: 'secretGift', giftCode: giftCode, giftData: sgGiftRecord, vaultAddress: vaultAddress });
-
-                        document.getElementById('sgConfirmText').textContent = 'Confirming transaction...';
-                        var confirmResult = await confirmSolanaTx(txHash, blockhash, lastValidBlockHeight, document.getElementById('sgConfirmText'), 'Confirming transaction');
-
-                        if (!confirmResult.confirmed) {
-                            console.warn('[SG-SOL] TX unconfirmed but gift saved to pending recovery. Vault:', vaultAddress, 'Tx:', txHash);
-                        }
-
-                        document.getElementById('sgConfirmText').textContent = 'Saving to database...';
-                        await sgStoreGift(giftCode, sgGiftRecord);
-                        removePendingSolanaTx(txHash);
-
-                        addGift({
-                            id: 'sg_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8),
-                            sender: senderPub.toString(),
-                            senderName: senderName,
-                            recipient: 'Public Voucher',
-                            amount: parseFloat(amount).toString(),
-                            style: 'secretGift',
-                            message: message,
-                            txHash: txHash,
-                            timestamp: Date.now(),
-                            claimed: false,
-                            chain: 'solana',
-                            token_symbol: 'ACE'
-                        });
-
-                        document.getElementById('sgSuccessCode').textContent = giftCode;
-                        document.getElementById('sgSuccessAmount').textContent = parseFloat(amount).toFixed(2) + ' ACE';
-                        document.getElementById('sgSuccessTx').textContent = txHash;
-
-                        if (!confirmResult.confirmed) {
-                            var warnEl = document.getElementById('sgSuccessPanel');
-                            if (warnEl) {
-                                var banner = document.createElement('div');
-                                banner.className = 'bg-amber-500/10 border border-amber-500/30 rounded-xl p-3 mb-4 text-center';
-                                banner.innerHTML = '<p class="text-xs text-amber-400 font-medium">⚠️ Transaction confirmation timed out.</p><p class="text-[10px] text-zinc-400 mt-1">Your gift was saved. Check <a href="https://solscan.io/tx/' + txHash + '" target="_blank" class="text-emerald-400 underline">Solscan</a> to verify. If confirmed, the gift will work normally.</p>';
-                                warnEl.insertBefore(banner, warnEl.firstChild);
-                            }
-                        }
-
-                    } else {
-                        // === BOT CHAIN SECRET GIFT VAULT (existing) ===
-                        document.getElementById('sgConfirmText').textContent = 'Generating vault wallet...';
-                        const vaultWallet = ethers.Wallet.createRandom();
-                        const vaultAddress = vaultWallet.address;
-                        const vaultPrivateKey = vaultWallet.privateKey;
-
-                        document.getElementById('sgConfirmText').textContent = 'Sending BOT to vault...';
-                        const amountWei = ethers.parseEther(amount);
-                        const gasBuffer = ethers.parseEther('0.001');
-                        const tx = await systemSigner.sendTransaction({ to: vaultAddress, value: amountWei + gasBuffer });
-                        const receipt = await tx.wait();
-                        if (receipt.status !== 1) throw new Error('Transaction failed on-chain');
-
-                        document.getElementById('sgConfirmText').textContent = 'Encrypting vault...';
-                        const encryptedPK = await encryptAES(vaultPrivateKey, giftCode);
-
-                        document.getElementById('sgConfirmText').textContent = 'Saving to database...';
-                        await sgStoreGift(giftCode, {
-                            code: giftCode,
-                            amount: parseFloat(amount),
-                            sender: realWalletAddress,
-                            sender_name: senderName || '',
-                            recipient: '',
-                            message: message || '',
-                            image_url: sgUploadedImageData || '',
-                            encrypted_pk: encryptedPK,
-                            claimed: false,
-                            chain: 'bot',
-                            token_symbol: 'BOT'
-                        });
-
-                        addGift({
-                            id: 'sg_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8),
-                            sender: realWalletAddress,
-                            senderName: senderName,
-                            recipient: 'Public Voucher',
-                            amount: parseFloat(amount).toString(),
-                            style: 'secretGift',
-                            message: message,
-                            txHash: tx.hash,
-                            timestamp: Date.now(),
-                            claimed: false,
-                            chain: 'bot',
-                            token_symbol: 'BOT'
-                        });
-
-                        txHash = tx.hash;
-                        document.getElementById('sgSuccessCode').textContent = giftCode;
-                        document.getElementById('sgSuccessAmount').textContent = parseFloat(amount).toFixed(4) + ' BOT';
-                        document.getElementById('sgSuccessTx').textContent = tx.hash;
-                    }
+                    document.getElementById('sgSuccessCode').textContent = giftCode;
+                    document.getElementById('sgSuccessAmount').textContent = parseFloat(amount).toFixed(4) + ' BOT';
+                    document.getElementById('sgSuccessTx').textContent = tx.hash;
 
                     if (copyCodeBtn) copyCodeBtn.addEventListener('click', () => {
                         navigator.clipboard.writeText(giftCode).then(() => {
@@ -9408,11 +8039,7 @@ window.convertSbtToBot = convertSbtToBot;
                     if (typeof loadOnChainHistory === 'function') await loadOnChainHistory();
                 } catch (err) {
                     console.error('Secret Gift creation failed:', err);
-                    var errMsg = err.reason || err.message || 'Unknown error';
-                    if (errMsg.includes('Transaction')) {
-                        errMsg = 'Transaction issue. Check your wallet and Solscan before retrying.\n\n' + errMsg;
-                    }
-                    alert('Failed to create Secret Gift: ' + errMsg);
+                    alert('Failed to create Secret Gift: ' + (err.reason || err.message || 'Unknown error'));
                     document.getElementById('sgConfirmText').textContent = 'Confirm & Create';
                     document.getElementById('sgConfirmIcon').textContent = '🔐';
                 } finally {
@@ -9426,9 +8053,7 @@ window.convertSbtToBot = convertSbtToBot;
                 console.log('[SG] Showing popup, balance:', balance, 'data:', data);
                 var txH = txHash || data.txHash || '';
                 var amtText = '0.0000';
-                var tokenSym = (data.chain === 'solana') ? 'ACE' : 'BOT';
-                var explorerUrl = (data.chain === 'solana') ? 'https://solscan.io/tx/' : 'https://scan.bohr.life/tx/';
-                try { amtText = (data.chain === 'solana') ? parseFloat(balance).toFixed(2) : parseFloat(balance).toFixed(4); } catch(e) { amtText = String(balance); }
+                try { amtText = parseFloat(balance).toFixed(4); } catch(e) { amtText = String(balance); }
                 var overlay = document.createElement('div');
                 overlay.id = 'secretGiftClaimedPopup';
                 overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);';
@@ -9436,11 +8061,11 @@ window.convertSbtToBot = convertSbtToBot;
                 if (data.imageUrl) html += '<img src="' + data.imageUrl + '" style="width:100%;height:180px;object-fit:cover;border-radius:16px;margin-bottom:16px;" alt="Gift Image">';
                 else html += '<div style="font-size:48px;margin-bottom:16px;">🎉</div>';
                 html += '<h3 style="font-size:22px;font-weight:bold;margin-bottom:8px;color:#f4f4f5;">Secret Gift Claimed!</h3>';
-                html += '<p style="font-size:18px;font-weight:bold;color:#34d399;font-family:monospace;margin-bottom:12px;">+' + amtText + ' ' + tokenSym + '</p>';
+                html += '<p style="font-size:18px;font-weight:bold;color:#34d399;font-family:monospace;margin-bottom:12px;">+' + amtText + ' BOT</p>';
                 if (data.msg) html += '<p style="font-size:12px;color:#a1a1aa;margin-bottom:8px;">' + data.msg + '</p>';
                 if (data.senderName) html += '<p style="font-size:10px;color:#71717a;margin-bottom:12px;">From: ' + data.senderName + '</p>';
                 if (txH) html += '<p style="font-size:10px;color:#52525b;font-family:monospace;word-break:break-all;margin-bottom:4px;">TX: ' + txH + '</p>';
-                if (txH) html += '<a href="' + explorerUrl + txH + '" target="_blank" style="font-size:10px;color:#34d399;text-decoration:underline;">View on Explorer</a>';
+                if (txH) html += '<a href="https://scan.botchain.ai/tx/' + txH + '" target="_blank" style="font-size:10px;color:#34d399;text-decoration:underline;">View on Explorer</a>';
                 html += '<button id="sgClaimedCloseBtn" style="width:100%;margin-top:16px;padding:12px;border-radius:12px;background:#10b981;color:#000;border:none;font-weight:bold;font-size:14px;cursor:pointer;">Awesome!</button>';
                 html += '</div>';
                 overlay.innerHTML = html;
@@ -9449,7 +8074,7 @@ window.convertSbtToBot = convertSbtToBot;
                 document.getElementById('sgClaimedCloseBtn').addEventListener('click', function() { overlay.remove(); });
             } catch(e) {
                 console.error('[SG] Popup error:', e);
-                alert('Gift Claimed! +' + balance + ' tokens');
+                alert('Gift Claimed! +' + balance + ' BOT');
             }
         }
 
@@ -9509,7 +8134,7 @@ window.convertSbtToBot = convertSbtToBot;
 
         async function claimSecretGift(code) {
             if (!isWalletConnected) { openWalletModal(); return; }
-            if (!systemProvider || !systemSigner) { alert('Connect wallet to BOT Chain Testnet first.'); return; }
+            if (!systemProvider || !systemSigner) { alert('Connect wallet to BOT Chain Mainnet first.'); return; }
 
             const gift = await sgLookupGift(code);
             if (!gift) { alert('Invalid secret gift code.'); return; }
@@ -9553,7 +8178,7 @@ window.convertSbtToBot = convertSbtToBot;
                     await sgMarkClaimed(code, claimerAddress);
 
                     overlay.remove();
-                    showSecretGiftClaimedPopup({ msg: gift.message, senderName: gift.sender_name, txHash: gift.tx_hash || '', imageUrl: gift.image_url, chain: gift.chain || 'bot' }, gift.amount);
+                    showSecretGiftClaimedPopup({ msg: gift.message, senderName: gift.sender_name, txHash: gift.tx_hash || '', imageUrl: gift.image_url }, gift.amount);
                     await updateRealBalance();
                 } catch (err) {
                     console.error('Secret Gift claim failed:', err);
@@ -9684,13 +8309,13 @@ window.convertSbtToBot = convertSbtToBot;
     <!-- AI CHATBOT STANDALONE SCRIPT -->
     <script>
     (function() {
-        // Groq API — Demo/testnet key for AI Gift Advisor (Builder Challenge)
+        // Groq API — AI Gift Advisor (Production)
         var GROQ_API_KEY = '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';
         var GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
         var aiChatHistory = [];
         var aiChatSource = 'gifts';
 
-        var AI_SYSTEM_PROMPT = 'You are Botchain AI, a fun, creative gift advisor for GIFT BOT on BOT Chain Testnet. ' +
+        var AI_SYSTEM_PROMPT = 'You are Botchain AI, a fun, creative gift advisor for GIFT BOT on BOT Chain Mainnet. ' +
         'Your personality: Enthusiastic, uses emojis, speaks like a cool friend who is obsessed with gifts. ' +
         'You ONLY help with: Gift recommendations (which type, how much, for what occasion), ' +
         'Writing gift messages (sweet, funny, heartfelt), ' +
@@ -9868,11 +8493,11 @@ window.convertSbtToBot = convertSbtToBot;
 
         // BOT Chain config (duplicated here for claim page scope)
         const CLAIM_BOT_CHAIN = {
-            chainId: '0x3C8',
-            chainName: 'BOT Chain Testnet',
+            chainId: '0x2A5',
+            chainName: 'BOT Chain Mainnet',
             nativeCurrency: { name: 'BOT', symbol: 'BOT', decimals: 18 },
-            rpcUrls: ['https://rpc.bohr.life'],
-            blockExplorerUrls: ['https://scan.bohr.life']
+            rpcUrls: ['https://rpc.botchain.ai'],
+            blockExplorerUrls: ['https://scan.botchain.ai']
         };
 
         function giftIconFor(s) {
@@ -10306,9 +8931,9 @@ window.convertSbtToBot = convertSbtToBot;
 
                 (async function() {
                     try {
-                        const provider = new ethers.JsonRpcProvider('https://rpc.bohr.life');
+                        const provider = new ethers.JsonRpcProvider('https://rpc.botchain.ai');
                         const abi = window.SBT_CONTRACT_ABI || [];
-                        const addr = window.SBT_CONTRACT_ADDRESS || '0x740e1ce98364EfF4d5e3d89b2b1fa513e0F75b16';
+                        const addr = window.SBT_CONTRACT_ADDRESS || '0x29F624c97FF1623697592EEe5c63Eb657A2DC9F3';
                         if (!addr || abi.length === 0) throw new Error('Contract not configured');
                         const contract = new ethers.Contract(addr, abi, provider);
                         const data = await contract.getGiftData(tokenId);
@@ -10391,7 +9016,7 @@ window.convertSbtToBot = convertSbtToBot;
             const colors = giftThemeColor(gift.style);
             document.getElementById('claimGiftTypeIcon').textContent = icon;
             document.getElementById('claimFromAddr').textContent = gift.sender.slice(0,6) + '...' + gift.sender.slice(-4);
-            document.getElementById('claimAmountDisplay').textContent = parseFloat(gift.amount).toFixed(4) + ' $' + (gift.chain === 'solana' ? 'ACE' : 'BOT');
+            document.getElementById('claimAmountDisplay').textContent = parseFloat(gift.amount).toFixed(4) + ' $BOT';
             document.getElementById('claimGiftTypeText').textContent = 'A ' + (gift.style || 'gift') + ' gift is waiting for you.';
             document.getElementById('claimBg').style.background = 'radial-gradient(ellipse at center, ' + colors[0] + '15 0%, rgba(9,9,11,0.97) 70%)';
 
@@ -10418,7 +9043,7 @@ window.convertSbtToBot = convertSbtToBot;
                     if (gift.style === 'goldenticket') {
                         setTimeout(() => {
                             const amt = document.getElementById('claimTicketAmount');
-                            if (amt) amt.textContent = parseFloat(gift.amount).toFixed(4) + ' $' + (gift.chain === 'solana' ? 'ACE' : 'BOT');
+                            if (amt) amt.textContent = parseFloat(gift.amount).toFixed(4) + ' $BOT';
                         }, 100);
                     }
                 } else {
@@ -10723,8 +9348,8 @@ window.convertSbtToBot = convertSbtToBot;
                 setTimeout(() => {
                     step2.classList.add('hidden');
                     step3.classList.remove('hidden');
-                    document.getElementById('claimSuccessAmount').textContent = parseFloat(gift.amount).toFixed(4) + ' $' + (gift.chain === 'solana' ? 'ACE' : 'BOT');
-                    document.getElementById('claimSuccessTx').href = getExplorerUrl('tx', claimTx.hash, gift.chain || 'BOT');
+                    document.getElementById('claimSuccessAmount').textContent = parseFloat(gift.amount).toFixed(4) + ' $BOT';
+                    document.getElementById('claimSuccessTx').href = 'https://scan.botchain.ai/tx/' + claimTx.hash;
                     document.getElementById('claimSuccessTx').textContent = 'View Claim Tx ' + claimTx.hash.slice(0, 10) + '...';
 
                         const colors = giftThemeColor(gift.style);
@@ -10747,8 +9372,8 @@ window.convertSbtToBot = convertSbtToBot;
                             }
                         }
 
-                        if (typeof updateRealBalance === 'function') updateRealBalance();
-                        if (typeof loadOnChainHistory === 'function') loadOnChainHistory();
+                        if (typeof updateRealBalance === 'function') await updateRealBalance();
+                        if (typeof loadOnChainHistory === 'function') await loadOnChainHistory();
                     }, 600);
             } catch (err) {
                 console.error('Claim page error:', err);
